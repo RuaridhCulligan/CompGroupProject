@@ -22,7 +22,7 @@
 
        - two fixed meetings per week (Tuesdays and Thursdays)
 
-5) Set up a timetable 
+5) Set up a timetable
 
 
     
