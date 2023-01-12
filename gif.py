@@ -67,7 +67,7 @@ for i in t:
     ax.set_ylabel(r'$|\Psi|^2$', fontsize=body_size)
     plt.title(r'Analytical Solution to the 1D Schr{\"o}dinger Equation', fontsize=title_size)
     ax.set_ylim(0, mod2_sol(x,0,a,k0).max()*1.1)
-    plt.show()
+    #plt.show()
     
     camera.snap()
     
