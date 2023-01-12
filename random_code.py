@@ -5,7 +5,7 @@ def schrodinger_sol_analytical(x, t, a, k0):
     return 1/(2*np.pi)*((1/(2*a*np.pi))**(1/4))*np.exp(k0/4*a)*(1/np.sqrt((1/2*a)+1j*t))*(np.exp((-(x-((1j*k0)/(2*a)))**2)/((1/a)+2*1j*t)))
 
 
-x = np.arange(-10, 10, 0.1)
+x = np.arange(-10, 10, 0.2)
 
 #print(schrodinger_sol_analytical(x, 0, 2, 2))
 plt.figure(figsize = [8,6])
