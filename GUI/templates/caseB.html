@@ -1,0 +1,26 @@
+{% extends "base.html" %}
+{% block title %}Free Wavepacket{% endblock %}
+{% block navbar %}
+<nav class="navbar">
+    <ul>
+        <li><a href="/">Home</a></li>
+        <li><a href="caseA.html">Free Wavepacket 1D</a></li>
+        <li><a class = "active" href="caseB.html">Free Wavepacket 2D</a></li>
+    </ul>
+</nav>
+{% endblock %}
+{% block bodycontent %}
+<div class = "bodycontent">
+    <h1>Free Wavepacket in 2D</h1>
+    <h3>Description of Scenario</h3>
+    <p>This scenario describes a situation in two dimensions where there is no external potential, and the wavepacket is allowed to spread and move freely.</p>
+</div>
+{% endblock %}
+
+{% block form %}
+<div class="form">
+    <h3>Enter values here:</h3>
+    <form action = "#" method = "post">
+    </form>
+</div>
+{% endblock %}
