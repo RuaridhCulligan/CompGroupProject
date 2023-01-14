@@ -1,0 +1,115 @@
+\documentclass[11pt]{article}
+\usepackage[a4paper]{geometry} 
+\usepackage{amsmath}
+\usepackage{amssymb}
+\usepackage{amsthm}
+\usepackage[UKenglish]{babel}
+\usepackage{enumerate}
+\usepackage{graphicx}
+
+\usepackage{hyperref}
+\hypersetup{colorlinks=false, bookmarks=true}
+
+
+\author{David Amorim}
+\title{Derivation Analytical Solution}
+\begin{document}
+\maketitle
+%\newpage
+
+\section{One-dimensional Schr{\"o}dinger Equation}
+The one-dimensional Schr{\"o}dinger equation for a free particle in natural units is 
+\begin{equation}\label{Se}
+- \frac{1}{2} \partial_x^2 \Psi(x,t) = i \partial_t \Psi(x,t).
+\end{equation}
+Transforming into momentum-space yields the PDE
+$$ - \frac{1}{2} (i k )^2 \tilde{\Psi}(k,t) = i \partial_t \tilde{\Psi}(k,t),$$
+with solution
+$$ \tilde{\Psi}(k,t) = g(k) \exp \left({-i \frac{k^2 t}{2}} \right).$$
+The spatial wavefunction $\Psi (x,t)$ that solves \eqref{Se} can be recovered from its momentum-space representation via an inverse Fourier transform:
+\begin{equation}\label{psi}
+ \Psi(x,t) = \frac{1}{\sqrt{2 \pi}} \int_{-\infty}^\infty g(k) \exp\left( i\left[kx - \frac{k^2t}{2} \right] \right) dk
+\end{equation}
+From the above, the coefficient function $g(k)$ can be identified as the Fourier transform of the initial condition $\Psi (x,0)$ into momentum-space:
+\begin{equation}\label{g(k)}
+g(k) = \frac{1}{\sqrt{2 \pi}} \int_{-\infty}^\infty \Psi (x,0) \exp({-ikx}) dx.
+\end{equation}
+Thus, solving the PDE \eqref{Se} for a given initial condition $\Psi (x,0)$ requires evaluating the two integrals \eqref{g(k)} and \eqref{psi}.  \par 
+Given the initial condition 
+\begin{equation}\label{in_cond}
+ \Psi (x,0) = \left( \frac{2a}{\pi} \right)^{1/4} \exp({-ax^2+ik_0 x})
+\end{equation}
+the function $g(k)$ corresponding to this travelling Gaussian wavepacket is 
+\begin{align*}
+g(k) &=  \frac{1}{\sqrt{2 \pi}} \int_{-\infty}^\infty \left[ \left( \frac{2a}{\pi} \right)^{1/4} \exp({-ax^2+ik_0 x}) \right] \exp({-ikx}) dx \\
+&=   \left( \frac{a}{2\pi^3} \right)^{1/4} \int_{-\infty}^\infty \exp(-ax^2-i[k-k_0] x)dx \\
+&= \ \left( \frac{a}{2\pi^3} \right)^{1/4} \int_{-\infty}^\infty \exp\left( - \left[ \left( \sqrt{a}x + \frac{i (k-k_0)}{2 \sqrt{a}} \right)^2 + \frac{(k-k_0)^2}{4a} \right]  \right) dx \\
+&= \left( \frac{a}{2\pi^3} \right)^{1/4}   \exp\left(-\frac{[k-k_0]^2}{4a} \right)  \int_{-\infty}^\infty  \exp\left( - \left[ \left( \sqrt{a}x + \frac{i (k-k_0)}{2 \sqrt{a}} \right)^2 \right]  \right) dx
+\end{align*}
+The substitution $y = \left( \sqrt{a}x + \frac{i (k-k_0)}{2 \sqrt{a}} \right)$ yields 
+$$ g(k) =  \left( \frac{a}{2\pi^3} \right)^{1/4} \exp\left(-\frac{[k-k_0]^2}{4a} \right) \int_{-\infty}^\infty \frac{1}{\sqrt{a}}  \exp({-y^2}) dy.$$
+Note that the standard Gaussian integral evaluates to
+$$\int_{-\infty}^\infty  \exp({-y^2}) dy= \sqrt{\pi}$$
+and hence we obtain
+\begin{equation}\label{g(k)_sol}
+g(k) = \left( \frac{1}{2 a \pi} \right)^{1/4} \exp\left(- \frac{[k-k_0]^2}{4a} \right).
+\end{equation}
+Substituting this result into \eqref{psi} yields 
+\begin{align*}
+\Psi (x,t) &= \frac{1}{\sqrt{2 \pi}} \int_{-\infty}^\infty  \left( \frac{1}{2 a \pi} \right)^{1/4} \exp\left(- \frac{[k-k_0]^2}{4a}+ ikx - \frac{ik^2t}{2} \right) dk \\
+&= \left( \frac{1}{8 a \pi^3} \right)^{1/4} \int_{-\infty}^\infty \exp\left( -k^2 \left[ \frac{1}{4a}+\frac{it}{2} \right] + k \left[ \frac{k_0}{2a} + ix \right] - \frac{k_0^2}{4a} \right) dk
+\end{align*}
+Defining appropriate parameters 
+$$ \alpha =\left( \frac{1}{8 a \pi^3} \right)^{1/4} \exp\left(- \frac{k_0^2}{4a}\right), \; \; \beta^2 = \left[ \frac{1}{4a}+\frac{it}{2} \right], \; \; \gamma = \left[ \frac{k_0}{2a} + ix \right] $$
+the above can be re-written as 
+\begin{align*}
+\Psi (x,t) &= \alpha \int_{-\infty}^\infty \exp\left(-[\beta^2 k^2 - \gamma k]\right)dk\\
+&= \alpha \int_{-\infty}^\infty \exp\left(- \left[\beta k - \frac{\gamma}{2 \beta} \right]^2 + \frac{\gamma^2}{4 \beta^2} \right)dk \\
+&= \alpha \exp\left( \frac{\gamma^2}{4 \beta^2}\right) \int_{-\infty}^\infty\exp\left( -\left[\beta k - \frac{\gamma}{2 \beta} \right]^2 \right) dk
+\end{align*}
+The substitution $K = \beta k + \frac{\gamma}{2 \beta}$ yields
+$$ \Psi (x,t) =\frac{\alpha}{\beta} \exp\left( \frac{\gamma^2}{4 \beta^2}\right) \int_{-\infty}^\infty e^{-K^2} dK = \sqrt{\pi} \frac{\alpha}{\beta} \exp\left( \frac{\gamma^2}{4 \beta^2}\right).$$
+Thus, the solution to \eqref{Se} with initial condition \eqref{in_cond} is
+\begin{align*}
+\Psi(x,t) &=\sqrt{\pi} \left( \frac{1}{8a \pi^3} \right)^{1/4} \exp\left(- \frac{k_0^2}{4a}\right) \left( \frac{1}{4a}+\frac{it}{2} \right)^{-1/2} \exp \left( \frac{1}{4} \frac{\left[ \frac{k_0}{2a} + ix \right]^2}{ \left[ \frac{1}{4a}+\frac{it}{2} \right]} \right) \\
+&= \left( \frac{1}{8a \pi} \right)^{1/4} \left( \frac{1}{4a}+\frac{it}{2} \right)^{-1/2} \exp \left( \frac{1}{4} \frac{\left[ \frac{k_0}{2a} + ix \right]^2}{\left[ \frac{1}{4a}+\frac{it}{2} \right]} -\frac{k_0^2}{4a} \right)  \\
+&= \frac{\left( \frac{2a}{\pi} \right)^{1/4}}{\sqrt{1+ 2ita}} \exp \left( \frac{-ax^2 + ixk_0+ \frac{k_0^2}{4a}- \frac{k_0^2}{4a} - \frac{itk_0^2}{2})}{\sqrt{1+ 2ita}} \right) 
+\end{align*}
+Hence, the analytical solution is 
+\begin{equation*}
+\boxed{\Psi (x,t) = \frac{1}{\sqrt{1+ 2ita}} \left( \frac{2a}{\pi} \right)^{1/4}  \exp \left( \frac{-ax^2 +i\left[xk_0 - \frac{1}{2}k_0^2 t \right]}{\sqrt{1+2ita}} \right)}.
+\end{equation*}
+
+\section{Two-dimensional Schr{\"o}dinger Equation}
+The two-dimensional Schr{\"o}dinger equation for a free particle in natural units is 
+\begin{equation}\label{Se2d}
+- \frac{1}{2} \left( \partial_x^2 +  \partial_y^2 \right) \Psi(x,y,t) = i \partial_t \Psi(x,y,t).
+\end{equation}
+Transforming into momentum-space yields the PDE
+$$ - \frac{1}{2} \left( [i k_x ]^2 + [i k_y]^2 \right) \tilde{\Psi}(k_x, k_y,t) = i \partial_t \tilde{\Psi}(k_x, k_y,t),$$
+with solution
+$$ \tilde{\Psi}(k_x,k_x,t) = g_x(k_x) g_y(k_y) \exp \left({-i \frac{t}{2}}[k_x^2 + k_y^2] \right).$$
+The spatial wavefunction $\Psi (x,y,t)$ that solves \eqref{Se2d} can be recovered from its momentum-space representation via an inverse Fourier transform:
+\begin{equation}\label{psi2d}
+ \Psi(x,y,t) = \frac{1}{2\pi} \int_{-\infty}^\infty \int_{-\infty}^\infty g_x(k_x) g_y(k_y) \exp\left( i\left[k_xx+k_yy - \frac{t}{2}(k_x^2 +k_y^2)  \right] \right)dk_x dk_y  
+\end{equation}
+From the above, the product $g_x(k_x)g_y(k_y)$ can be identified as the Fourier transform of the initial condition $\Psi (x,y,0)$ into momentum-space:
+\begin{equation}\label{g(k)2d}
+g_x(k_x) g_y(k_y)= \frac{1}{2\pi} \int_{-\infty}^\infty \int_{-\infty}^\infty \Psi (x,y,0) \exp({-i[k_xx+k_yy]}) dxdy.
+\end{equation}
+Thus, solving the PDE \eqref{Se2d} for a given initial condition $\Psi (x,0)$ requires evaluating the two integrals \eqref{g(k)2d} and \eqref{psi2d}.  \par 
+Given the initial condition 
+\begin{equation}\label{in_cond2d}
+ \Psi (x,y,0) = \left( \frac{2a}{\pi} \right)^{1/4} \left( \frac{2b}{\pi} \right)^{1/4} \exp({-ax^2-by^2+i[k_{x0} x+k_{y0} y]})
+\end{equation}
+the product $g_x(k_x)g_y(k_y)$ corresponding to this travelling Gaussian wavepacket is 
+\begin{equation}\label{g(k)_sol2d}
+g_x(k_x)g_y(k_y) = \left( \frac{1}{2 a \pi} \right)^{1/4}\left( \frac{1}{2 b \pi} \right)^{1/4} \exp\left(- \frac{[k_x-k_{x0}]^2}{4a}- \frac{[k_y-k_{y0}]^2}{4b} \right),
+\end{equation}
+where the integral \eqref{g(k)2d} was evaluated using the same techniques as in the one-dimensional case. \par 
+Substituting the above into \eqref{psi2d} and generalising the methods applied in one dimension, we find 
+\begin{equation*}
+\boxed{\Psi (x,y,t) = \frac{1}{\sqrt{(1+ 2ita)(1+2itb)}} \left( \frac{4ab}{\pi^2} \right)^{1/4} \exp \left( \frac{-ax^2-by^2 +i\left[k_{x0}x+k_{y0}y- \frac{t}{2}(k_{x0}^2+k_{y0}^2) \right]}{\sqrt{(1+ 2ita)(1+2itb)}} \right)}.
+\end{equation*}
+
+\end{document}
