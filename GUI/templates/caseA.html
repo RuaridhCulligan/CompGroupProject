@@ -1,0 +1,53 @@
+{% extends "base.html" %}
+{% block title %}Free Wavepacket{% endblock %}
+{% block navbar %}
+<nav class="navbar">
+    <ul>
+        <li><a href="/">Home</a></li>
+        <li><a class = "active" href="caseA.html">Free Wavepacket 1D</a></li>
+        <li><a href="caseB.html">Free Wavepacket 2D</a></li>
+    </ul>
+</nav>
+{% endblock %}
+{% block bodycontent %}
+<div class = "bodycontent">
+    <h1>Free Wavepacket in 1D</h1>
+    <h3>Description of Scenario</h3>
+    <p>This scenario describes a situation in one dimension where there is no external potential, and the wavepacket is allowed to spread and move freely.</p>
+</div>
+{% endblock %}
+
+{% block form %}
+<div class="form">
+    <h3>Enter values here:</h3>
+    <form action = "#" method = "post">
+        <p>Value of t1: </p>
+        <p><input type="text" name = "t1" /></p>
+        <p>Value of dt: </p>
+        <p><input type="text" name = "dt" /></p>
+        <p>Value of x0: </p>
+        <p><input type="text" name = "x0" /></p>
+        <p>Value of x1: </p>
+        <p><input type="text" name = "x1" /></p>
+        <p>Value of dx: </p>
+        <p><input type="text" name = "dx" /></p>
+        <p>Value of a: </p>
+        <p><input type="text" name = "a" /></p>
+        <p>Value of k0: </p>
+        <p><input type="text" name = "k0" /></p>
+        <p>Select integration method:</p>
+        <p><select id="int_method" name="int_method">
+            <option value="crank_nicholson">Crank Nicholson Scheme</option>
+            <option value="FTCS">FTCS</option>
+            <option value="ERK4">Explicit Runge-Kutta 4</option>
+            <option value="RK4">Implicit Runge-Kutta 4</option>
+        </select></p>
+        <p>Do you want a time propagation from t=0 to t=t1 or a snapshot at t=t1?</p>
+        <p><input type="radio" name = "snapshot" value="True" />Snapshot</p>
+        <p><input type="radio" name = "snapshot" value="False"/>Propagation up to t1</p>
+
+        <p><input type="submit" value="submit" /></p>
+        
+    </form>
+</div>
+{% endblock %}
