@@ -3,6 +3,13 @@ import scipy as sc
 from scipy import integrate
 import matplotlib.pyplot as plt
 
+"""
+
+
+"""
+
+
+
 # Using this space so we can comment current shit going on in the program
 #
 # Dillon - Need to comment on functions, do summaries and update variable names. Overall tidy up functions
