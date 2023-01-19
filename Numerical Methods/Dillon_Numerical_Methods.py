@@ -2,7 +2,18 @@ import numpy as np
 import scipy as sc
 from scipy import integrate
 import matplotlib.pyplot as plt
+<<<<<<< HEAD
  
+=======
+
+"""
+
+
+"""
+
+
+
+>>>>>>> f0a62d7f7efa72e30db6f8da65a0d162ee7a9fe8
 # Using this space so we can comment current shit going on in the program
 
 def ftcs_1D(t1, dt, x0, dx, a, k0=0, V=None):
