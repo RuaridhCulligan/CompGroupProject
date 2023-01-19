@@ -22,15 +22,26 @@ def read_log(path):
 # read in csv files:
 def read_csv(path):
 
-    # SHAPE OF CSV:
-    # top row contains normalisation result + labels for each solution  ["commented out"]
-    # second row contains x vals [horizontal, first col placeholder, last col placeholder]
-    # all rows below: first col time value, other cols P(x,t), last col identifier in case there is several solutions
+    #SHAPE of CSV:
+    #   top row contains normalisation result
+    #   2nd row contains x_vals [1st col: placeholder val]
+    #   nth row contains P_vals [1st col: time val]
+
+    t_vals = np.loadtxt(path, skiprows=2, usecols=0, delimiter=",")
+    x_vals = np.loadtxt(path, skiprows=1, delimiter=",")[0,1:]
+    P_vals = np.loadtxt(path, skiprows=2, delimiter=",")[:,1:]
+
+    # read top row separately:
+    with open(path, "r") as f:
+        norm = f.readline()[:-1]
+    f.close()
+
+    #norm = norm.as_type("float")
+
+    return t_vals, x_vals, P_vals, norm
 
 
 
-
-
-print(read_log("log.txt"))
+print(read_csv("test.csv"))
 
 
