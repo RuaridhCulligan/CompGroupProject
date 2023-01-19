@@ -2,18 +2,10 @@ import numpy as np
 import scipy as sc
 from scipy import integrate
 import matplotlib.pyplot as plt
-
+ 
 # Using this space so we can comment current shit going on in the program
-#
-# Dillon - Need to comment on functions, do summaries and update variable names. Overall tidy up functions
-# Got an idea for RK4 to fix so will impliment that and fix that hopefully
-# Looked into more efficient ways of for looping, will look into that more and impliment
-# Try impliment potential into ftcs as RK4 and Crank nichelson should already work with potentials.
-# Will test potentials after tuesday meeting though
-# Once true analytic solution is avaliable can tweak shit
-# Change all matrices and vectors to complex
 
-def ftcs(t0, t1, dt, x0, x1, dx,  a, V=None, Y=None, k_0=0, ky0=0, y0=0, y1=0, dy=0, b=0):
+def ftcs_1D(t1, dt, x0, dx, a, k0=0, V=None):
     """Function calculates the forward centered difference scheme for 
         a one dimensional parabolic partial differential equation. 
     
@@ -26,58 +18,56 @@ def ftcs(t0, t1, dt, x0, x1, dx,  a, V=None, Y=None, k_0=0, ky0=0, y0=0, y1=0, d
         x1: The end position of the x grid
         dx: The spacing between x grid points
         
-        init_cond: The state of the function at a time, t=0
         a: Constant...
-        k_0: Constant... optional argument set to 0 , if set to a number will become moving case
+        k0: Constant... optional argument set to 0 , if set to a number will become moving case
     
     Returns:
         f: Distribution function being solved as a function of time
         x: The position grid (for information)
         t: The time grid (for information)
     """
-    if Y.type == None or Y == 1:
-        #Initialise Arrays: 
-        t = np.arange(t0, t1, dt) 
-        x = np.arange(x0, x1, dx)
-        n = len(t) 
-        xn = len(x)
-        
-        #Initialise function at t = 0
-        f = init_func_1D(a,x,kx0=0)
-        f.dtype = np.complex
-        
-        #Loop to compute FCTS scheme
-        for i in range(1,n):
-            f[1:xn-1] = f[1:xn-1] + dt*1j*((f[2:xn]-2*f[1:xn-1]+f[0:xn-2])/(2*dx**2) + V[1:xn-1]*f[1:xn-1]) 
-            f[0] = 0
-            f[xn-1] = 0
-    elif Y == 2:
-        #Initialise Arrays: 
-        t = np.arange(t0, t1, dt) 
-        x = np.arange(x0, x1, dx)
-        y = np.arange(y0, y1, dy)
-        n = len(t) 
-        xn = len(x)
-        yn = len(y)
-        
-        #Initialise function at t = 0
-        f = init_func_2D(a,b,x,y,kx0=0,ky0=0)
-        f.dtype = np.complex
-        
-        #Loop to compute FCTS scheme
-        for i in range(1,n):
-            for i in range(1,xn-1):
-                f[i,1:yn-1] = f[i,1:yn-1] + dt*1j*((f[i+1,2:yn]-2*f[i,1:yn-1]+f[i-1,0:yn-2])/(2*dx**2) + V[i,1:yn-1]*f[i,1:yn-1]) 
-                f[:,0] = 0
-                f[:, yn] = 0
-                f[xn,:] = 0
-                f[:, :] = 0
-        
-        return(f,x,t)
 
+    #Initialise Arrays: 
+    t = np.arange(0, t1, dt) 
+    x = np.arange(-50, 50, dx)
+    n = len(t) 
+    xn = len(x)
+    
+    #Initialise function at t = 0
+    phi = init_func_1D(a,x,k0=k0)
+    phi.dtype = complex
+    
+    #Loop to compute FCTS scheme
+    for i in range(1,n):
+        phi[1:xn-1] = phi[1:xn-1] + dt*1j*(phi[2:xn]-2*phi[1:xn-1]+phi[0:xn-2])/(2*dx**2) #+ V[1:xn-1]*phi[1:xn-1]) 
+        phi[0] = 0
+        phi[xn-1] = 0
+        
+    return(f,x,t)
 
-#After some more reaserch we need to impliment method of lines for this to work
-#Will delete this comment if I complete it xoxo
+def ftcs_2D(t1, dt, dx, dy, a, b, kx0=0, ky0=0, V=None):
+    #Initialise Arrays: 
+    t = np.arange(0, t1, dt) 
+    x = np.arange(-50, 50, dx)
+    y = np.arange(-50, 50, dy)
+    n = len(t) 
+    xn = len(x)
+    yn = len(y)
+    
+    #Initialise function at t = 0
+    phi = init_func_2D(a,b,x,y,kx0=kx0,ky0=ky0)
+    phi.dtype = complex
+    
+    #Loop to compute FCTS scheme
+    for i in range(1,n):
+        for i in range(1,xn-1):
+            phi[i,1:yn-1] = phi[i,1:yn-1] + dt*1j*((phi[i+1,2:yn]-2*phi[i,1:yn-1]+phi[i-1,0:yn-2])/(2*dx**2) + V[i,1:yn-1]*phi[i,1:yn-1]) 
+            phi[:,0] = 0
+            phi[:, yn] = 0
+            phi[xn,:] = 0
+            phi[:, :] = 0
+    return(phi, x, y, t)
+
 def RK4(t0, t1, dt, x0, x1, dx, a, V, k_0=0):
     """ODE Solver for ODEs of the form dx/dt = kx using RK4. 
     Assumes that the initial condition is given at t = 0 
@@ -162,7 +152,7 @@ def crank_nichelson(t0, t1, dt, x0, x1, dx, a, k_0=0, V=0):
     sigma = np.ones(xn)*(dt*1j)/(4*dx**2)
 
     A = np.diag(-sigma[0:xn-1], 1) + np.diag(1+2*sigma) + np.diag(-sigma[0:xn-1], -1)
-    B = np.diag(sigma[0:xn-1], 1) + np.diag(1-2*sigma+(V*dt*1j)) + np.diag(sigma[0:xn-1], -1)
+    B = np.diag(sigma[0:xn-1], 1) + np.diag(1-2*sigma) + np.diag(sigma[0:xn-1], -1)
     
     #Set the initial value of x (i.e. x[0])
     phi = init_func_1D(a,x,k_0=k_0)
@@ -202,7 +192,8 @@ def tunnel(V0,d,x0,x1,dx):
             V[i] = V0
         else:
             continue
-    return V 
+    return V
+
 a = 1
 k_0 = 1
 V0 = 1
@@ -210,38 +201,40 @@ d = 10
 
 
 t0 = 0
-t1 = 0.4
-dt = 0.01
+t1 = 5
+dt = 0.0001
 
 x0 = -20
 x1 = 20
-dx = 0.65
+dx = 0.1
 
 V=0
 
-f1, X1, t = RK4(t0, t1, dt, x0, x1, dx, a, V, k_0=0)
-prob_density_func1 = np.real(f1*np.conj(f1))
-prob1 = sc.integrate.simpson(X1,prob_density_func1, dx=0.1)
+# f1, X1, t = RK4(t0, t1, dt, x0, x1, dx, a, V, k_0=0)
+# prob_density_func1 = np.real(f1*np.conj(f1))
+# prob1 = sc.integrate.simpson(X1,prob_density_func1, dx=0.1)
 
-# f2, X2, t = ftcs(t0, t1, dt, x0, x1, dx, a, V, k_0=k_0)
-# prob_density_func2 = np.real(f2*np.conj(f2))
-# prob2 = sc.integrate.simpson(X2,prob_density_func2, dx=0.1)
+f2, X2, t = ftcs(t0, t1, dt, x0, x1, dx, a, V, k_0=k_0)
+prob_density_func2 = np.real(f2*np.conj(f2))
+prob2 = sc.integrate.simpson(X2,prob_density_func2, dx=0.1)
 
-# f4, X4, t = crank_nichelson(t0, t1, dt, x0, x1, dx, a, k_0, V)
-# prob_density_func4 = np.real(f4*np.conj(f4))
-# prob4 = sc.integrate.simpson(X4,prob_density_func4, dx=0.1)
+dt = 0.001
 
-# f3 = schrodinger_sol_analytical(X4, t1, a, k_0)
-# prob_density_func3 = np.real(f3*np.conj(f3))
-# prob3 = sc.integrate.simpson(X4,prob_density_func3, dx=0.1)
+f4, X4, t = crank_nichelson(t0, t1, dt, x0, x1, dx, a, k_0, V)
+prob_density_func4 = np.real(f4*np.conj(f4))
+prob4 = sc.integrate.simpson(X4,prob_density_func4, dx=0.1)
 
-print(prob1)
+f3 = schrodinger_sol_analytical_1D(X4, t1, a, k_0)
+prob_density_func3 = np.real(f3*np.conj(f3))
+prob3 = sc.integrate.simpson(X4,prob_density_func3, dx=0.1)
+
+print(prob4, prob2, prob3)
 
 plt.figure()
-# plt.plot(X2,prob_density_func2, label="FTCS")
-# plt.plot(X4,prob_density_func4, label="Crank-Nichelson")
-# plt.plot(X4,prob_density_func3, label="Analytic")
-plt.plot(X1,prob_density_func1, label="RK4")
+plt.plot(X2,prob_density_func2, label="FTCS")
+plt.plot(X4,prob_density_func4, label="Crank-Nichelson")
+plt.plot(X4,prob_density_func3, label="Analytic")
+# plt.plot(X1,prob_density_func1, label="RK4")
 plt.ylim(0,1)
 # plt.savefig("Group_test_RK4.png")
 plt.legend()
