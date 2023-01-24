@@ -271,13 +271,13 @@ def ftcs_1D(case, settings, sys_par, num_par):
     if case=="caseA":
         V = np.zeros(xn)
     if case=="caseC":
-        V = potentialC(x, sys_par)
+        V = potential_C(x, sys_par)
     
     # make relevant adjustments for non-static/semi-static output:
     if float(settings[0])==0:    
         T   = np.arange(t_start, t_end+dt, dt*100)
         P   = np.empty(len(T), dtype="object")
-        val = np.empty(len(T))
+        val = np.empty(len(T), dtype="float")
         j       = 0
     if float(settings[0])==0.5: 
         T   = np.array([t_start,t_end/8,t_end/4,t_end/2, 3*t_end/4, t_end]) 
@@ -286,8 +286,8 @@ def ftcs_1D(case, settings, sys_par, num_par):
         j   = 0
     else:
         T   = np.array([t_end])
-        P   = np.empty(xn)
-        val = np.array([1])
+        P   = np.empty(1, dtype="object")
+        val = np.array([1], dtype="float")
         j   = 0
      
     # run loop to compute FTCS scheme and write mod square of result to file
@@ -304,7 +304,7 @@ def ftcs_1D(case, settings, sys_par, num_par):
         
         if (t[i] in T):
             P[j]   = np.abs(psi)**2
-            val[j] = integrate_1d(P_arr[j],x)
+            val[j] = integrate_1d(P[j],x)
             j += 1
         
     # return output
@@ -337,14 +337,14 @@ def ftcs_2D(case, settings, sys_par, num_par):
     yn = len(y)
     
     # initialise wavefunction 
-    psi = wavepacket_2d(x,y, sys_params)
+    psi = wavepacket_2d(x,y, sys_par)
     psi.dtype = complex 
     
     # set up relevant potential at each point
     if case=="caseB":
         V = np.zeros((xn,yn))
     if case=="caseD":
-        V = potentialD(x,y, sys_par)
+        V = potential_D(x,y, sys_par)
         
     # make relevant adjustments for non-static/semi-static output:
     if settings[2]=="0":    
@@ -379,7 +379,7 @@ def ftcs_2D(case, settings, sys_par, num_par):
             
         if (t[k] in T):
             P[j]   = np.abs(psi)**2
-            val[j] = integrate_2d(P_arr[j],x,y)
+            val[j] = integrate_2d(P[j],x,y)
             j += 1   
                                                  
     # return output                                    
@@ -497,25 +497,25 @@ def visualise_1D(case,method, settings, sys_par, num_par):
         plt.figure(figsize=fig_dim) 
         
         if case=="caseA":
-            plt.title(r'Free propagation of a Gaussian wavepacket (at $t={0:.3f})$'.format(sys_par), fontsize=title_size)
+            plt.title(r'Free propagation of a Gaussian wavepacket (at $t={0:.3f})$'.format(sys_par[0]), fontsize=title_size)
         elif case=="caseC":
-            plt.title(r'Tunneling of a Gaussian wavepacket (at $t={0:.3f})$'.format(sys_par), fontsize=title_size)
+            plt.title(r'Tunneling of a Gaussian wavepacket (at $t={0:.3f})$'.format(sys_par[0]), fontsize=title_size)
         
         plt.ylabel(r'Probability density $|\Psi(x,t)|^2$', fontsize=body_size)
         plt.xlabel(r'Spatial dimension $x$', fontsize=body_size)
         
         if method=="ftcs": 
-            plt.plot(x,P,color="black", label=r'FTCS scheme normalised to {0:.4f} '.format(val))
+            plt.plot(x,P[0],color="black", label=r'FTCS scheme normalised to {0:.4f} '.format(val[0]))
         if method=="rk4": 
-            plt.plot(x,P,color="black", label=r'RK4 scheme normalised to {0:.4f} '.format(val))
+            plt.plot(x,P[0],color="black", label=r'RK4 scheme normalised to {0:.4f} '.format(val[0]))
         if method=="cn": 
-            plt.plot(x,P,color="black", label=r'CN scheme normalised to {0:.4f} '.format(val))
+            plt.plot(x,P[0],color="black", label=r'CN scheme normalised to {0:.4f} '.format(val[0]))
         if method=="all":
-            plt.plot(x,P_ftcs,color="black", label=r'FTCS scheme normalised to {0:.4f} '.format(val_ftcs))
-            plt.plot(x,P_rk4,color="grey", label=r'RK4 scheme normalised to {0:.4f} '.format(val_rk4))
-            plt.plot(x,P_cn,color="blue", label=r'CN scheme normalised to {0:.4f} '.format(val_cn))
+            plt.plot(x,P_ftcs[0],color="black", label=r'FTCS scheme normalised to {0:.4f} '.format(val_ftcs[0]))
+            plt.plot(x,P_rk4[0],color="grey", label=r'RK4 scheme normalised to {0:.4f} '.format(val_rk4[0]))
+            plt.plot(x,P_cn[0],color="blue", label=r'CN scheme normalised to {0:.4f} '.format(val_cn[0]))
         if an==True:
-            plt.plot(x,P_an,color="red",linestyle="--", label=r'analytical solution') 
+            plt.plot(x,P_an[0],color="red",linestyle="--", label=r'analytical solution') 
             
         plt.legend(fontsize=body_size, loc="upper right")
         plt.show()
@@ -586,3 +586,5 @@ def main(log_file="log.txt"):
                                                    
 
 main()
+
+#create_log("log.txt")
