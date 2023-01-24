@@ -1,70 +1,91 @@
+#-----------------------------------------------------------------------------
+#
+# "numpy.py" - FUNCTIONS TO IMPLEMENT NUMERICAL SOLUTION
+#
+#------------------------------------------------------------------------------
+
+# import modules
 import numpy as np
 import scipy as sc
 from scipy import integrate
 import matplotlib.pyplot as plt
+# from file_handling import read_log
+
+# extract information from log files (NOTE: specify location of log file)
+"""
+# case, method, num_params, bound_params,  _ = read_log("...")
+"""
+
+# check normalisation:
+def norm(arr):
+
+    # implement own Simpson's method to numerically integrate function (array)
+    # for now as a placeholder: use scipy.integrate.simpson
+
+    return norm
 
 
 
 
-# Using this space so we can comment current shit going on in the program
+
 
 def ftcs_1D(t1, dt, x0, dx, a, k0=0, V=None):
-    """Function calculates the forward centered difference scheme for 
-        a one dimensional parabolic partial differential equation. 
-    
+    """Function calculates the forward centered difference scheme for
+        a one dimensional parabolic partial differential equation.
+
     Args:
-        t0: The starting time (generally zero) 
+        t0: The starting time (generally zero)
         t1: The end time
-        dt: The time step size 
-        
-        x0: The start position of the x grid (generally zero) 
+        dt: The time step size
+
+        x0: The start position of the x grid (generally zero)
         x1: The end position of the x grid
         dx: The spacing between x grid points
-        
+
         a: Constant...
         k0: Constant... optional argument set to 0 , if set to a number will become moving case
-    
+
     Returns:
         f: Distribution function being solved as a function of time
         x: The position grid (for information)
         t: The time grid (for information)
     """
 
-    #Initialise Arrays: 
-    t = np.arange(0, t1, dt) 
+    #Initialise Arrays:
+    t = np.arange(0, t1, dt)
     x = np.arange(-50, 50, dx)
-    n = len(t) 
+    n = len(t)
     xn = len(x)
-    
+
     #Initialise function at t = 0
     phi = init_func_1D(a,x,k0=k0)
     phi.dtype = complex
-    
+
     #Loop to compute FCTS scheme
     for i in range(1,n):
-        phi[1:xn-1] = phi[1:xn-1] + dt*1j*(phi[2:xn]-2*phi[1:xn-1]+phi[0:xn-2])/(2*dx**2) #+ V[1:xn-1]*phi[1:xn-1]) 
+        phi[1:xn-1] = phi[1:xn-1] + dt*1j*(phi[2:xn]-2*phi[1:xn-1]+phi[0:xn-2])/(2*dx**2) #+ V[1:xn-1]*phi[1:xn-1])
         phi[0] = 0
         phi[xn-1] = 0
-        
+
     return(f,x,t)
 
 def ftcs_2D(t1, dt, dx, dy, a, b, kx0=0, ky0=0, V=None):
-    #Initialise Arrays: 
-    t = np.arange(0, t1, dt) 
+    #Initialise Arrays:
+    t = np.arange(0, t1, dt)
     x = np.arange(-50, 50, dx)
     y = np.arange(-50, 50, dy)
-    n = len(t) 
+    n = len(t)
     xn = len(x)
     yn = len(y)
-    
+
     #Initialise function at t = 0
     phi = init_func_2D(a,b,x,y,kx0=kx0,ky0=ky0)
     phi.dtype = complex
-    
+
     #Loop to compute FCTS scheme
     for i in range(1,n):
         for i in range(1,xn-1):
-            phi[i,1:yn-1] = phi[i,1:yn-1] + dt*1j*((phi[i+1,2:yn]-2*phi[i,1:yn-1]+phi[i-1,0:yn-2])/(2*dx**2) + V[i,1:yn-1]*phi[i,1:yn-1]) 
+            phi[i,1:yn-1] = phi[i,1:yn-1] + dt*1j*((phi[i+1,2:yn]-2*phi[i,1:yn-1]+phi[i-1,0:yn-2])/(2*dx**2) + V[i,1:yn-1]*phi[i,1:yn-1])
             phi[:,0] = 0
             phi[:, yn] = 0
             phi[xn,:] = 0
@@ -72,33 +93,33 @@ def ftcs_2D(t1, dt, dx, dy, a, b, kx0=0, ky0=0, V=None):
     return(phi, x, y, t)
 
 def RK4(t0, t1, dt, x0, x1, dx, a, V, k_0=0):
-    """ODE Solver for ODEs of the form dx/dt = kx using RK4. 
-    Assumes that the initial condition is given at t = 0 
-       
-    Args: 
+    """ODE Solver for ODEs of the form dx/dt = kx using RK4.
+    Assumes that the initial condition is given at t = 0
+
+    Args:
         t1: time to solve the equation up to
         x0: starting value of x, at t = 0
         k:  value of k in the ODE equation
-        h:  step size of the method 
-        
+        h:  step size of the method
+
     Returns:
         t: An array in increments of h for the dimension of time up to t1
         x: An array in increments of h for the dimension of space up to x(t1)
     """
-    
+
     #Initialise the arrays to be used
     # t is an array containing each of the timepoints that we will step forward to
     t = np.arange(t0,t1+dt,dt)
     # n is the number of timesteps in t
     n = np.shape(t)[0]
     # x starts as an empty array, but we will fill in the values we calculate in the loop, below
-    x = np.arange(x0,x1+dx,dx) 
+    x = np.arange(x0,x1+dx,dx)
     xn = np.shape(x)[0]
 
-    
+
     #Set the initial value of x (i.e. x[0])
     phi = init_func_1D(a,x,k_0=k_0)
-    
+
     #Loop over the time values and calculate the derivative
     for i in range(1,n):
         f = np.zeros(xn, dtype=np.complex); k1 = np.zeros(xn,dtype=np.complex);  k2 = np.zeros(xn, dtype=np.complex); k3 = np.zeros(xn, dtype=np.complex); k4 = np.zeros(xn, dtype=np.complex)
@@ -121,23 +142,23 @@ def RK4(t0, t1, dt, x0, x1, dx, a, V, k_0=0):
     return(phi, x, t)
 
 def crank_nichelson(t0, t1, dt, x0, x1, dx, a, k_0=0, V=0):
-    """Function calculates the crank nichelson scheme for 
-        a one dimensional parabolic partial differential equation. 
-    
+    """Function calculates the crank nichelson scheme for
+        a one dimensional parabolic partial differential equation.
+
     Args:
-        t0: The starting time (generally zero) 
+        t0: The starting time (generally zero)
         t1: The end time
-        dt: The time step size 
-        
-        x0: The start position of the x grid (generally zero) 
+        dt: The time step size
+
+        x0: The start position of the x grid (generally zero)
         x1: The end position of the x grid
         dx: The spacing between x grid points
-        
+
         init_cond: The state of the function at a time, t=0
         a: Constant...
         k_0: Constant... optional argument set to 0 , if set to a number will become moving case
         V: Potential function, optional argument that is initially set to 0
-    
+
     Returns:
         f: Distribution function being solved as a function of time
         x: The position grid (for information)
@@ -149,14 +170,14 @@ def crank_nichelson(t0, t1, dt, x0, x1, dx, a, k_0=0, V=0):
     tn = np.shape(t)[0]
 
     # x starts as an empty array, but we will fill in the values we calculate in the loop, below
-    x = np.arange(x0,x1+dx,dx) 
+    x = np.arange(x0,x1+dx,dx)
     xn = np.shape(x)[0]
 
     sigma = np.ones(xn)*(dt*1j)/(4*dx**2)
 
     A = np.diag(-sigma[0:xn-1], 1) + np.diag(1+2*sigma) + np.diag(-sigma[0:xn-1], -1)
     B = np.diag(sigma[0:xn-1], 1) + np.diag(1-2*sigma) + np.diag(sigma[0:xn-1], -1)
-    
+
     #Set the initial value of x (i.e. x[0])
     phi = init_func_1D(a,x,k_0=k_0)
     phi.dtype = np.complex
@@ -185,7 +206,7 @@ def schrodinger_sol_analytical_2D(x, y, t, a, b, kx0, ky0):
 
 def tunnel(V0,d,x0,x1,dx):
 
-    x = np.arange(x0,x1+dx,dx) 
+    x = np.arange(x0,x1+dx,dx)
     xn = np.shape(x)[0]
 
     V = np.zeros(xn)
@@ -256,3 +277,4 @@ plt.show()
 #     plt.plot(x,prob_density_func)
 #     #plt.savefig("Group_test_{0}.png".format([i]))
 #     plt.show()
+
