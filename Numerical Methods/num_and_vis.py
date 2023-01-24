@@ -520,13 +520,27 @@ def visualise_1D(case,method, settings, sys_par, num_par):
         plt.legend(fontsize=body_size, loc="upper right")
         plt.savefig("visualisation.pdf")
         plt.show()
-     
+ 
     # produce visualisation in the non-static (GIF) case:
     if float(settings[0])==0:
         
-        """
-        to do! [see code in "gif.py"]
-        """
+        fig=plt.figure(figsize=fig_dim)
+        camera = Camera(fig)
+
+        if case=="caseA":
+            plt.title(r'Free propagation of a Gaussian wavepacket', fontsize=title_size)
+        elif case=="caseC":
+            plt.title(r'Tunneling of a Gaussian wavepacket', fontsize=title_size)
+
+        for i in np.arange(len(T)):
+            """
+            do this!
+            """
+            camera.snap()
+        
+
+        animation = camera.animate()
+        animation.save("visualisation.gif")
     
     # produce visualisation in the semi-static (subplot) case:
     if float(settings[0])==0.5:
