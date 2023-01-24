@@ -49,6 +49,8 @@
 #                                   [only relevant for case D]
 #                   alpha (float):  coefficient of inter-particle potential 
 #                                   [only relevant for case E]
+#                   x0 (float):     initial peak position of wavepacket
+#                   y0 (float):     initial peak position of wavepacket in y direction
 #                   x_min (float):  minimum value of x-grid
 #                   x_max (float):  maximum value of x-grid
 #                   dx (float):     x-grid step size
@@ -106,6 +108,8 @@ def create_log(path="log.txt"):
     f.write("d 2 \n")
     f.write("w 2 \n")
     f.write("alpha 0.5 \n")
+    f.write("x0 0 \n")
+    f.write("y0 0 \n")
     
     f.write("x_min -10 \n")
     f.write("x_max +10 \n")
@@ -131,11 +135,11 @@ def read_log(path):
     
     # variables corresponding to physical parameters in the simulation 
     # stored in one array
-    sys_par  = arr[7:16].astype("float")
+    sys_par  = arr[7:18].astype("float")
     
     # variables corresponding to grid parameters for the numerical solvers
     # stored in one array
-    num_par = arr[16:].astype("float")
+    num_par = arr[18:].astype("float")
     
     # return results
     return case, method, settings, sys_par, num_par
@@ -678,8 +682,7 @@ def visualise_1D(case,method, settings, sys_par, num_par):
         """
         to do!
         """
-        
-    
+
     return 0
 
 
