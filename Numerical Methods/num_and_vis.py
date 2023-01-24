@@ -518,8 +518,8 @@ def visualise_1D(case,method, settings, sys_par, num_par):
             plt.plot(x,P_an[0],color="red",linestyle="--", label=r'analytical solution') 
             
         plt.legend(fontsize=body_size, loc="upper right")
-        plt.show()
         plt.savefig("visualisation.pdf")
+        plt.show()
      
     # produce visualisation in the non-static (GIF) case:
     if float(settings[0])==0:
