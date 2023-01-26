@@ -111,9 +111,9 @@ def create_log(path="log.txt"):
     f.write("x0 0 \n")
     f.write("y0 0 \n")
     
-    f.write("x_min -10 \n")
-    f.write("x_max +10 \n")
-    f.write("dx 0.0001 \n")
+    f.write("x_min -50 \n")
+    f.write("x_max +50 \n")
+    f.write("dx 0.1 \n")
     f.write("dt 0.0001 \n")
     f.write("y_min -10 \n")
     f.write("y_max +10 \n")
