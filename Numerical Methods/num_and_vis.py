@@ -222,15 +222,23 @@ def potential_E(x1,x2, sys_params):
 # check normalisation: numerically integrate 'func' and return result;
 def integrate_1d(func, x_vals):
 
-    """
-    to do!
-    """
-    
-    # implement own Simpson's method to numerically integrate function 
-    # for now as a placeholder: use scipy.integrate.simpson
-    val = integrate.simpson(func, x_vals)
+    N = len(func) -1        # number of sub-intervals
+    h = x_vals[1]-x_vals[0] # x-spacing 
 
-    return val
+    # ensure N is even (pad zeros if need be):
+    if N % 2 == 1:
+        func   = np.append(func, func[0])
+        x_vals = np.append(x_vals, x_vals.min)
+
+    # calculate integral as sum:
+    I = h /3 * (func[0]+ func[-1]) 
+
+    for i in np.arange(1, N/2):
+        I += h/3 * 4* func[int(2*i-1)] + h/3 * 2 * func[int(2*i)]
+
+    I += h/3 * 4* func[-2]    
+
+    return I
 
 # check normalisation in 2D: numerically integrate 'func' and return result;
 def integrate_2d(func, x_vals,y_vals):
