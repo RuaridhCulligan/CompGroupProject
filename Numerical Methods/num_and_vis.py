@@ -162,7 +162,7 @@ def wavepacket_2d(x,y,sys_params):
     b   = sys_params[3]
     ky0 = sys_params[4]
     
-    f = np.zeros(len(x), len(y))
+    f = np.zeros((len(x), len(y))).astype("complex")
     for i in np.arange(len(y)):
         f[i,0:] = (2*a/np.pi)**(1/4) * (2*b/np.pi)**(1/4) * np.exp(-a*x[i]**2 - b*y[0:]**2) * np.exp(1j*(kx0*x[i] + ky0*y[0:]))
         
@@ -191,11 +191,10 @@ def potential_C(x, sys_params):
     
     V0 = sys_params[5]
     d  = sys_params[6]
-    
-    if np.abs(x) < 0.5*d:
-        return V0
-    else: 
-        return 0
+
+    V = V0 * (np.abs(x) < 0.5*d)
+     
+    return V
     
 # potential function for case D at position x,y
 def potential_D(x,y, sys_params):
@@ -267,8 +266,7 @@ def ftcs_1D(case, settings, sys_par, num_par):
     xn = len(x)
     
     # initialise wavefunction 
-    psi = wavepacket_1d(x, sys_par)
-    psi.dtype = complex 
+    psi = wavepacket_1d(x, sys_par).astype("complex_")
     
     # set up relevant potential at each point
     if case=="caseA":
@@ -335,8 +333,7 @@ def ftcs_2D(case, settings, sys_par, num_par):
     yn = len(y)
     
     # initialise wavefunction 
-    psi = wavepacket_2d(x,y, sys_par)
-    psi.dtype = complex 
+    psi = wavepacket_2d(x,y, sys_par).astype("complex_")
     
     # set up relevant potential at each point
     if case=="caseB":
@@ -408,8 +405,7 @@ def rk4_1D(case, settings, sys_par, num_par):
     xn = len(x)
     
     # initialise wavefunction 
-    psi = wavepacket_1d(x, sys_par)
-    psi.dtype = complex 
+    psi = wavepacket_1d(x, sys_par).astype("complex")
     
     # set up relevant potential at each point
     if case=="caseA":
@@ -436,7 +432,7 @@ def rk4_1D(case, settings, sys_par, num_par):
      
     #Loop over the time values and calculate the derivative
     for i in range(1,tn):
-        f = np.zeros(xn, dtype=np.complex); k1 = np.zeros(xn,dtype=np.complex);  k2 = np.zeros(xn, dtype=np.complex); k3 = np.zeros(xn, dtype=np.complex); k4 = np.zeros(xn, dtype=np.complex)
+        f = np.zeros(xn).astype("complex"); k1 = np.zeros(xn).astype("complex");  k2 = np.zeros(xn).astype("complex"); k3 = np.zeros(xn).astype("complex"); k4 = np.zeros(xn).astype("complex")
 
         f[1:xn-1] = (1j/2)*(psi[0:xn-2]-2*psi[1:xn-1]+psi[2:xn])/(dx**2) + V[1:xn-1]*psi[1:xn-1]
 
@@ -487,8 +483,7 @@ def rk4_2D(case, settings, sys_par, num_par):
     yn = len(y)
     
     # initialise wavefunction 
-    psi = wavepacket_2d(x,y, sys_par)
-    psi.dtype = complex 
+    psi = wavepacket_2d(x,y, sys_par).astype("complex") 
     
     # set up relevant potential at each point
     if case=="caseB":
@@ -515,7 +510,7 @@ def rk4_2D(case, settings, sys_par, num_par):
     #Loop over the time values and calculate the derivative
     for k in range(1,tn):
         for i in range(1,xn):
-            f = np.zeros((xn,yn), dtype=np.complex); k1 = np.zeros((xn,yn),dtype=np.complex);  k2 = np.zeros((xn,yn), dtype=np.complex); k3 = np.zeros((xn,yn), dtype=np.complex); k4 = np.zeros((xn,yn), dtype=np.complex)
+            f = np.zeros((xn,yn)).astype("complex"); k1 = np.zeros((xn,yn)).astype("complex");  k2 = np.zeros((xn,yn)).astype("complex"); k3 = np.zeros((xn,yn)).astype("complex"); k4 = np.zeros((xn,yn)).astype("complex")
 
             f[1:xn-1] = (1j/2)*(phi[0:xn-2]-2*phi[1:xn-1]+phi[2:xn])/(dx**2)# + V[1:xn-1]*phi[1:xn-1]
 
@@ -581,24 +576,32 @@ def cn_2particle(case, settings, sys_par, num_par):
 
 # visualise solution in one-dimensional case (cases A & C)
 def visualise_1D(case,method, settings, sys_par, num_par):
-    
     # compute relevant numerical solutions
-    if method=="ftcs":
+    ADD_MET = settings[2]
+    if method=="ftcs" and ADD_MET == "no":
         P, x, val, T = ftcs_1D(case, settings, sys_par, num_par)
-    elif method=="rk4":
+    if method=="rk4" and ADD_MET == "no":
         P, x, val, T = rk4_1D(case, settings, sys_par, num_par)
-    elif method=="cn":
+    if method=="cn" and ADD_MET == "no":
         P, x, val, T = cn_1D(case, settings, sys_par, num_par)
-    elif method=="all":
+    if method=="all" and ADD_MET == "no":
         P_ftcs, x, val_ftcs, T = ftcs_1D(case, settings, sys_par, num_par)
         P_rk4, x, val_rk4, T   = rk4_1D(case, settings, sys_par, num_par)
         P_cn, x, val_cn, T     = cn_1D(case, settings, sys_par, num_par)
     
+
     # implement option to compute two numerical solutions using
     # the variable ADD_MET in the log file
-    """
-    to do!
-    """
+    
+    if (method == "ftcs" and ADD_MET == "rk4") or (method == "rk4" and ADD_MET == "ftcs"):
+        P_ftcs, x, val_ftcs, T = ftcs_1D(case, settings, sys_par, num_par)
+        P_rk4, x, val_rk4, T = rk4_1D(case, settings, sys_par, num_par)
+    if (method == "rk4" and ADD_MET == "cn") or (method == "cn" and ADD_MET == "rk4"):
+        P_rk4, x, val_ftcs, T = rk4_1D(case, settings, sys_par, num_par)
+        P_cn, x, val_cn, T = cn_1D(case, settings, sys_par, num_par)
+    if (method == "ftcs" and ADD_MET == "cn") or (method == "cn" and ADD_MET == "ftcs"):
+        P_ftcs, x, val_ftcs, T = ftcs_1D(case, settings, sys_par, num_par)
+        P_cn, x, val_cn, T = cn_1D(case, settings, sys_par, num_par)
     
     # implement option to display potential in relevant cases
     """
@@ -611,7 +614,7 @@ def visualise_1D(case,method, settings, sys_par, num_par):
     if case=="caseA" and float(settings[1])!=1:
         an = True
         
-        if method != "all":
+        if method != "all" and ADD_MET == "no":
             P_an = np.copy(P)
         else:
             P_an = np.copy(P_ftcs)
@@ -632,19 +635,31 @@ def visualise_1D(case,method, settings, sys_par, num_par):
         plt.ylabel(r'Probability density $|\Psi(x,t)|^2$', fontsize=body_size)
         plt.xlabel(r'Spatial dimension $x$', fontsize=body_size)
         
-        if method=="ftcs": 
+        if method=="ftcs" and ADD_MET == "no": 
             plt.plot(x,P[0],color="black", label=r'FTCS scheme normalised to {0:.4f} '.format(val[0]))
-        if method=="rk4": 
+        if method=="rk4" and ADD_MET == "no": 
             plt.plot(x,P[0],color="black", label=r'RK4 scheme normalised to {0:.4f} '.format(val[0]))
-        if method=="cn": 
+        if method=="cn" and ADD_MET == "no": 
             plt.plot(x,P[0],color="black", label=r'CN scheme normalised to {0:.4f} '.format(val[0]))
-        if method=="all":
+        if method=="all" and ADD_MET == "no":
             plt.plot(x,P_ftcs[0],color="black", label=r'FTCS scheme normalised to {0:.4f} '.format(val_ftcs[0]))
             plt.plot(x,P_rk4[0],color="grey", label=r'RK4 scheme normalised to {0:.4f} '.format(val_rk4[0]))
             plt.plot(x,P_cn[0],color="blue", label=r'CN scheme normalised to {0:.4f} '.format(val_cn[0]))
         if an==True:
             plt.plot(x,P_an[0],color="red",linestyle="--", label=r'analytical solution') 
-            
+        
+
+        # cases for displaying two numerical solutions using ADD_MET
+        if (method == "ftcs" and ADD_MET == "rk4") or (method == "rk4" and ADD_MET == "ftcs"):
+            plt.plot(x,P_ftcs[0],color="black", label=r'FTCS scheme normalised to {0:.4f} '.format(val_ftcs[0]))
+            plt.plot(x,P_rk4[0],color="gray", label=r'RK4 scheme normalised to {0:.4f} '.format(val_rk4[0]))
+        if (method == "rk4" and ADD_MET == "cn") or (method == "cn" and ADD_MET == "rk4"):
+            plt.plot(x,P_rk4[0],color="black", label=r'RK4 scheme normalised to {0:.4f} '.format(val_rk4[0]))
+            plt.plot(x,P_cn[0],color="gray", label=r'CN scheme normalised to {0:.4f} '.format(val_cn[0]))
+        if (method == "ftcs" and ADD_MET == "cn") or (method == "cn" and ADD_MET == "ftcs"):
+            plt.plot(x,P_ftcs[0],color="black", label=r'FTCS scheme normalised to {0:.4f} '.format(val_ftcs[0]))
+            plt.plot(x,P_cn[0],color="gray", label=r'CN scheme normalised to {0:.4f} '.format(val_cn[0]))
+
         plt.legend(fontsize=body_size, loc="upper right")
         plt.savefig("visualisation.pdf")
         plt.show()

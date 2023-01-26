@@ -1,11 +1,11 @@
 CASE caseA 
-METHOD rk4 
+METHOD ftcs 
 STATIC 1 
 HIDE_A 0 
-ADD_MET no 
+ADD_MET rk4 
 SHOW_V 0 
 SAVE 0 
-t_end 10
+t_end 5 
 a 1 
 k0 1 
 b 1 
@@ -14,8 +14,10 @@ V0 5
 d 2 
 w 2 
 alpha 0.5 
-x_min -60 
-x_max +60 
+x0 0 
+y0 0 
+x_min -50 
+x_max +50 
 dx 0.1 
 dt 0.0001 
 y_min -10 
