@@ -612,11 +612,16 @@ def visualise_1D(case,method, settings, sys_par, num_par):
         P_cn, x, val_cn, T = cn_1D(case, settings, sys_par, num_par)
     
     # implement option to display potential in relevant cases
-    """
-    to do!
-    """
+    SHOW_V = float(settings[3])
+    v = False
+    V0 = sys_par[5]
     
-    # compute analytical solution in relevant cases:
+    if SHOW_V==1 and case=="caseC":
+            d = sys_par[6]
+            V_x = np.array([d/2, d/2])
+            v = True
+            
+    # compute analyticquial solution in relevant cases:
     an = False
     
     if case=="caseA" and float(settings[1])!=1:
@@ -624,9 +629,15 @@ def visualise_1D(case,method, settings, sys_par, num_par):
         
         if method != "all" and ADD_MET == "no":
             P_an = np.copy(P)
-        else:
+        elif method=="all":
             P_an = np.copy(P_ftcs)
-        
+        elif ADD_MET=="ftcs":
+            P_an = np.copy(P_ftcs) 
+        elif ADD_MET=="rk4":
+            P_an = np.copy(P_rk4)  
+        elif ADD_MET=="cn":
+            P_an = np.copy(P_cn)           
+      
         for i in np.arange(len(T)):
             psi = an_sol_1D(x, T[i], sys_par)
             P_an[i] = np.abs(psi)**2
@@ -645,14 +656,33 @@ def visualise_1D(case,method, settings, sys_par, num_par):
         
         if method=="ftcs" and ADD_MET == "no": 
             plt.plot(x,P[0],color="black", label=r'FTCS scheme normalised to {0:.4f} '.format(val[0]))
+
+            if v==True:
+                plt.plot(V_x,np.array([0,P[0].max()]),color="green",linestyle="--", label=r'Finite potential well of depth {0:.4f} '.format(V0))
+                plt.plot(-V_x,np.array([0,P[0].max()]),color="green",linestyle="--")
+
         if method=="rk4" and ADD_MET == "no": 
             plt.plot(x,P[0],color="black", label=r'RK4 scheme normalised to {0:.4f} '.format(val[0]))
+
+            if v==True:
+                plt.plot(V_x,np.array([0,P[0].max()]),color="green",linestyle="--", label=r'Finite potential well of depth {0:.4f} '.format(V0))
+                plt.plot(-V_x,np.array([0,P[0].max()]),color="green",linestyle="--")
+       
         if method=="cn" and ADD_MET == "no": 
             plt.plot(x,P[0],color="black", label=r'CN scheme normalised to {0:.4f} '.format(val[0]))
+
+            if v==True:
+                plt.plot(V_x,np.array([0,P[0].max()]),color="green",linestyle="--", label=r'Finite potential well of depth {0:.4f} '.format(V0))
+                plt.plot(-V_x,np.array([0,P[0].max()]),color="green",linestyle="--")
+        
         if method=="all" and ADD_MET == "no":
             plt.plot(x,P_ftcs[0],color="black", label=r'FTCS scheme normalised to {0:.4f} '.format(val_ftcs[0]))
             plt.plot(x,P_rk4[0],color="grey", label=r'RK4 scheme normalised to {0:.4f} '.format(val_rk4[0]))
             plt.plot(x,P_cn[0],color="blue", label=r'CN scheme normalised to {0:.4f} '.format(val_cn[0]))
+
+            if v==True:
+                plt.plot(V_x,np.array([0,P_ftcs[0].max()]),color="green",linestyle="--", label=r'Finite potential well of depth {0:.4f} '.format(V0))
+                plt.plot(-V_x,np.array([0,P_ftcs[0].max()]),color="green",linestyle="--")
         if an==True:
             plt.plot(x,P_an[0],color="red",linestyle="--", label=r'analytical solution') 
         
@@ -661,12 +691,26 @@ def visualise_1D(case,method, settings, sys_par, num_par):
         if (method == "ftcs" and ADD_MET == "rk4") or (method == "rk4" and ADD_MET == "ftcs"):
             plt.plot(x,P_ftcs[0],color="black", label=r'FTCS scheme normalised to {0:.4f} '.format(val_ftcs[0]))
             plt.plot(x,P_rk4[0],color="gray", label=r'RK4 scheme normalised to {0:.4f} '.format(val_rk4[0]))
+            
+            if v==True:
+                plt.plot(V_x,np.array([0,P_ftcs[0].max()]),color="green",linestyle="--", label=r'Finite potential well of depth {0:.4f} '.format(V0))
+                plt.plot(-V_x,np.array([0,P_ftcs[0].max()]),color="green",linestyle="--")
+        
         if (method == "rk4" and ADD_MET == "cn") or (method == "cn" and ADD_MET == "rk4"):
             plt.plot(x,P_rk4[0],color="black", label=r'RK4 scheme normalised to {0:.4f} '.format(val_rk4[0]))
             plt.plot(x,P_cn[0],color="gray", label=r'CN scheme normalised to {0:.4f} '.format(val_cn[0]))
+            
+            if v==True:
+                plt.plot(V_x,np.array([0,P_cn[0].max()]),color="green",linestyle="--", label=r'Finite potential well of depth {0:.4f} '.format(V0))
+                plt.plot(-V_x,np.array([0,P_cn[0].max()]),color="green",linestyle="--")
+        
         if (method == "ftcs" and ADD_MET == "cn") or (method == "cn" and ADD_MET == "ftcs"):
             plt.plot(x,P_ftcs[0],color="black", label=r'FTCS scheme normalised to {0:.4f} '.format(val_ftcs[0]))
             plt.plot(x,P_cn[0],color="gray", label=r'CN scheme normalised to {0:.4f} '.format(val_cn[0]))
+            
+            if v==True:
+                plt.plot(V_x,np.array([0,P_ftcs[0].max()]),color="green",linestyle="--", label=r'Finite potential well of depth {0:.4f} '.format(V0))
+                plt.plot(-V_x,np.array([0,P_ftcs[0].max()]),color="green",linestyle="--")
 
         plt.legend(fontsize=body_size, loc="upper right")
         plt.savefig("visualisation.pdf")
