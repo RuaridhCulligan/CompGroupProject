@@ -151,8 +151,10 @@ def read_log(path):
 def wavepacket_1d(x, sys_params):
     a =  sys_params[1]
     k0 = sys_params[2]
+
+    x0 = sys_params[9]
     
-    return (2*a/np.pi)**(1/4) * np.exp(-a*x**2) * np.exp(1j*k0*x)
+    return (2*a/np.pi)**(1/4) * np.exp(-a*(x-x0)**2) * np.exp(1j*k0*x)
 
 # initialise wavepacket at position x,y and time t=0 (2D case)
 def wavepacket_2d(x,y,sys_params):
@@ -161,10 +163,13 @@ def wavepacket_2d(x,y,sys_params):
     kx0 = sys_params[2]
     b   = sys_params[3]
     ky0 = sys_params[4]
+
+    x0 = sys_params[9]
+    y0 = sys_params[10]
     
     f = np.zeros((len(x), len(y))).astype("complex")
     for i in np.arange(len(y)):
-        f[i,0:] = (2*a/np.pi)**(1/4) * (2*b/np.pi)**(1/4) * np.exp(-a*x[i]**2 - b*y[0:]**2) * np.exp(1j*(kx0*x[i] + ky0*y[0:]))
+        f[i,0:] = (2*a/np.pi)**(1/4) * (2*b/np.pi)**(1/4) * np.exp(-a*(x[i]-x0)**2 - b*(y[0:]-y0)**2) * np.exp(1j*(kx0*(x[i]-x0) + ky0*(y[0:]-y0)))
         
     return f
 
@@ -173,8 +178,10 @@ def an_sol_1D(x,t, sys_params):
     
     a  = sys_params[1]
     k0 = sys_params[2]
+
+    x0 = sys_params[9]
     
-    return (1 / (8*a*np.pi))**(1/4)*np.exp(-k0**2 /(4*a)) * (1/(4*a) + 1j*t/2)**(-1/2) * np.exp(((k0/(2*a) + 1j*x)**2) / (a + 2*1j*t))
+    return (1 / (8*a*np.pi))**(1/4)*np.exp(-k0**2 /(4*a)) * (1/(4*a) + 1j*t/2)**(-1/2) * np.exp(((k0/(2*a) + 1j*(x-x0))**2) / (a + 2*1j*t))
 
 # analytical solution for caseB (2D free wavepacket)  at position x,y and time t
 def an_sol_2D(x,y,t, sys_params):
@@ -183,8 +190,11 @@ def an_sol_2D(x,y,t, sys_params):
     kx0 = sys_params[2]
     b   = sys_params[3]
     ky0 = sys_params[4]
+
+    x0 = sys_params[9]
+    y0 = sys_params[10]
     
-    return 1/np.sqrt((1+ 2*1j*a*t)*(1+ 2*1j*b*t)) * (4*a*b/np.pi**2)**1/4 * np.exp(-(a*x**2 + b*y**2 - 1j*(kx0*x + ky0*y - t/2 * (kx0**2 + ky0**2) ))/((1+ 2*1j*a*t)*(1+ 2*1j*b*t)))
+    return 1/np.sqrt((1+ 2*1j*a*t)*(1+ 2*1j*b*t)) * (4*a*b/np.pi**2)**1/4 * np.exp(-(a*(x-x0)**2 + b*(y-y0)**2 - 1j*(kx0*x + ky0*y - t/2 * (kx0**2 + ky0**2) ))/((1+ 2*1j*a*t)*(1+ 2*1j*b*t)))
 
 # potential function for case C at position x
 def potential_C(x, sys_params):
@@ -243,17 +253,15 @@ def integrate_1d(func, x_vals):
 # check normalisation in 2D: numerically integrate 'func' and return result;
 def integrate_2d(func, x_vals,y_vals):
 
-    
-    """
-    to do!
-    """
-    
-    
-    # implement own Simpson's method to numerically integrate function 
-    # for now as a placeholder: use scipy.integrate.simpson
-    val = integrate.simpson(integrate.simpson(func, x_vals),y_vals)
+    # integrate func with respect to y:
+    I_y = np.empty(len(x_vals))
+    for i in np.arange(len(x_vals)):
+        I_y[i] = integrate_1d(func[i,:], y_vals)
 
-    return val
+    # integrate with respect to x
+    I = integrate_1d(I_y, x_vals)
+    
+    return I
 
 def ftcs_1D(case, settings, sys_par, num_par):
     

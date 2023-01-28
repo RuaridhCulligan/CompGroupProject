@@ -1,11 +1,11 @@
-CASE caseC 
+CASE caseA 
 METHOD ftcs 
 STATIC 1 
 HIDE_A 0 
 ADD_MET no
 SHOW_V 1 
 SAVE 0 
-t_end 15 
+t_end 0.1 
 a 1 
 k0 1 
 b 1 
@@ -14,7 +14,7 @@ V0 10
 d 30 
 w 2 
 alpha 0.5 
-x0 0 
+x0 -10 
 y0 0 
 x_min -50 
 x_max +50 
