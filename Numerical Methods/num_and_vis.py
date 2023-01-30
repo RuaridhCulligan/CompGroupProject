@@ -154,7 +154,7 @@ def wavepacket_1d(x, sys_params):
 
     x0 = sys_params[9]
     
-    return (2*a/np.pi)**(1/4) * np.exp(-a*(x-x0)**2) * np.exp(1j*k0*x)
+    return (2*a/np.pi)**(1/4) * np.exp(-a*(x-x0)**2) * np.exp(1j*k0*(x-x0))
 
 # initialise wavepacket at position x,y and time t=0 (2D case)
 def wavepacket_2d(x,y,sys_params):
@@ -180,9 +180,9 @@ def an_sol_1D(x,t, sys_params):
     k0 = sys_params[2]
 
     x0 = sys_params[9]
-    
-    return (1 / (8*a*np.pi))**(1/4)*np.exp(-k0**2 /(4*a)) * (1/(4*a) + 1j*t/2)**(-1/2) * np.exp(((k0/(2*a) + 1j*(x-x0))**2) / (a + 2*1j*t))
 
+    return 1/np.sqrt(1+2*a*t*1j) * (2*a/np.pi)**0.25 * np.exp(  (-a*(x-x0)**2 +1j * ( k0 * (x-x0) -0.5*k0**2*t) )  / (1+2*a*t*1j)  )
+    
 # analytical solution for caseB (2D free wavepacket)  at position x,y and time t
 def an_sol_2D(x,y,t, sys_params):
     
@@ -194,7 +194,7 @@ def an_sol_2D(x,y,t, sys_params):
     x0 = sys_params[9]
     y0 = sys_params[10]
     
-    return 1/np.sqrt((1+ 2*1j*a*t)*(1+ 2*1j*b*t)) * (4*a*b/np.pi**2)**1/4 * np.exp(-(a*(x-x0)**2 + b*(y-y0)**2 - 1j*(kx0*x + ky0*y - t/2 * (kx0**2 + ky0**2) ))/((1+ 2*1j*a*t)*(1+ 2*1j*b*t)))
+    return 1/np.sqrt(1+2*a*t*1j) * (2*a/np.pi)**0.25 * np.exp(  (-a*(x-x0)**2 +1j * ( kx0 * (x-x0) -0.5*kx0**2*t) )  / (1+2*a*t*1j)  ) *1/np.sqrt(1+2*b*t*1j) * (2*b/np.pi)**0.25 * np.exp(  (-b*(y-y0)**2 +1j * ( ky0 * (y-y0) -0.5*ky0**2*t) )  / (1+2*b*t*1j)  )
 
 # potential function for case C at position x
 def potential_C(x, sys_params):
@@ -370,7 +370,7 @@ def ftcs_2D(case, settings, sys_par, num_par):
         j   = 0
     else:
         T   = np.array([t_end])
-        P   = np.empty((xn,yn))
+        P   = np.empty(len(T), dtype="object")
         val = np.array([1])
         j   = 0    
     
@@ -380,8 +380,8 @@ def ftcs_2D(case, settings, sys_par, num_par):
             
             psi[i,1:yn-1] = psi[i,1:yn-1] + dt*1j*((psi[i+1,2:yn]-2*psi[i,1:yn-1]+psi[i-1,0:yn-2])/(2*dx**2) + V[i,1:xn-1]*psi[i,1:xn-1])
             psi[0:,0] = 0
-            psi[0:, yn] = 0
-            psi[xn,0:] = 0
+            psi[0:, yn-1] = 0
+            psi[xn-1,0:] = 0
             psi[0, 0:] = 0
             
         if (t[k] in T):
@@ -764,9 +764,156 @@ def visualise_1D(case,method, settings, sys_par, num_par):
 # visualise solution in two-dimensional case (cases B & D)
 def visualise_2D(case,method, settings, sys_par, num_par):
     
-    """
-    to do!
-    """
+    # compute relevant numerical solutions
+    ADD_MET = settings[2]
+    if method=="ftcs" and ADD_MET == "no":
+        P, x, y , val, T = ftcs_2D(case, settings, sys_par, num_par)
+    if method=="rk4" and ADD_MET == "no":
+        P, x, y, val, T = rk4_2D(case, settings, sys_par, num_par)
+    if method=="cn" and ADD_MET == "no":
+        P, x, y, val, T = cn_2D(case, settings, sys_par, num_par)
+    if method=="all" and ADD_MET == "no":
+        P_ftcs, x, y, val_ftcs, T = ftcs_2D(case, settings, sys_par, num_par)
+        P_rk4, x, y, val_rk4, T   = rk4_2D(case, settings, sys_par, num_par)
+        P_cn, x, y, val_cn, T     = cn_2D(case, settings, sys_par, num_par)
+    
+
+    # implement option to compute two numerical solutions using
+    # the variable ADD_MET in the log file
+    
+    if (method == "ftcs" and ADD_MET == "rk4") or (method == "rk4" and ADD_MET == "ftcs"):
+        P_ftcs, x, y, val_ftcs, T = ftcs_2D(case, settings, sys_par, num_par)
+        P_rk4, x, y, val_rk4, T = rk4_2D(case, settings, sys_par, num_par)
+    if (method == "rk4" and ADD_MET == "cn") or (method == "cn" and ADD_MET == "rk4"):
+        P_rk4, x, y, val_ftcs, T = rk4_2D(case, settings, sys_par, num_par)
+        P_cn, x, y, val_cn, T = cn_2D(case, settings, sys_par, num_par)
+    if (method == "ftcs" and ADD_MET == "cn") or (method == "cn" and ADD_MET == "ftcs"):
+        P_ftcs, x, y, val_ftcs, T = ftcs_2D(case, settings, sys_par, num_par)
+        P_cn, x, y, val_cn, T = cn_2D(case, settings, sys_par, num_par)
+
+    # set up meshgrid with x,y values
+    X, Y = np.meshgrid(x,y)    
+    
+    # implement option to display potential in relevant cases
+    SHOW_V = float(settings[3])
+    v  = False
+    V0 = sys_par[5]
+    d  = sys_par[6]
+    w  = sys_par[7] 
+    
+    if SHOW_V==1 and case=="caseD":
+            
+            """
+            do later
+            """
+            
+    # compute analyticquial solution in relevant cases:
+    an = False
+    
+    if case=="caseB" and float(settings[1])!=1:
+        an = True
+        
+        if method != "all" and ADD_MET == "no":
+            P_an = np.copy(P)
+        elif method=="all":
+            P_an = np.copy(P_ftcs)
+        elif ADD_MET=="ftcs":
+            P_an = np.copy(P_ftcs) 
+        elif ADD_MET=="rk4":
+            P_an = np.copy(P_rk4)  
+        elif ADD_MET=="cn":
+            P_an = np.copy(P_cn)           
+      
+        for i in np.arange(len(T)):
+            psi = an_sol_2D(X,Y, T[i], sys_par)
+            P_an[i] = np.abs(psi)**2
+        
+    # produce visualisation in the static case:
+    if float(settings[0])==1:
+        plt.figure(figsize=fig_dim) 
+        ax = plt.axes(projection='3d')
+        
+        if case=="caseB":
+            ax.set_title(r'Free propagation of a Gaussian wavepacket (at $t={0:.3f})$'.format(sys_par[0]), fontsize=title_size)
+        elif case=="caseD":
+            ax.set_title(r'Gaussian wavepacket in an infinite potential well (at $t={0:.3f})$'.format(sys_par[0]), fontsize=title_size)
+        
+        ax.set_zlabel(r'Probability density $|\Psi(x,y,t)|^2$', fontsize=body_size)
+        ax.set_xlabel(r'Spatial dimension $x$', fontsize=body_size)
+        ax.set_ylabel(r'Spatial dimension $y$', fontsize=body_size)
+        
+        if method=="ftcs" and ADD_MET == "no": 
+            ax.plot_wireframe(X,Y,P[0],color="black", label=r'FTCS scheme normalised to {0:.4f} '.format(val[0]))
+
+            if v==True:
+                """ """
+
+        if method=="rk4" and ADD_MET == "no": 
+            plt.plot(x,P[0],color="black", label=r'RK4 scheme normalised to {0:.4f} '.format(val[0]))
+
+            if v==True:
+                """ """  
+       
+        if method=="cn" and ADD_MET == "no": 
+            plt.plot(x,P[0],color="black", label=r'CN scheme normalised to {0:.4f} '.format(val[0]))
+
+            if v==True:
+                """ """
+        
+        if method=="all" and ADD_MET == "no":
+            plt.plot(x,P_ftcs[0],color="black", label=r'FTCS scheme normalised to {0:.4f} '.format(val_ftcs[0]))
+            plt.plot(x,P_rk4[0],color="grey", label=r'RK4 scheme normalised to {0:.4f} '.format(val_rk4[0]))
+            plt.plot(x,P_cn[0],color="blue", label=r'CN scheme normalised to {0:.4f} '.format(val_cn[0]))
+
+            if v==True:
+                """ """
+        if an==True:
+            ax.plot_wireframe(X,Y,P_an[0],color="red",linestyle="--", label=r'analytical solution') 
+        
+
+        # cases for displaying two numerical solutions using ADD_MET
+        if (method == "ftcs" and ADD_MET == "rk4") or (method == "rk4" and ADD_MET == "ftcs"):
+            plt.plot(x,P_ftcs[0],color="black", label=r'FTCS scheme normalised to {0:.4f} '.format(val_ftcs[0]))
+            plt.plot(x,P_rk4[0],color="gray", label=r'RK4 scheme normalised to {0:.4f} '.format(val_rk4[0]))
+            
+            if v==True:
+                """ """
+        
+        if (method == "rk4" and ADD_MET == "cn") or (method == "cn" and ADD_MET == "rk4"):
+            plt.plot(x,P_rk4[0],color="black", label=r'RK4 scheme normalised to {0:.4f} '.format(val_rk4[0]))
+            plt.plot(x,P_cn[0],color="gray", label=r'CN scheme normalised to {0:.4f} '.format(val_cn[0]))
+            
+            if v==True:
+                """ """
+        
+        if (method == "ftcs" and ADD_MET == "cn") or (method == "cn" and ADD_MET == "ftcs"):
+            plt.plot(x,P_ftcs[0],color="black", label=r'FTCS scheme normalised to {0:.4f} '.format(val_ftcs[0]))
+            plt.plot(x,P_cn[0],color="gray", label=r'CN scheme normalised to {0:.4f} '.format(val_cn[0]))
+            
+            if v==True:
+                """ """
+
+        plt.legend(fontsize=body_size, loc="upper right")
+        plt.savefig("visualisation.pdf")
+        plt.show()
+ 
+    # produce visualisation in the non-static (GIF) case:
+        """
+         to do! 
+        """
+    
+    # produce visualisation in the semi-static (subplot) case:
+        
+        """
+        to do! 
+        """
+        
+     # add option to save some of the numerical output to file
+        
+        """
+        to do!
+        """
+
     
     return 0
 
