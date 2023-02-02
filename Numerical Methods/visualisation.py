@@ -124,8 +124,7 @@ def visualise_1D(case,method, settings, sys_par, num_par):
         elif case=="caseC":
             plt.title(r'Tunneling of a Gaussian wavepacket (at $t={0:.3f})$'.format(sys_par[0]), fontsize=title_size)
         
-        plt.ylabel(r'Probability density $|\Psi(x,t)|^2$', fontsize=body_size)
-        plt.xlabel(r'Spatial dimension $x$', fontsize=body_size)
+
         
         if method=="ftcs" and ADD_MET == "no":
             if diff == "True" and case == "caseA":
@@ -239,7 +238,7 @@ def visualise_1D(case,method, settings, sys_par, num_par):
     # produce visualisation in the non-static (GIF) case:
     if float(settings[0])==0:
         
-        fig=plt.figure(figsize=fig_dim)
+        fig, ax =plt.subplots(figsize=fig_dim)
         camera = Camera(fig)
 
         if case=="caseA":
@@ -248,9 +247,7 @@ def visualise_1D(case,method, settings, sys_par, num_par):
             plt.title(r'Tunneling of a Gaussian wavepacket', fontsize=title_size)
 
         for i in np.arange(len(T)):
-            """
-            do this!
-            """
+            ##
             camera.snap()
         
 
@@ -259,79 +256,247 @@ def visualise_1D(case,method, settings, sys_par, num_par):
     
     # produce visualisation in the semi-static (subplot) case:
     if float(settings[0])==0.5:
+        fig, axs = plt.subplots(3,2,figsize = [18,10])
+        fig.subplots_adjust(hspace = .5, wspace=.4)
+
+        if case=="caseA":
+            plt.suptitle(r'Free propagation of a Gaussian wavepacket', fontsize=title_size)
+        elif case=="caseC":
+            plt.suptitle(r'Tunneling of a Gaussian wavepacket', fontsize=title_size)
         
-        t_arr = [0,5,10,20]
-        fig, axs = plt.subplots(2,2, figsize=[15,8])
+
+
         if ADD_MET == "no":
-            fig.suptitle("Semistatic case for case {0} using {1} method".format(case[-1], method),fontsize="16")
-            fig.subplots_adjust(hspace = .25, wspace=.1)
             axs = axs.ravel()
+            if method=="ftcs":
+                if diff == "True" and case == "caseA":
+                    P_diff = np.abs(P - P_an)
+                    for i in range(len(T)):
+                        axs[i].set_title("t={0}".format(T[i]))
+                        axs[i].plot(x,P_diff[i],color="black", label=r'Error on FTCS scheme (total: {0:.3f})'.format(integrate_1d(P_diff[i],x)))
+                        if an==True and method != "an" and diff == "False":
+                            axs[i].plot(x,P_an[i],color="red",linestyle="--", label=r'Analytical solution')
+                        if v == True:
+                            axs[i].plot(V_x,np.array([0,P[0].max()]),color="green",linestyle="--", label=r'Finite potential well of depth {0:.4f} '.format(V0))
+                            axs[i].plot(-V_x,np.array([0,P[0].max()]),color="green",linestyle="--")
+                        axs[i].legend(fontsize=body_size, loc="upper right")
+                        axs[i].set_ylabel(r'Probability density $|\Psi(x,t)|^2$', fontsize=body_size)
+                        axs[i].set_xlabel(r'Spatial dimension $x$', fontsize=body_size)
+                else:
+                    for i in range(len(T)):
+                        axs[i].set_title("t={0}".format(T[i]))
+                        axs[i].plot(x,P[i],color="black", label= r'FTCS scheme normalised to {0:.4f}'.format(val[i]))
+                        if an==True and method != "an" and diff == "False":
+                            axs[i].plot(x,P_an[i],color="red",linestyle="--", label=r'Analytical solution')
+                        if v == True:
+                            axs[i].plot(V_x,np.array([0,P[0].max()]),color="green",linestyle="--", label=r'Finite potential well of depth {0:.4f} '.format(V0))
+                            axs[i].plot(-V_x,np.array([0,P[0].max()]),color="green",linestyle="--")
+                        axs[i].legend(fontsize=body_size, loc="upper right")
+                        axs[i].set_ylabel(r'$|\Psi(x,t)|^2$', fontsize=body_size)
+                        axs[i].set_xlabel(r'Spatial dimension $x$', fontsize=body_size)
 
-            for i in range(len(t_arr)):
-                axs[i].set_title("t={0}".format(t_arr[i]))
-                axs[i].plot(x,P[t_arr[i]],color="black", label=method +" scheme normalised to "+str(val[0]))
-                axs[i].legend()
-                axs[i].set_ylabel("f(x)")
-                axs[i].set_xlabel("x")
+            elif method=="rk4": 
+                if diff == "True" and case == "caseA":
+                    P_diff = np.abs(P - P_an)
+                    for i in range(len(T)):
+                        axs[i].set_title("t={0}".format(T[i]))
+                        axs[i].plot(x,P_diff[i],color="black", label=r'Error on RK4 method (total: {0:.3f})'.format(integrate_1d(P_diff[i],x)))
+                        if an==True and method != "an" and diff == "False":
+                            axs[i].plot(x,P_an[i],color="red",linestyle="--", label=r'Analytical solution')
+                        if v == True:
+                            axs[i].plot(V_x,np.array([0,P[0].max()]),color="green",linestyle="--", label=r'Finite potential well of depth {0:.4f} '.format(V0))
+                            axs[i].plot(-V_x,np.array([0,P[0].max()]),color="green",linestyle="--") 
+                        axs[i].legend(fontsize=body_size, loc="upper right")
+                        axs[i].set_ylabel(r'Probability density $|\Psi(x,t)|^2$', fontsize=body_size)
+                        axs[i].set_xlabel(r'Spatial dimension $x$', fontsize=body_size)
+                else:
+                    for i in range(len(T)):
+                        axs[i].set_title("t={0}".format(T[i]))
+                        print(val[0])
+                        axs[i].plot(x,P[i],color="black", label= r'RK4 method normalised to {0:.4f}'.format(val[i]))
+                        if an==True and method != "an" and diff == "False":
+                            axs[i].plot(x,P_an[i],color="red",linestyle="--", label=r'Analytical solution')
+                        if v == True:
+                            axs[i].plot(V_x,np.array([0,P[0].max()]),color="green",linestyle="--", label=r'Finite potential well of depth {0:.4f} '.format(V0))
+                            axs[i].plot(-V_x,np.array([0,P[0].max()]),color="green",linestyle="--")  
+                        axs[i].legend(fontsize=body_size, loc="upper right")
+                        axs[i].set_ylabel(r'Probability density $|\Psi(x,t)|^2$', fontsize=body_size)
+                        axs[i].set_xlabel(r'Spatial dimension $x$', fontsize=body_size)
 
-        elif method == "all":
-            fig.suptitle("Semistatic case for case {0} using RK4, FTCS, and Crank-Nicolson  methods".format(case[-1]),fontsize="16")
-            fig.subplots_adjust(hspace = .25, wspace=.1)
-            axs = axs.ravel()
 
-            for i in range(len(t_arr)):
-                axs[i].set_title("t={0}".format(t_arr[i]))
-                axs[i].plot(x,P_ftcs[t_arr[i]],color="black", label=r'FTCS scheme normalised to '.format(val_ftcs[0]))
-                axs[i].plot(x,P_rk4[t_arr[i]],color="gray", label=r'RK4 scheme normalised to {0:.4f} '.format(val_rk4[0]))
-                axs[i].plot(x,P_cn[t_arr[i]],color="blue", label=r'CN scheme normalised to {0:.4f} '.format(val_cn[0]))
-                axs[i].legend()
-                axs[i].set_ylabel("f(x)")
-                axs[i].set_xlabel("x")
+            elif method=="cn": 
+                if diff == "True" and case == "caseA":
+                    P_diff = np.abs(P - P_an)
+                    for i in range(len(T)):
+                        axs[i].set_title("t={0}".format(T[i]))
+                        axs[i].plot(x,P_diff[i],color="black", label=r'Error on CN scheme (total: {0:.3f})'.format(integrate_1d(P_diff[i],x)))
+                        if an==True and method != "an" and diff == "False":
+                            axs[i].plot(x,P_an[i],color="red",linestyle="--", label=r'Analytical solution')
+                        if v == True:
+                            axs[i].plot(V_x,np.array([0,P[0].max()]),color="green",linestyle="--", label=r'Finite potential well of depth {0:.4f} '.format(V0))
+                            axs[i].plot(-V_x,np.array([0,P[0].max()]),color="green",linestyle="--") 
+                        axs[i].legend(fontsize=body_size, loc="upper right")
+                        axs[i].set_ylabel(r'Probability density $|\Psi(x,t)|^2$', fontsize=body_size)
+                        axs[i].set_xlabel(r'Spatial dimension $x$', fontsize=body_size)
+                else:
+                    for i in range(len(T)):
+                        axs[i].set_title("t={0}".format(T[i]))
+                        axs[i].plot(x,P[i],color="black", label= r'CN scheme normalised to {0:.4f}'.format(val[i]))
+                        if an==True and method != "an" and diff == "False":
+                            axs[i].plot(x,P_an[i],color="red",linestyle="--", label=r'Analytical solution') 
+                        if v == True:
+                            axs[i].plot(V_x,np.array([0,P[0].max()]),color="green",linestyle="--", label=r'Finite potential well of depth {0:.4f} '.format(V0))
+                            axs[i].plot(-V_x,np.array([0,P[0].max()]),color="green",linestyle="--")
+                        axs[i].legend(fontsize=body_size, loc="upper right")
+                        axs[i].set_ylabel(r'Probability density $|\Psi(x,t)|^2$', fontsize=body_size)
+                        axs[i].set_xlabel(r'Spatial dimension $x$', fontsize=body_size)
 
+            
+            elif method=="all":
+                if diff == "True" and case == "caseA":
+                    P_diff1 = np.abs(P_ftcs - P_an)
+                    P_diff2 = np.abs(P_rk4 - P_an)
+                    P_diff3 = np.abs(P_cn - P_an)
+                    for i in range(len(T)):
+                        axs[i].set_title("t={0}".format(T[i]))
+                        axs[i].plot(x,P_diff1[i],color="black", label=r'Error on FTCS scheme (total: {0:.3f})'.format(integrate_1d(P_diff1[i],x)))
+                        axs[i].plot(x,P_diff2[i],color="gray", label=r'Error on RK4 method (total: {0:.3f})'.format(integrate_1d(P_diff2[i],x)))
+                        axs[i].plot(x,P_diff3[i],color="blue", label=r'Error on CN scheme (total: {0:.3f})'.format(integrate_1d(P_diff3[i],x)))
+                        if an==True and method != "an" and diff == "False":
+                            axs[i].plot(x,P_an[i],color="red",linestyle="--", label=r'Analytical solution')
+                        if v == True:
+                            axs[i].plot(V_x,np.array([0,P[0].max()]),color="green",linestyle="--", label=r'Finite potential well of depth {0:.4f} '.format(V0))
+                            axs[i].plot(-V_x,np.array([0,P[0].max()]),color="green",linestyle="--") 
+                        axs[i].legend(fontsize=body_size, loc="upper right")
+                        axs[i].set_ylabel(r'Probability density $|\Psi(x,t)|^2$', fontsize=body_size)
+                        axs[i].set_xlabel(r'Spatial dimension $x$', fontsize=body_size)
+                else:
+                    for i in range(len(T)):
+                        axs[i].set_title("t={0}".format(T[i]))
+                        axs[i].plot(x,P_ftcs[i],color="black", label= r'FTCS scheme normalised to {0:.4f}'.format(val[i]))
+                        axs[i].plot(x,P_rk4[i],color="gray", label= r'RK4 scheme normalised to {0:.4f}'.format(val[i]))
+                        axs[i].plot(x,P_cn[i],color="blue", label= r'CN scheme normalised to {0:.4f}'.format(val[i]))
+                        if an==True and method != "an" and diff == "False":
+                            axs[i].plot(x,P_an[i],color="red",linestyle="--", label=r'Analytical solution')       
+                        if v == True:
+                            axs[i].plot(V_x,np.array([0,P[0].max()]),color="green",linestyle="--", label=r'Finite potential well of depth {0:.4f} '.format(V0))
+                            axs[i].plot(-V_x,np.array([0,P[0].max()]),color="green",linestyle="--")                   
+                        axs[i].legend(fontsize=body_size, loc="upper right")
+                        axs[i].set_ylabel(r'Probability density $|\Psi(x,t)|^2$', fontsize=body_size)
+                        axs[i].set_xlabel(r'Spatial dimension $x$', fontsize=body_size)
+
+
+            elif method == "an":
+                for i in range(len(T)):
+                    axs[i].set_title("t={0}".format(T[i]))
+                    axs[i].plot(x,P[i],color="black", label= r'Analytical solution normalised to {0:.4f}'.format(integrate_1d(P[i],x)))
+                    if an==True and method != "an" and diff == "False":
+                        axs[i].plot(x,P_an[i],color="red",linestyle="--", label=r'Analytical solution')
+                    if v == True:
+                        axs[i].plot(V_x,np.array([0,P[0].max()]),color="green",linestyle="--", label=r'Finite potential well of depth {0:.4f} '.format(V0))
+                        axs[i].plot(-V_x,np.array([0,P[0].max()]),color="green",linestyle="--")                          
+                    axs[i].legend(fontsize=body_size, loc="upper right")
+                    axs[i].set_ylabel(r'Probability density $|\Psi(x,t)|^2$', fontsize=body_size)
+                    axs[i].set_xlabel(r'Spatial dimension $x$', fontsize=body_size)
         else:
-            if (method == "ftcs" and ADD_MET == "rk4") or (method == "rk4" and ADD_MET == "ftcs"):
-                fig.suptitle("Semistatic case for case {0} using FTCS and RK4 method".format(case[-1]),fontsize="16")
-                fig.subplots_adjust(hspace = .25, wspace=.1)
-                axs = axs.ravel()
-                for i in range(len(t_arr)):
-                    axs[i].set_title("t={0}".format(t_arr[i]))
-                    axs[i].plot(x,P_ftcs[t_arr[i]],color="black", label=r'FTCS scheme normalised to FIX ')
-                    axs[i].plot(x,P_rk4[t_arr[i]],color="gray", label=r'RK4 scheme normalised to FIX ')
-                    axs[i].legend()
-                    axs[i].set_ylabel("f(x)")
-                    axs[i].set_xlabel("x")
+            axs = axs.ravel()
+            if (method == "rk4" and ADD_MET == "ftcs") or (method == "ftcs" and ADD_MET == "rk4"):
+                if diff == "True" and case == "caseA":
+                    P_diff1 = np.abs(P_rk4 - P_an)
+                    P_diff2 = np.abs(P_ftcs - P_an)
+                    for i in range(len(T)):
+                        axs[i].set_title("t={0}".format(T[i]))
+                        axs[i].plot(x,P_diff1[i],color="black", label=r'Error on RK4 method (total: {0:.3f})'.format(integrate_1d(P_diff1[i],x)))
+                        axs[i].plot(x,P_diff2[i],color="gray", label=r'Error on FTCS scheme (total: {0:.3f})'.format(integrate_1d(P_diff2[i],x)))
+                        if an==True and method != "an" and diff == "False":
+                            axs[i].plot(x,P_an[i],color="red",linestyle="--", label=r'Analytical solution')  
+                        if v == True:
+                            axs[i].plot(V_x,np.array([0,P[0].max()]),color="green",linestyle="--", label=r'Finite potential well of depth {0:.4f} '.format(V0))
+                            axs[i].plot(-V_x,np.array([0,P[0].max()]),color="green",linestyle="--")
+                        axs[i].legend(fontsize=body_size, loc="upper right")
+                        axs[i].set_ylabel(r'Probability density $|\Psi(x,t)|^2$', fontsize=body_size)
+                        axs[i].set_xlabel(r'Spatial dimension $x$', fontsize=body_size)
+                else:
+                    for i in range(len(T)):
+                        axs[i].set_title("t={0}".format(T[i]))
+                        axs[i].plot(x,P_rk4[i],color="black", label= r'RK4 method normalised to {0:.4f}'.format(val[i]))
+                        axs[i].plot(x,P_ftcs[i],color="gray", label= r'FTCS scheme normalised to {0:.4f}'.format(val[i]))
+                        if an==True and method != "an" and diff == "False":
+                            axs[i].plot(x,P_an[i],color="red",linestyle="--", label=r'Analytical solution') 
+                        if v == True:
+                            axs[i].plot(V_x,np.array([0,P[0].max()]),color="green",linestyle="--", label=r'Finite potential well of depth {0:.4f} '.format(V0))
+                            axs[i].plot(-V_x,np.array([0,P[0].max()]),color="green",linestyle="--")                      
+                        axs[i].legend(fontsize=body_size, loc="upper right")
+                        axs[i].set_ylabel(r'Probability density $|\Psi(x,t)|^2$', fontsize=body_size)
+                        axs[i].set_xlabel(r'Spatial dimension $x$', fontsize=body_size)
+
+
             if (method == "rk4" and ADD_MET == "cn") or (method == "cn" and ADD_MET == "rk4"):
-                
-                fig.suptitle("Semistatic case for case {0} using RK4 and CN methods".format(case[-1]),fontsize="16")
-                fig.subplots_adjust(hspace = .25, wspace=.1)
-                axs = axs.ravel()
-                for i in range(len(t_arr)):
-                    axs[i].set_title("t={0}".format(t_arr[i]))
-                    axs[i].plot(x,P_rk4[t_arr[i]],color="black", label=r'RK4 scheme normalised to {0:.4f} '.format(val_rk4[0]))
-                    axs[i].plot(x,P_cn[t_arr[i]],color="gray", label=r'CN scheme normalised to {0:.4f} '.format(val_cn[0]))
-                    axs[i].set_ylabel("f(x)")
-                    axs[i].set_xlabel("x")
+                if diff == "True" and case == "caseA":
+                    P_diff1 = np.abs(P_rk4 - P_an)
+                    P_diff2 = np.abs(P_cn - P_an)
+                    for i in range(len(T)):
+                        axs[i].set_title("t={0}".format(T[i]))
+                        axs[i].plot(x,P_diff1[i],color="black", label=r'Error on RK4 method (total: {0:.3f})'.format(integrate_1d(P_diff1[i],x)))
+                        axs[i].plot(x,P_diff2[i],color="gray", label=r'Error on CN scheme (total: {0:.3f})'.format(integrate_1d(P_diff2[i],x)))
+                        if an==True and method != "an" and diff == "False":
+                            axs[i].plot(x,P_an[i],color="red",linestyle="--", label=r'Analytical solution')  
+                        if v == True:
+                            axs[i].plot(V_x,np.array([0,P[0].max()]),color="green",linestyle="--", label=r'Finite potential well of depth {0:.4f} '.format(V0))
+                            axs[i].plot(-V_x,np.array([0,P[0].max()]),color="green",linestyle="--")
+                        axs[i].legend(fontsize=body_size, loc="upper right")
+                        axs[i].set_ylabel(r'Probability density $|\Psi(x,t)|^2$', fontsize=body_size)
+                        axs[i].set_xlabel(r'Spatial dimension $x$', fontsize=body_size)
+                else:
+                    for i in range(len(T)):
+                        axs[i].set_title("t={0}".format(T[i]))
+                        axs[i].plot(x,P_rk4[i],color="black", label= r'RK4 method normalised to {0:.4f}'.format(val[i]))
+                        axs[i].plot(x,P_cn[i],color="gray", label= r'CN scheme normalised to {0:.4f}'.format(val[i]))
+                        if an==True and method != "an" and diff == "False":
+                            axs[i].plot(x,P_an[i],color="red",linestyle="--", label=r'Analytical solution') 
+                        if v == True:
+                            axs[i].plot(V_x,np.array([0,P[0].max()]),color="green",linestyle="--", label=r'Finite potential well of depth {0:.4f} '.format(V0))
+                            axs[i].plot(-V_x,np.array([0,P[0].max()]),color="green",linestyle="--")                   
+                        axs[i].legend(fontsize=body_size, loc="upper right")
+                        axs[i].set_ylabel(r'Probability density $|\Psi(x,t)|^2$', fontsize=body_size)
+                        axs[i].set_xlabel(r'Spatial dimension $x$', fontsize=body_size)
 
-            if (method == "ftcs" and ADD_MET == "cn") or (method == "cn" and ADD_MET == "ftcs"):
-                
-                fig.suptitle("Semistatic case for case {0} using FTCS and CN methods".format(case[-1]),fontsize="16")
-                fig.subplots_adjust(hspace = .25, wspace=.1)
-                axs = axs.ravel()
-                for i in range(len(t_arr)):
-                    axs[i].set_title("t={0}".format(t_arr[i]))
-                    axs[i].plot(x,P_ftcs[t_arr[i]],color="black", label=r'FTCS scheme normalised to {0:.4f} '.format(val_ftcs[0]))
-                    axs[i].plot(x,P_cn[t_arr[i]],color="gray", label=r'CN scheme normalised to {0:.4f} '.format(val_cn[0]))
-                    axs[i].legend()
-                    axs[i].set_ylabel("f(x)")
-                    axs[i].set_xlabel("x")
+
+            elif (method == "ftcs" and ADD_MET == "cn") or (method == "cn" and ADD_MET == "ftcs"):
+                if diff == "True" and case == "caseA":
+                    P_diff1 = np.abs(P_ftcs - P_an)
+                    P_diff2 = np.abs(P_cn - P_an)
+                    for i in range(len(T)):
+                        axs[i].set_title("t={0}".format(T[i]))
+                        axs[i].plot(x,P_diff1[i],color="black", label=r'Error on FTCS scheme (total: {0:.3f})'.format(integrate_1d(P_diff1[i],x)))
+                        axs[i].plot(x,P_diff2[i],color="gray", label=r'Error on CN scheme (total: {0:.3f})'.format(integrate_1d(P_diff2[i],x)))
+                        if an==True and method != "an" and diff == "False":
+                            axs[i].plot(x,P_an[i],color="red",linestyle="--", label=r'Analytical solution')  
+                        if v == True:
+                            axs[i].plot(V_x,np.array([0,P[0].max()]),color="green",linestyle="--", label=r'Finite potential well of depth {0:.4f} '.format(V0))
+                            axs[i].plot(-V_x,np.array([0,P[0].max()]),color="green",linestyle="--")
+                        axs[i].legend(fontsize=body_size, loc="upper right")
+                        axs[i].set_ylabel(r'Probability density $|\Psi(x,t)|^2$', fontsize=body_size)
+                        axs[i].set_xlabel(r'Spatial dimension $x$', fontsize=body_size)
+                else:
+                    for i in range(len(T)):
+                        axs[i].set_title("t={0}".format(T[i]))
+                        axs[i].plot(x,P_ftcs[i],color="black", label= r'FTCS scheme normalised to {0:.4f}'.format(val[i]))
+                        axs[i].plot(x,P_cn[i],color="gray", label= r'CN scheme normalised to {0:.4f}'.format(val[i]))
+                        if an==True and method != "an" and diff == "False":
+                            axs[i].plot(x,P_an[i],color="red",linestyle="--", label=r'Analytical solution')
+                        if v == True:
+                            axs[i].plot(V_x,np.array([0,P[0].max()]),color="green",linestyle="--", label=r'Finite potential well of depth {0:.4f} '.format(V0))
+                            axs[i].plot(-V_x,np.array([0,P[0].max()]),color="green",linestyle="--")                 
+                        axs[i].legend(fontsize=body_size, loc="upper right")
+                        axs[i].set_ylabel(r'Probability density $|\Psi(x,t)|^2$', fontsize=body_size)
+                        axs[i].set_xlabel(r'Spatial dimension $x$', fontsize=body_size)
+
+    
+        
+        plt.legend(fontsize=body_size, loc="upper right")
+        plt.savefig(out_file)
         plt.show()
-        
-     # add option to save some of the numerical output to file
-        
-        """
-        to do!
-        """
-
     return 0
 
 
