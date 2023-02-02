@@ -74,7 +74,7 @@ import warnings
 warnings.simplefilter(action='ignore', category=RuntimeWarning) # surpress RuntimeWarnings 
 
 # set standardised layout of plots
-fig_dim    = [8, 4]   # dimensions
+fig_dim    = [16, 8]   # dimensions
 title_size = 16       # title font size
 body_size  = 14       # axes and legends font size
 tick_size  = 12       # tick mark font size 
@@ -98,6 +98,7 @@ def create_log(path="log.txt"):
     f.write("ADD_MET no \n")
     f.write("SHOW_V 0 \n")
     f.write("SAVE 0 \n")
+    f.write("DIFF False")
     
     f.write("t_end 5 \n")
     f.write("a 1 \n")
@@ -118,7 +119,7 @@ def create_log(path="log.txt"):
     f.write("y_min -10 \n")
     f.write("y_max +10 \n")
     f.write("dy 0.0001 \n")
-    f.write("DIFF true ")
+    
     
     f.close()
 
@@ -126,26 +127,25 @@ def create_log(path="log.txt"):
 def read_log(path):
     arr = np.loadtxt(path,dtype="str", delimiter=" ", usecols=1)
     
-    # case, method and diff as independent variables
+    # case, method as independent variables
     case     = arr[0]
     method   = arr[1]
-    diff     = arr[25]
     
     # variables corresponding to general simulation and output settings
     # stored in one array
-    settings = np.array([float(arr[2]), float(arr[3]), arr[4], float(arr[5]),float(arr[6])])
+    settings = np.array([float(arr[2]), float(arr[3]), arr[4], float(arr[5]),float(arr[6]), arr[7]])
     
     # variables corresponding to physical parameters in the simulation 
     # stored in one array
-    sys_par  = arr[7:18].astype("float")
+    sys_par  = arr[8:19].astype("float")
     
     # variables corresponding to grid parameters for the numerical solvers
     # stored in one array
-    num_par = arr[18:25].astype("float")
+    num_par = arr[19:].astype("float")
 
     
     # return results
-    return case, method, diff, settings, sys_par, num_par
+    return case, method, settings, sys_par, num_par
 
 #@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@
 #     AUXILIARY FUNCTIONS RELATING TO INITIAL / BOUNDARY CONDITIONS
@@ -742,7 +742,10 @@ def cn_2particle(case, settings, sys_par, num_par):
 #     VISUALISATION FUNCTIONS
 
 # visualise solution in one-dimensional case (cases A & C)
-def visualise_1D(case,method, diff, settings, sys_par, num_par):
+def visualise_1D(case,method, settings, sys_par, num_par):
+
+    diff = settings[5]
+
     # compute relevant numerical solutions
     ADD_MET = settings[2]
     if method=="ftcs" and ADD_MET == "no":
@@ -763,14 +766,20 @@ def visualise_1D(case,method, diff, settings, sys_par, num_par):
         t_end   = sys_par[0]
         dt      = num_par[3]
         x = np.arange(x_min, x_max+dx, dx)
-        T   = np.arange(t_start, t_end+dt, dt*100)
-        P = np.zeros(len(T), dtype="object")
+
+        if settings[2]=="0":    
+            T   = np.arange(t_start, t_end+dt, dt*100)
+        if settings[2]=="0.5": 
+            T   = np.array([t_start,t_end/8,t_end/4,t_end/2, 3*t_end/4, t_end]) 
+        else:
+            T   = np.array([t_end])
+
+        P = np.empty(len(T), dtype="object")
         for i in np.arange(len(T)):
             psi = an_sol_1D(x, T[i], sys_par)
             P[i] = np.abs(psi)**2
 
     
-
     # implement option to compute two numerical solutions using
     # the variable ADD_MET in the log file
     
@@ -797,7 +806,7 @@ def visualise_1D(case,method, diff, settings, sys_par, num_par):
     # compute analytical solution in relevant cases:
     an = False
     
-    if (case=="caseA" and float(settings[1])!=1) or diff == "true":
+    if (case=="caseA" and float(settings[1])!=1) or diff == "True":
         an = True
         
         if method != "all" and ADD_MET == "no":
@@ -828,9 +837,9 @@ def visualise_1D(case,method, diff, settings, sys_par, num_par):
         plt.xlabel(r'Spatial dimension $x$', fontsize=body_size)
         
         if method=="ftcs" and ADD_MET == "no":
-            if diff == "true" and case == "caseA":
+            if diff == "True" and case == "caseA":
                 P_diff = np.abs(P - P_an)
-                plt.plot(x,P_diff[0],color="black", label=r'Difference between numerical and analytical solution (FTCS)')
+                plt.plot(x,P_diff[0],color="black", label=r'Error on FTCS scheme (total: {0:.3f})'.format(integrate_1d(P_diff[0],x)))
             else:
                 plt.plot(x,P[0],color="black", label=r'FTCS scheme normalised to {0:.4f} '.format(val[0]))
 
@@ -839,9 +848,9 @@ def visualise_1D(case,method, diff, settings, sys_par, num_par):
                 plt.plot(-V_x,np.array([0,P[0].max()]),color="green",linestyle="--")
 
         elif method=="rk4" and ADD_MET == "no": 
-            if diff == "true" and case == "caseA":
+            if diff == "True" and case == "caseA":
                 P_diff = np.abs(P - P_an)
-                plt.plot(x,P_diff[0],color="black", label=r'Difference between numerical and analytical solution (RK4)')
+                plt.plot(x,P_diff[0],color="black", label=r'Error on RK4 scheme (total: {0:.3f})'.format(integrate_1d(P_diff[0],x)))
             else:
                 plt.plot(x,P[0],color="black", label=r'RK4 method normalised to {0:.4f} '.format(val[0]))
 
@@ -850,9 +859,9 @@ def visualise_1D(case,method, diff, settings, sys_par, num_par):
                 plt.plot(-V_x,np.array([0,P[0].max()]),color="green",linestyle="--")
        
         elif method=="cn" and ADD_MET == "no": 
-            if diff == "true" and case == "caseA":
+            if diff == "True" and case == "caseA":
                 P_diff = np.abs(P - P_an)
-                plt.plot(x,P_diff[0],color="black", label=r'Difference between numerical and analytical solution (CN)')
+                plt.plot(x,P_diff[0],color="black", label=r'Error on CN scheme (total: {0:.3f})'.format(integrate_1d(P_diff[0],x)))
             else:
                 plt.plot(x,P[0],color="black", label=r'CN scheme normalised to {0:.4f} '.format(val[0]))
 
@@ -861,13 +870,13 @@ def visualise_1D(case,method, diff, settings, sys_par, num_par):
                 plt.plot(-V_x,np.array([0,P[0].max()]),color="green",linestyle="--")
         
         elif method=="all" and ADD_MET == "no":
-            if diff == "true" and case == "caseA":
+            if diff == "True" and case == "caseA":
                 P_diff1 = np.abs(P_ftcs - P_an)
                 P_diff2 = np.abs(P_rk4 - P_an)
                 P_diff3 = np.abs(P_cn - P_an)
-                plt.plot(x,P_diff1[0],color="black", label=r'Difference between numerical and analytical solution (FTCS)')
-                plt.plot(x,P_diff2[0],color="gray", label=r'Difference between numerical and analytical solution (RK4)')
-                plt.plot(x,P_diff3[0],color="blue", label=r'Difference between numerical and analytical solution (CN)')
+                plt.plot(x,P_diff1[0],color="black", label=r'Error on FTCS scheme (total: {0:.3f})'.format(integrate_1d(P_diff1[0],x)))
+                plt.plot(x,P_diff2[0],color="gray", label=r'Error on RK4 scheme (total: {0:.3f})'.format(integrate_1d(P_diff2[0],x)))
+                plt.plot(x,P_diff3[0],color="blue", label=r'Error on CN scheme (total: {0:.3f})'.format(integrate_1d(P_diff3[0],x)))
             else:
                 plt.plot(x,P_ftcs[0],color="black", label=r'FTCS scheme normalised to {0:.4f} '.format(val_ftcs[0]))
                 plt.plot(x,P_rk4[0],color="grey", label=r'RK4 scheme normalised to {0:.4f} '.format(val_rk4[0]))
@@ -878,7 +887,7 @@ def visualise_1D(case,method, diff, settings, sys_par, num_par):
                 plt.plot(-V_x,np.array([0,P_ftcs[0].max()]),color="green",linestyle="--")
 
         elif method=="an" and ADD_MET=="no":
-            plt.plot(x,P[0],color="black", label=r'Analytical solution normalised to $1.0000$')
+            plt.plot(x,P[0],color="black", label=r'Analytical solution normalised to {0:.4f}'.format(integrate_1d(P[0],x)))
 
             if v==True:
                 plt.plot(V_x,np.array([0,P[0].max()]),color="green",linestyle="--", label=r'Finite potential well of depth {0:.4f} '.format(V0))
@@ -887,11 +896,11 @@ def visualise_1D(case,method, diff, settings, sys_par, num_par):
 
         # cases for displaying two numerical solutions using ADD_MET
         elif (method == "ftcs" and ADD_MET == "rk4") or (method == "rk4" and ADD_MET == "ftcs"):
-            if diff == "true" and case == "caseA":
+            if diff == "True" and case == "caseA":
                 P_diff1 = np.abs(P_ftcs - P_an)
                 P_diff2 = np.abs(P_rk4 - P_an)
-                plt.plot(x,P_diff1[0],color="black", label=r'Difference between numerical and analytical solution (FTCS)')
-                plt.plot(x,P_diff2[0],color="gray", label=r'Difference between numerical and analytical solution (RK4)')
+                plt.plot(x,P_diff1[0],color="black", label=r'Error on FTCS scheme (total: {0:.3f})'.format(integrate_1d(P_diff1[0],x)))
+                plt.plot(x,P_diff2[0],color="gray", label=r'Error on RK4 scheme (total: {0:.3f})'.format(integrate_1d(P_diff2[0],x)))
             else:
                 plt.plot(x,P_ftcs[0],color="black", label=r'FTCS scheme normalised to {0:.4f} '.format(val_ftcs[0]))
                 plt.plot(x,P_rk4[0],color="grey", label=r'RK4 scheme normalised to {0:.4f} '.format(val_rk4[0]))
@@ -902,11 +911,11 @@ def visualise_1D(case,method, diff, settings, sys_par, num_par):
                 plt.plot(-V_x,np.array([0,P_ftcs[0].max()]),color="green",linestyle="--")
         
         elif (method == "rk4" and ADD_MET == "cn") or (method == "cn" and ADD_MET == "rk4"):
-            if diff == "true" and case == "caseA":
+            if diff == "True" and case == "caseA":
                 P_diff2 = np.abs(P_rk4 - P_an)
                 P_diff3 = np.abs(P_cn - P_an)
-                plt.plot(x,P_diff2[0],color="black", label=r'Difference between numerical and analytical solution (RK4)')
-                plt.plot(x,P_diff3[0],color="gray", label=r'Difference between numerical and analytical solution (CN)')
+                plt.plot(x,P_diff2[0],color="black", label=r'Error on RK4 scheme (total: {0:.3f})'.format(integrate_1d(P_diff2[0],x)))
+                plt.plot(x,P_diff3[0],color="gray", label=r'Error on CN scheme (total: {0:.3f})'.format(integrate_1d(P_diff3[0],x)))
             else:
                 plt.plot(x,P_rk4[0],color="grey", label=r'RK4 scheme normalised to {0:.4f} '.format(val_rk4[0]))
                 plt.plot(x,P_cn[0],color="blue", label=r'CN scheme normalised to {0:.4f} '.format(val_cn[0])) 
@@ -916,11 +925,11 @@ def visualise_1D(case,method, diff, settings, sys_par, num_par):
                 plt.plot(-V_x,np.array([0,P_cn[0].max()]),color="green",linestyle="--")
         
         elif (method == "ftcs" and ADD_MET == "cn") or (method == "cn" and ADD_MET == "ftcs"):
-            if diff == "true" and case == "caseA":
+            if diff == "True" and case == "caseA":
                 P_diff1 = np.abs(P_ftcs - P_an)
                 P_diff3 = np.abs(P_cn - P_an)
-                plt.plot(x,P_diff1[0],color="black", label=r'Difference between numerical and analytical solution (FTCS)')
-                plt.plot(x,P_diff3[0],color="gray", label=r'Difference between numerical and analytical solution (CN)')
+                plt.plot(x,P_diff1[0],color="black", label=r'Error on FTCS scheme (total: {0:.3f})'.format(integrate_1d(P_diff1[0],x)))
+                plt.plot(x,P_diff3[0],color="gray", label=r'Error on CN scheme (total: {0:.3f})'.format(integrate_1d(P_diff3[0],x)))
             else:
                 plt.plot(x,P_ftcs[0],color="black", label=r'FTCS scheme normalised to {0:.4f} '.format(val_ftcs[0]))
                 plt.plot(x,P_cn[0],color="blue", label=r'CN scheme normalised to {0:.4f} '.format(val_cn[0]))
@@ -929,7 +938,7 @@ def visualise_1D(case,method, diff, settings, sys_par, num_par):
                 plt.plot(V_x,np.array([0,P_ftcs[0].max()]),color="green",linestyle="--", label=r'Finite potential well of depth {0:.4f} '.format(V0))
                 plt.plot(-V_x,np.array([0,P_ftcs[0].max()]),color="green",linestyle="--")
 
-        if an==True and method != "an" and diff == "false":
+        if an==True and method != "an" and diff == "False":
             plt.plot(x,P_an[0],color="red",linestyle="--", label=r'Analytical solution')
         
         plt.legend(fontsize=body_size, loc="upper right")
@@ -1036,7 +1045,7 @@ def visualise_1D(case,method, diff, settings, sys_par, num_par):
 
 
 # visualise solution in two-dimensional case (cases B & D)
-def visualise_2D(case,method, diff, settings, sys_par, num_par):
+def visualise_2D(case,method, settings, sys_par, num_par):
     
     # compute relevant numerical solutions
     ADD_MET = settings[2]
@@ -1212,14 +1221,14 @@ def main(log_file="log.txt"):
         create_log(log_file)
     
     # extract information from log files
-    case, method, diff, settings, sys_par, num_par=read_log(log_file)
+    case, method, settings, sys_par, num_par=read_log(log_file)
     
     if case=="caseA" or case=="caseC":
-        visualise_1D(case,method, diff, settings, sys_par, num_par)
+        visualise_1D(case,method, settings, sys_par, num_par)
     if case=="caseB" or case=="caseD":
-        visualise_2D(case,method, diff, settings, sys_par, num_par)
+        visualise_2D(case,method, settings, sys_par, num_par)
     if case=="caseE":
-        visualise_2particle(case,method, diff, settings, sys_par, num_par)    
+        visualise_2particle(case,method, settings, sys_par, num_par)    
                                                    
 
 main()
