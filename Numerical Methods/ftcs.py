@@ -126,10 +126,10 @@ def ftcs_2D(case, settings, sys_par, num_par):
         for i in np.arange(xn-1):
             
             psi[1:xn-1,1:yn-1] = psi[1:xn-1,1:yn-1] + (dt*1j/2)*((psi[1:xn-1,2:yn]-2*psi[1:xn-1,1:yn-1]+psi[1:xn,0:yn-2])/(dy**2) + (psi[2:xn,1:yn-1]-2*psi[1:xn-1,1:yn-1]+psi[0:xn-2,1:yn-1])/(dx**2) + V[1:xn-1,1:yn-1]*psi[1:xn-1,1:yn-1])
-            psi[0:,0] = 0
-            psi[0:, yn-1] = 0
-            psi[xn-1,0:] = 0
-            psi[0, 0:] = 0
+            psi[:,0] = 0
+            psi[:, yn-1] = 0
+            psi[xn-1,:] = 0
+            psi[0, :] = 0
             
         if (t[k] in T):
             P[j]   = np.abs(psi)**2

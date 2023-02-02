@@ -55,7 +55,7 @@ def cn_1D(case, settings, sys_par, num_par):
         val = np.array([1], dtype="float")
         j   = 0
     #### POSSIBLY A 4 NOT 2. WAS 4 IN OTHER CODE NOT SURE WHY
-    sigma = np.ones(xn)*(dt*1j)/(2*dx**2)
+    sigma = np.ones(xn)*(dt*1j)/(4*dx**2)
 
     A = np.diag(-sigma[0:xn-1], 1) + np.diag(1+2*sigma) + np.diag(-sigma[0:xn-1], -1)
     B = np.diag(sigma[0:xn-1], 1) + np.diag(1-2*sigma + V) + np.diag(sigma[0:xn-1], -1)
