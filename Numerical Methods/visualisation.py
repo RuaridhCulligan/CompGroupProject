@@ -232,6 +232,8 @@ def visualise_1D(case,method, settings, sys_par, num_par):
             plt.plot(x,P_an[0],color="red",linestyle="--", label=r'Analytical solution')
         
         plt.legend(fontsize=body_size, loc="upper right")
+        plt.ylabel(r'Probability density $|\Psi(x,t)|^2$', fontsize=body_size)
+        plt.xlabel(r'Spatial dimension $x$', fontsize=body_size)
         plt.savefig(out_file)
         plt.show()
  
@@ -280,7 +282,7 @@ def visualise_1D(case,method, settings, sys_par, num_par):
                             axs[i].plot(V_x,np.array([0,P[0].max()]),color="green",linestyle="--", label=r'Finite potential well of depth {0:.4f} '.format(V0))
                             axs[i].plot(-V_x,np.array([0,P[0].max()]),color="green",linestyle="--")
                         axs[i].legend(fontsize=body_size, loc="upper right")
-                        axs[i].set_ylabel(r'Probability density $|\Psi(x,t)|^2$', fontsize=body_size)
+                        axs[i].set_ylabel(r'$|\Psi(x,t)|^2$', fontsize=body_size)
                         axs[i].set_xlabel(r'Spatial dimension $x$', fontsize=body_size)
                 else:
                     for i in range(len(T)):
@@ -307,7 +309,7 @@ def visualise_1D(case,method, settings, sys_par, num_par):
                             axs[i].plot(V_x,np.array([0,P[0].max()]),color="green",linestyle="--", label=r'Finite potential well of depth {0:.4f} '.format(V0))
                             axs[i].plot(-V_x,np.array([0,P[0].max()]),color="green",linestyle="--") 
                         axs[i].legend(fontsize=body_size, loc="upper right")
-                        axs[i].set_ylabel(r'Probability density $|\Psi(x,t)|^2$', fontsize=body_size)
+                        axs[i].set_ylabel(r'$|\Psi(x,t)|^2$', fontsize=body_size)
                         axs[i].set_xlabel(r'Spatial dimension $x$', fontsize=body_size)
                 else:
                     for i in range(len(T)):
@@ -320,7 +322,7 @@ def visualise_1D(case,method, settings, sys_par, num_par):
                             axs[i].plot(V_x,np.array([0,P[0].max()]),color="green",linestyle="--", label=r'Finite potential well of depth {0:.4f} '.format(V0))
                             axs[i].plot(-V_x,np.array([0,P[0].max()]),color="green",linestyle="--")  
                         axs[i].legend(fontsize=body_size, loc="upper right")
-                        axs[i].set_ylabel(r'Probability density $|\Psi(x,t)|^2$', fontsize=body_size)
+                        axs[i].set_ylabel(r'$|\Psi(x,t)|^2$', fontsize=body_size)
                         axs[i].set_xlabel(r'Spatial dimension $x$', fontsize=body_size)
 
 
@@ -336,7 +338,7 @@ def visualise_1D(case,method, settings, sys_par, num_par):
                             axs[i].plot(V_x,np.array([0,P[0].max()]),color="green",linestyle="--", label=r'Finite potential well of depth {0:.4f} '.format(V0))
                             axs[i].plot(-V_x,np.array([0,P[0].max()]),color="green",linestyle="--") 
                         axs[i].legend(fontsize=body_size, loc="upper right")
-                        axs[i].set_ylabel(r'Probability density $|\Psi(x,t)|^2$', fontsize=body_size)
+                        axs[i].set_ylabel(r'$|\Psi(x,t)|^2$', fontsize=body_size)
                         axs[i].set_xlabel(r'Spatial dimension $x$', fontsize=body_size)
                 else:
                     for i in range(len(T)):
@@ -348,7 +350,7 @@ def visualise_1D(case,method, settings, sys_par, num_par):
                             axs[i].plot(V_x,np.array([0,P[0].max()]),color="green",linestyle="--", label=r'Finite potential well of depth {0:.4f} '.format(V0))
                             axs[i].plot(-V_x,np.array([0,P[0].max()]),color="green",linestyle="--")
                         axs[i].legend(fontsize=body_size, loc="upper right")
-                        axs[i].set_ylabel(r'Probability density $|\Psi(x,t)|^2$', fontsize=body_size)
+                        axs[i].set_ylabel(r'$|\Psi(x,t)|^2$', fontsize=body_size)
                         axs[i].set_xlabel(r'Spatial dimension $x$', fontsize=body_size)
 
             
@@ -368,7 +370,7 @@ def visualise_1D(case,method, settings, sys_par, num_par):
                             axs[i].plot(V_x,np.array([0,P[0].max()]),color="green",linestyle="--", label=r'Finite potential well of depth {0:.4f} '.format(V0))
                             axs[i].plot(-V_x,np.array([0,P[0].max()]),color="green",linestyle="--") 
                         axs[i].legend(fontsize=body_size, loc="upper right")
-                        axs[i].set_ylabel(r'Probability density $|\Psi(x,t)|^2$', fontsize=body_size)
+                        axs[i].set_ylabel(r'$|\Psi(x,t)|^2$', fontsize=body_size)
                         axs[i].set_xlabel(r'Spatial dimension $x$', fontsize=body_size)
                 else:
                     for i in range(len(T)):
@@ -382,7 +384,7 @@ def visualise_1D(case,method, settings, sys_par, num_par):
                             axs[i].plot(V_x,np.array([0,P[0].max()]),color="green",linestyle="--", label=r'Finite potential well of depth {0:.4f} '.format(V0))
                             axs[i].plot(-V_x,np.array([0,P[0].max()]),color="green",linestyle="--")                   
                         axs[i].legend(fontsize=body_size, loc="upper right")
-                        axs[i].set_ylabel(r'Probability density $|\Psi(x,t)|^2$', fontsize=body_size)
+                        axs[i].set_ylabel(r'$|\Psi(x,t)|^2$', fontsize=body_size)
                         axs[i].set_xlabel(r'Spatial dimension $x$', fontsize=body_size)
 
 
@@ -396,7 +398,7 @@ def visualise_1D(case,method, settings, sys_par, num_par):
                         axs[i].plot(V_x,np.array([0,P[0].max()]),color="green",linestyle="--", label=r'Finite potential well of depth {0:.4f} '.format(V0))
                         axs[i].plot(-V_x,np.array([0,P[0].max()]),color="green",linestyle="--")                          
                     axs[i].legend(fontsize=body_size, loc="upper right")
-                    axs[i].set_ylabel(r'Probability density $|\Psi(x,t)|^2$', fontsize=body_size)
+                    axs[i].set_ylabel(r'$|\Psi(x,t)|^2$', fontsize=body_size)
                     axs[i].set_xlabel(r'Spatial dimension $x$', fontsize=body_size)
         else:
             axs = axs.ravel()
@@ -414,7 +416,7 @@ def visualise_1D(case,method, settings, sys_par, num_par):
                             axs[i].plot(V_x,np.array([0,P[0].max()]),color="green",linestyle="--", label=r'Finite potential well of depth {0:.4f} '.format(V0))
                             axs[i].plot(-V_x,np.array([0,P[0].max()]),color="green",linestyle="--")
                         axs[i].legend(fontsize=body_size, loc="upper right")
-                        axs[i].set_ylabel(r'Probability density $|\Psi(x,t)|^2$', fontsize=body_size)
+                        axs[i].set_ylabel(r'$|\Psi(x,t)|^2$', fontsize=body_size)
                         axs[i].set_xlabel(r'Spatial dimension $x$', fontsize=body_size)
                 else:
                     for i in range(len(T)):
@@ -427,7 +429,7 @@ def visualise_1D(case,method, settings, sys_par, num_par):
                             axs[i].plot(V_x,np.array([0,P[0].max()]),color="green",linestyle="--", label=r'Finite potential well of depth {0:.4f} '.format(V0))
                             axs[i].plot(-V_x,np.array([0,P[0].max()]),color="green",linestyle="--")                      
                         axs[i].legend(fontsize=body_size, loc="upper right")
-                        axs[i].set_ylabel(r'Probability density $|\Psi(x,t)|^2$', fontsize=body_size)
+                        axs[i].set_ylabel(r'$|\Psi(x,t)|^2$', fontsize=body_size)
                         axs[i].set_xlabel(r'Spatial dimension $x$', fontsize=body_size)
 
 
@@ -445,7 +447,7 @@ def visualise_1D(case,method, settings, sys_par, num_par):
                             axs[i].plot(V_x,np.array([0,P[0].max()]),color="green",linestyle="--", label=r'Finite potential well of depth {0:.4f} '.format(V0))
                             axs[i].plot(-V_x,np.array([0,P[0].max()]),color="green",linestyle="--")
                         axs[i].legend(fontsize=body_size, loc="upper right")
-                        axs[i].set_ylabel(r'Probability density $|\Psi(x,t)|^2$', fontsize=body_size)
+                        axs[i].set_ylabel(r'$|\Psi(x,t)|^2$', fontsize=body_size)
                         axs[i].set_xlabel(r'Spatial dimension $x$', fontsize=body_size)
                 else:
                     for i in range(len(T)):
@@ -458,7 +460,7 @@ def visualise_1D(case,method, settings, sys_par, num_par):
                             axs[i].plot(V_x,np.array([0,P[0].max()]),color="green",linestyle="--", label=r'Finite potential well of depth {0:.4f} '.format(V0))
                             axs[i].plot(-V_x,np.array([0,P[0].max()]),color="green",linestyle="--")                   
                         axs[i].legend(fontsize=body_size, loc="upper right")
-                        axs[i].set_ylabel(r'Probability density $|\Psi(x,t)|^2$', fontsize=body_size)
+                        axs[i].set_ylabel(r'$|\Psi(x,t)|^2$', fontsize=body_size)
                         axs[i].set_xlabel(r'Spatial dimension $x$', fontsize=body_size)
 
 
@@ -476,7 +478,7 @@ def visualise_1D(case,method, settings, sys_par, num_par):
                             axs[i].plot(V_x,np.array([0,P[0].max()]),color="green",linestyle="--", label=r'Finite potential well of depth {0:.4f} '.format(V0))
                             axs[i].plot(-V_x,np.array([0,P[0].max()]),color="green",linestyle="--")
                         axs[i].legend(fontsize=body_size, loc="upper right")
-                        axs[i].set_ylabel(r'Probability density $|\Psi(x,t)|^2$', fontsize=body_size)
+                        axs[i].set_ylabel(r'$|\Psi(x,t)|^2$', fontsize=body_size)
                         axs[i].set_xlabel(r'Spatial dimension $x$', fontsize=body_size)
                 else:
                     for i in range(len(T)):
@@ -489,7 +491,7 @@ def visualise_1D(case,method, settings, sys_par, num_par):
                             axs[i].plot(V_x,np.array([0,P[0].max()]),color="green",linestyle="--", label=r'Finite potential well of depth {0:.4f} '.format(V0))
                             axs[i].plot(-V_x,np.array([0,P[0].max()]),color="green",linestyle="--")                 
                         axs[i].legend(fontsize=body_size, loc="upper right")
-                        axs[i].set_ylabel(r'Probability density $|\Psi(x,t)|^2$', fontsize=body_size)
+                        axs[i].set_ylabel(r'$|\Psi(x,t)|^2$', fontsize=body_size)
                         axs[i].set_xlabel(r'Spatial dimension $x$', fontsize=body_size)
 
     

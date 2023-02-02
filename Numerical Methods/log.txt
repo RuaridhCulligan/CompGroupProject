@@ -1,6 +1,6 @@
 CASE caseA 
 METHOD ftcs 
-STATIC 0.5 
+STATIC 1 
 HIDE_A 0 
 ADD_MET no 
 SHOW_V 0 
