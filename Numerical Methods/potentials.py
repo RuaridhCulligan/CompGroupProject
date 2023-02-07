@@ -25,9 +25,14 @@ def potential_D(x,y, sys_params):
         return 0    
 
 # potential function for case E at position x1,x2
-def potential_E(x1,x2, sys_params):
+def potential_E(x, x1, x2, sys_params):
     
     V0    = sys_params[5]
     alpha = sys_params[8]
     
-    return V0*np.exp(-alpha*np.abs(x1-x2)**2)    
+    V = np.zeros(len(x))
+    V[x1:x2+1] = V0*np.exp(-alpha*np.abs(x[x1]-x[x2])**2)
+    print(V[x1:x2+1])
+    
+
+    return V      

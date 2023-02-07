@@ -38,26 +38,18 @@ def integrate_2d(func, x_vals,y_vals):
     return I
 
 # tridiagonal matrix solver to solve tridiagonal system of equations
-def tridiag_solv(Mat1, Mat2, vec):
-
-    rhs = np.matmul(Mat2,vec)
-
-    n = rhs.shape
-    # c and d are just intermediate constants
-    c = np.zeros(n)
-    d = np.zeros(n)
-
-    # vector of the solution values
-    sol_vec = np.zeros(n)
-
-    # calculating constants
-    c[0] = Mat1[1,0]/Mat1[0,0]
-    d[0] = rhs[0]/Mat1[0,0]
-    c[1:n-1] = Mat1[2:n,1:n-1]/(Mat1[1:n-1,1:n-1] - Mat1[1:n-1,2:n]*c[0:n-2])
-    d[1:n-1] = (rhs[1:n-1] - Mat1[1:n-1,2:n]*d[0:n-2])/(Mat1[1:n-1,1:n-1] - Mat1[1:n-1,2:n]*c[0:n-2])
-
-    # calculating solution vector
-    sol_vec[n-1] = (rhs[n-1] - Mat1[n-1,n]*d[n-1])/(Mat1[n-1,n-1] - Mat1[n-1,n]*c[n-2])
-    sol_vec[0:n-1] = d[0:n-1] - c[0:n-1]*sol_vec[1:n]
-
-    return sol_vec
+def tridiag_solver(a, b, c, d):
+    nf = len(d) # number of equations
+    ac, bc, cc, dc = (x.astype(float) for x in (a, b, c, d)) # copy arrays & cast to floats
+    for it in range(1, nf):
+        mc = ac[it-1]/bc[it-1]
+        bc[it] = bc[it] - mc*cc[it-1]
+        dc[it] = dc[it] - mc*dc[it-1]
+ 
+    xc = bc
+    xc[-1] = dc[-1]/bc[-1]
+ 
+    for il in range(nf-2, -1, -1):
+        xc[il] = (dc[il]-cc[il]*xc[il+1])/bc[il]
+ 
+    return xc

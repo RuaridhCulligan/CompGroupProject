@@ -4,7 +4,7 @@
 import numpy as np
 from wavefuncs import wavepacket_1d, wavepacket_2d
 from potentials import potential_C, potential_D
-from num_aux import integrate_1d, integrate_2d, tridiag_solv
+from num_aux import integrate_1d, integrate_2d, tridiag_solver
 
 import warnings
 warnings.simplefilter(action='ignore', category=RuntimeWarning) # surpress RuntimeWarnings 
@@ -54,14 +54,16 @@ def cn_1D(case, settings, sys_par, num_par):
         P   = np.empty(1, dtype="object")
         val = np.array([1], dtype="float")
         j   = 0
-    #### POSSIBLY A 4 NOT 2. WAS 4 IN OTHER CODE NOT SURE WHY
+
     sigma = np.ones(xn)*(dt*1j)/(4*dx**2)
 
-    A = np.diag(-sigma[0:xn-1], 1) + np.diag(1+2*sigma) + np.diag(-sigma[0:xn-1], -1)
-    B = np.diag(sigma[0:xn-1], 1) + np.diag(1-2*sigma + V) + np.diag(sigma[0:xn-1], -1)
+    a = -sigma; a[0] = 0; b = 1 + 2*sigma; c = -sigma; c[xn-1] = 0
+    M = np.diag(sigma[0:xn-1], 1) + np.diag(1-2*sigma + V) + np.diag(sigma[0:xn-1], -1)
+
+    
 
     for i in range(1,tn):
-        psi = np.linalg.solve(A, B.dot(psi))
+        psi = np.linalg.solve(np.diag(a,1)+np.diag(b)+np.diag(c,-1),M.dot(psi))
         
         psi[0] = 0; psi[xn-1] = 0
 

@@ -2,9 +2,11 @@
 #     FTCS SCHEMES
 
 import numpy as np
-from wavefuncs import wavepacket_1d, wavepacket_2d
-from potentials import potential_C, potential_D
+from wavefuncs import wavepacket_1d, wavepacket_2d, wavepacket_2particle
+from potentials import potential_C, potential_D, potential_E
 from num_aux import integrate_1d, integrate_2d
+from scipy.signal import find_peaks
+import matplotlib.pyplot as plt
 
 import warnings
 warnings.simplefilter(action='ignore', category=RuntimeWarning) # surpress RuntimeWarnings 
@@ -125,11 +127,12 @@ def ftcs_2D(case, settings, sys_par, num_par):
     for k in np.arange(tn):
         for i in np.arange(xn-1):
             
-            psi[1:xn-1,1:yn-1] = psi[1:xn-1,1:yn-1] + (dt*1j/2)*((psi[1:xn-1,2:yn]-2*psi[1:xn-1,1:yn-1]+psi[1:xn,0:yn-2])/(dy**2) + (psi[2:xn,1:yn-1]-2*psi[1:xn-1,1:yn-1]+psi[0:xn-2,1:yn-1])/(dx**2) + V[1:xn-1,1:yn-1]*psi[1:xn-1,1:yn-1])
-            psi[:,0] = 0
-            psi[:, yn-1] = 0
-            psi[xn-1,:] = 0
-            psi[0, :] = 0
+            psi[1:xn-1,1:yn-1] = psi[1:xn-1,1:yn-1] + (dt*1j/2)*((psi[1:xn-1,2:yn]-2*psi[1:xn-1,1:yn-1]+psi[1:xn-1,0:yn-2])/(dy**2) + (psi[2:xn,1:yn-1]-2*psi[1:xn-1,1:yn-1]+psi[0:xn-2,1:yn-1])/(dx**2) + V[1:xn-1,1:yn-1]*psi[1:xn-1,1:yn-1])
+
+            psi[0:,0] = 0
+            psi[0:, yn-1] = 0
+            psi[xn-1,0:] = 0
+            psi[0, 0:] = 0
             
         if (t[k] in T):
             P[j]   = np.abs(psi)**2
@@ -141,9 +144,77 @@ def ftcs_2D(case, settings, sys_par, num_par):
 
 # FCTS method to solve two-particle case numerically (case E)  
 def ftcs_2particle(case, settings, sys_par, num_par): 
+ 
+    # set up grids
+    x_min = num_par[0]
+    x_max = num_par[1]
+    dx    = num_par[2]
     
-    """
-    to do!
-    """
+    t_start = 0
+    t_end   = sys_par[0]
+    dt      = num_par[3]
     
+    t = np.arange(t_start, t_end+dt, dt)
+    x = np.arange(x_min, x_max+dx, dx)
+    
+    # determine grid lengths
+    tn = len(t)
+    xn = len(x)
+    
+    # initialise wavefunction 
+    psi1,psi2 = wavepacket_2particle(x, sys_par)
+    P1 = np.abs(psi1)**2
+    P2 = np.abs(psi2)**2
+    
+    maxima1, _ = find_peaks(P1)
+    maxima2, _ = find_peaks(P2)
+    
+    V = potential_E(x,maxima1[0],maxima2[0],sys_par)
+        
+    # # make relevant adjustments for non-static/semi-static output:
+    # if settings[2]=="0":    
+    #     T   = np.arange(t_start, t_end+dt, dt*100)
+    #     P   = np.empty(len(T), dtype="object")
+    #     val = np.empty(len(T))
+    #     j       = 0
+    # if settings[2]=="0.5": 
+    #     T   = np.array([t_start,t_end/8,t_end/4,t_end/2, 3*t_end/4, t_end]) 
+    #     P   = np.empty(len(T), dtype="object")
+    #     val = np.empty(len(T))
+    #     j   = 0
+    # else:
+    #     T   = np.array([t_end])
+    #     P   = np.empty(len(T), dtype="object")
+    #     val = np.array([1])
+    #     j   = 0
+
+    # run loop to compute FTCS scheme and write mod square of result to file
+    for i in np.arange(tn):
+        psi1[1:xn-1] = psi1[1:xn-1] + dt*1j*((psi1[2:xn]-2*psi1[1:xn-1]+psi1[0:xn-2])/(2*dx**2) + V[1:xn-1]*psi1[1:xn-1])
+        psi1[0] = 0
+        psi1[xn-1] = 0
+
+        psi2[1:xn-1] = psi2[1:xn-1] + dt*1j*((psi2[2:xn]-2*psi2[1:xn-1]+psi2[0:xn-2])/(2*dx**2) + V[1:xn-1]*psi2[1:xn-1])
+        psi2[0] = 0
+        psi2[xn-1] = 0
+
+        P1 = np.abs(psi1)**2
+        P2 = np.abs(psi2)**2
+
+        maxima1, _ = find_peaks(P1)
+        maxima2, _ = find_peaks(P2)
+    
+        V = potential_E(x,maxima1[0],maxima2[0],sys_par)
+
+        # if (t[i] in T):
+        #     P[j]   = np.abs(psi)**2
+        #     val[j] = integrate_1d(P[j],x)
+        #     j += 1
+    
+
+
+    plt.plot(x,P1)
+    plt.plot(x,P2)
+    plt.show()
+
     return 0
