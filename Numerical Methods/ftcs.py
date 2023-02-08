@@ -203,8 +203,6 @@ def ftcs_2particle(case, settings, sys_par, num_par):
         #     val[j] = integrate_1d(P[j],x)
         #     j += 1
     
-
-    print(maxima)
     plt.plot(x,P)
     plt.show()
 
