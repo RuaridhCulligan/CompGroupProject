@@ -40,17 +40,17 @@ def ftcs_1D(case, settings, sys_par, num_par):
         V = potential_C(x, sys_par)
     
     # make relevant adjustments for non-static/semi-static output:
-    if float(settings[0])==0:    
+    if float(settings[0]) == 0.0:    
         T   = np.arange(t_start, t_end+dt, dt*100)
         P   = np.empty(len(T), dtype="object")
         val = np.empty(len(T), dtype="float")
         j       = 0
-    if float(settings[0])==0.5: 
+    if float(settings[0]) == 0.5: 
         T   = np.array([t_start,t_end/8,t_end/4,t_end/2, 3*t_end/4, t_end]) 
         P   = np.empty(len(T), dtype="object")
         val = np.empty(len(T))
         j   = 0
-    else:
+    if float(settings[0]) == 1.0:
         T   = np.array([t_end])
         P   = np.empty(1, dtype="object")
         val = np.array([1], dtype="float")
@@ -107,17 +107,17 @@ def ftcs_2D(case, settings, sys_par, num_par):
         V = potential_D(x,y, sys_par)
         
     # make relevant adjustments for non-static/semi-static output:
-    if settings[2]=="0":    
+    if float(settings[0]) == 0.0:    
         T   = np.arange(t_start, t_end+dt, dt*100)
         P   = np.empty(len(T), dtype="object")
         val = np.empty(len(T))
         j       = 0
-    if settings[2]=="0.5": 
+    if float(settings[0]) == 0.5: 
         T   = np.array([t_start,t_end/8,t_end/4,t_end/2, 3*t_end/4, t_end]) 
         P   = np.empty(len(T), dtype="object")
         val = np.empty(len(T))
         j   = 0
-    else:
+    if float(settings[0]) == 1.0:
         T   = np.array([t_end])
         P   = np.empty(len(T), dtype="object")
         val = np.array([1])
