@@ -32,7 +32,5 @@ def potential_E(x, x1, x2, sys_params):
     
     V = np.zeros(len(x))
     V[x1:x2+1] = V0*np.exp(-alpha*np.abs(x[x1]-x[x2])**2)
-    print(V[x1:x2+1])
-    
 
     return V      

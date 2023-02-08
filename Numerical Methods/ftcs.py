@@ -163,13 +163,12 @@ def ftcs_2particle(case, settings, sys_par, num_par):
     
     # initialise wavefunction 
     psi1,psi2 = wavepacket_2particle(x, sys_par)
-    P1 = np.abs(psi1)**2
-    P2 = np.abs(psi2)**2
+    psi = psi1+psi2
+    P = np.abs(psi)**2
     
-    maxima1, _ = find_peaks(P1)
-    maxima2, _ = find_peaks(P2)
+    maxima, _ = find_peaks(P)
     
-    V = potential_E(x,maxima1[0],maxima2[0],sys_par)
+    V = potential_E(x,maxima[0],maxima[1],sys_par)
         
     # # make relevant adjustments for non-static/semi-static output:
     # if settings[2]=="0":    
@@ -190,21 +189,15 @@ def ftcs_2particle(case, settings, sys_par, num_par):
 
     # run loop to compute FTCS scheme and write mod square of result to file
     for i in np.arange(tn):
-        psi1[1:xn-1] = psi1[1:xn-1] + dt*1j*((psi1[2:xn]-2*psi1[1:xn-1]+psi1[0:xn-2])/(2*dx**2) + V[1:xn-1]*psi1[1:xn-1])
-        psi1[0] = 0
-        psi1[xn-1] = 0
+        psi[1:xn-1] = psi[1:xn-1] + dt*1j*((psi[2:xn]-2*psi[1:xn-1]+psi[0:xn-2])/(2*dx**2)  + V[1:xn-1]*psi[1:xn-1]) 
+        psi[0] = 0
+        psi[xn-1] = 0
 
-        psi2[1:xn-1] = psi2[1:xn-1] + dt*1j*((psi2[2:xn]-2*psi2[1:xn-1]+psi2[0:xn-2])/(2*dx**2) + V[1:xn-1]*psi2[1:xn-1])
-        psi2[0] = 0
-        psi2[xn-1] = 0
-
-        P1 = np.abs(psi1)**2
-        P2 = np.abs(psi2)**2
-
-        maxima1, _ = find_peaks(P1)
-        maxima2, _ = find_peaks(P2)
-    
-        V = potential_E(x,maxima1[0],maxima2[0],sys_par)
+        P = np.abs(psi)**2
+        
+        maxima, _ = find_peaks(P)
+        
+        V = potential_E(x,maxima[0],maxima[1],sys_par)
 
         # if (t[i] in T):
         #     P[j]   = np.abs(psi)**2
@@ -212,9 +205,8 @@ def ftcs_2particle(case, settings, sys_par, num_par):
         #     j += 1
     
 
-
-    plt.plot(x,P1)
-    plt.plot(x,P2)
+    print(maxima)
+    plt.plot(x,P)
     plt.show()
 
     return 0
