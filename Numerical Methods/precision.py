@@ -1,5 +1,6 @@
 #@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@
-#     FUNCTIONS TO EVALUATE THE PRECISION OF NUMERICAL METHODS IN CASES A AND B
+#     FUNCTIONS TO EVALUATE THE PRECISION OF NUMERICAL METHODS IN CASES A, B, C, D
+#           NOTE: CASE E STILL TO DO!
 
 # import modules
 import numpy as np
@@ -32,17 +33,21 @@ if os.path.exists(out_dir) ==False:
     os.mkdir(out_dir) 
 
 # define "standard set-up" for comparison of methods
-t_end = 1
+t_end = 10 # 10
 a     = 1 
 kx0    = 1 
 b     = 1 
 ky0   = 1 
 x0    = 0 
 y0    = 0 
-x_min = -50 
-x_max = +50 
-y_min = -10 
-y_max = +10 
+x_min = -20 
+x_max = +20 
+y_min = -20 
+y_max = +20 
+V0    = 100 
+d     = 1 
+w     = 1 
+alpha = 1 
 
 # given values for dx, dt, dy,, case package into relevant arrays
 def package(case, dx, dt, dy):
@@ -65,6 +70,10 @@ def package(case, dx, dt, dy):
     sys_params[2] = kx0
     sys_params[3] = b 
     sys_params[4] = ky0 
+    sys_params[5] = V0
+    sys_params[6] = d
+    sys_params[7] = w
+    sys_params[7] = alpha
     sys_params[9] = x0 
     sys_params[10] = y0
 
@@ -72,12 +81,15 @@ def package(case, dx, dt, dy):
     return case, settings, sys_params, num_par
 
 
-# for a given case, method, dt, dx, dy find total error
-def total_error(case, method, dt, dx, dy):
+# run simulation for a fixed dt, dx, dy and evaluate
+def single_run(case, method, dt, dx, dy):
 
     case,  settings, sys_params, num_par = package(case, dx, dt, dy)
 
-    cpu_frac = psutil.cpu_percent(0.5)
+    pid = os.getpid()
+    process = psutil.Process(pid)
+
+    cpu_frac = process.cpu_percent()
 
     if case=="caseA":
         if method=="ftcs":
@@ -94,6 +106,8 @@ def total_error(case, method, dt, dx, dy):
             stop = time.time()       
 
         P_an = np.abs(an_sol_1D(x,t_end, sys_params))**2
+        P_diff = np.abs( P_an - P[0] )
+        err = integrate_1d(P_diff, x)
 
     if case=="caseB":
         if method=="ftcs":
@@ -109,15 +123,45 @@ def total_error(case, method, dt, dx, dy):
             P, x, y, _, _ = cn_2D(case,  settings, sys_params, num_par) 
             stop = time.time()     
 
-        P_an =np.abs(an_sol_2D(x,y,t_end, case, method, settings, sys_params, num_par))**2  
-
-    P_diff = np.abs( P_an - P[0] )
-
-    if case=="caseA":
-        err = integrate_1d(P_diff, x)
-
-    if case=="caseB":
+        P_an =np.abs(an_sol_2D(x,y,t_end,sys_params))**2  
+        P_diff = np.abs( P_an - P[0] )
         err = integrate_2d(P_diff, x, y)
+
+    if case=="caseC":
+        if method=="ftcs":
+            start = time.time() 
+            P, x, val, _ = ftcs_1D(case, settings, sys_params, num_par) 
+            stop = time.time()
+        elif method=="rk4":
+            start = time.time()
+            P, x, val, _ = rk4_1D(case,  settings, sys_params, num_par) 
+            stop = time.time()
+        elif method=="cn":
+            start = time.time()
+            P, x, val, _ = cn_1D(case,  settings, sys_params, num_par) 
+            stop = time.time()    
+
+        err = np.abs(val[0] -1)
+
+    if case=="caseD":
+        if method=="ftcs":
+            start = time.time() 
+            P, x,y, val, _ = ftcs_2D(case, settings, sys_params, num_par) 
+            stop = time.time()
+        elif method=="rk4":
+            start = time.time()
+            P, x,y, val, _ = rk4_2D(case,  settings, sys_params, num_par) 
+            stop = time.time()
+        elif method=="cn":
+            start = time.time()
+            P, x,y, val, _ = cn_2D(case,  settings, sys_params, num_par) 
+            stop = time.time()    
+
+        err = np.abs(val[0] -1)    
+
+    # do caseE !
+    
+    cpu_frac = process.cpu_percent()    
 
     return err, stop-start, cpu_frac
 
@@ -127,12 +171,17 @@ def space_loop(case, method, dt, dxdy_arr):
     err_arr     = np.empty(len(dxdy_arr))
     runtime_arr = np.empty(len(dxdy_arr))
     cpu_arr     = np.empty(len(dxdy_arr))
+    arr         = np.empty(3, dtype="object")
 
     for i in np.arange(len(dxdy_arr)):
         dx, dy = dxdy_arr[i], dxdy_arr[i]
-        err_arr[i], runtime_arr[i], cpu_arr[i] = total_error(case, method, dt, dx, dy)
+        err_arr[i], runtime_arr[i], cpu_arr[i] = single_run(case, method, dt, dx, dy)
 
-    return err_arr, runtime_arr, cpu_arr   
+    arr[0] = err_arr 
+    arr[1] = runtime_arr 
+    arr[2] = cpu_arr 
+
+    return arr  
 
 # for constant space step, loop through array of time step sizes (assuming dx=dy)
 def time_loop(case, method, dxdy, dt_arr):
@@ -140,378 +189,278 @@ def time_loop(case, method, dxdy, dt_arr):
     err_arr     = np.empty(len(dt_arr))
     runtime_arr = np.empty(len(dt_arr))
     cpu_arr     = np.empty(len(dt_arr))
+    arr         = np.empty(3, dtype="object")
 
     for i in np.arange(len(dt_arr)):
         dt = dt_arr[i]
         dx, dy = dxdy, dxdy
-        err_arr[i], runtime_arr[i], cpu_arr[i] = total_error(case, method, dt, dx, dy)
+        err_arr[i], runtime_arr[i], cpu_arr[i] = single_run(case, method, dt, dx, dy)
 
-    return err_arr, runtime_arr, cpu_arr       
+    arr[0] = err_arr 
+    arr[1] = runtime_arr 
+    arr[2] = cpu_arr
 
-# loop through space and time with "central step" dxdy0 or dt0
-def double_loop(case, method,dxy0, dt0, dxdy_arr,dt_arr):  
+    return arr       
+  
+# plot error against step size and computional time  
+def err_vs_step_time(case,method,mode, d0, d_arr, fit ):
 
-    space_err, space_runtime, space_cpu = space_loop(case, method, dt0, dxdy_arr)
-    time_err, time_runtime, time_cpu =time_loop(case, method, dxy0, dt_arr)
+    # generate data
+    if mode=="space_loop":
+        
+        d_const = "dt"
+        if case != "caseB" and case != "caseD":
+            d = "dx"
+        else:
+            d = "dx, dy"
+        
+        if method=="all":
+            arr_ftcs = space_loop(case, "ftcs", d0, d_arr)
+            arr_rk4 =  space_loop(case, "rk4", d0, d_arr)
+            arr_cn =   space_loop(case, "cn", d0, d_arr)
+        elif method=="ftcs" or method=="rk4" or method=="cn":
+            arr =  space_loop(case, method, d0, d_arr)  
+    elif mode=="time_loop":
+        
+        d = "dt"
+        if case != "caseB" and case != "caseD":
+            d_const = "dx"
+        else:
+            d_const = "dx, dy"
+        
+        if method=="all":
+            arr_ftcs = time_loop(case, "ftcs", d0, d_arr)
+            arr_rk4 =  time_loop(case, "rk4", d0, d_arr)
+            arr_cn =   time_loop(case, "cn", d0, d_arr)
+        elif method=="ftcs" or method=="rk4" or method=="cn":
+            arr =  time_loop(case, method, d0, d_arr)
 
-    arr = np.empty((2,3), dtype="object")
-    arr[0,0] = space_err 
-    arr[0,1] = space_runtime  
-    arr[0,2] = space_cpu
-    arr[1,0] = time_err 
-    arr[1,1] = time_runtime  
-    arr[1,2] = time_cpu
-
-    return arr 
-
-def run(case, method, dxdy0, dt0, dxdy_arr, dt_arr):
-
-    if method=="all":
-        arr_ftcs = double_loop(case, "ftcs", dxdy0, dt0, dxdy_arr, dt_arr)
-        arr_rk4 = double_loop(case, "rk4", dxdy0, dt0, dxdy_arr, dt_arr)
-        arr_cn = double_loop(case, "cn", dxdy0, dt0, dxdy_arr, dt_arr)
-
-        return arr_ftcs, arr_rk4, arr_cn
-
-    elif method=="ftcs" or method=="rk4" or method=="cn":
-        arr = double_loop(case, method, dxdy0, dt0, dxdy_arr, dt_arr)
-   
-        return arr
-
-# visualise caseA
-def vis_caseA(method, dx0, dt0, dx_arr, dt_arr):
-
-    # get data
-    if method=="all":
-        arr_ftcs, arr_rk4, arr_cn = run("caseA", method, dx0, dt0, dx_arr, dt_arr)
-    else: 
-        arr = run("caseA", method, dx0, dt0, dx_arr, dt_arr)
-
-    # set up figure
-    fig, axs = plt.subplots(3,2,figsize = [18,10])
-    fig.subplots_adjust(hspace = .5, wspace=.4) 
-    axs = axs.ravel()  
-
-    plt.suptitle(r'Evaluation of Numerical Schemes in 1D', fontsize=title_size)
-    
-    # plot err vs dx at constant dt:
-    axs[0].set_title(r'Total error against spatial step size with $dt={0:.1e}$'.format(dt0), fontsize=body_size)
-    
-    if method=="ftcs":
-        axs[0].scatter(dx_arr, arr[0,0] , label=r'FTCS scheme', color="black", marker=".")
-    elif method=="rk4":
-        axs[0].scatter(dx_arr, arr[0,0] , label=r'RK4 scheme', color="black", marker=".")
-    elif method=="cn":
-        axs[0].scatter(dx_arr, arr[0,0] , label=r'CN scheme', color="black",  marker=".")
-    elif method=="all":
-        axs[0].scatter(dx_arr, arr_ftcs[0,0] , label=r'FTCS scheme', color="black",  marker=".")
-        axs[0].scatter(dx_arr, arr_rk4[0,0] , label=r'RK4 scheme', color="gray",  marker=".")
-        axs[0].scatter(dx_arr, arr_cn[0,0] , label=r'CN scheme', color="blue",  marker=".")        
-    
-    axs[0].legend(fontsize=body_size, loc="upper center")
-    axs[0].set_ylabel(r'$\epsilon_{tot}$', fontsize=body_size)
-    axs[0].set_xlabel(r'$dx$', fontsize=body_size)
-
-    # plot comp time vs dx at constant dt:
-    axs[2].set_title(r'Computational time against spatial step size with $dt={0:.1e}$'.format(dt0), fontsize=body_size)
-    
-    if method=="ftcs":
-        axs[2].scatter(dx_arr, arr[0,1] , label=r'FTCS scheme', color="black", marker=".")
-    elif method=="rk4":
-        axs[2].scatter(dx_arr, arr[0,1] , label=r'RK4 scheme', color="black", marker=".")
-    elif method=="cn":
-        axs[2].scatter(dx_arr, arr[0,1] , label=r'CN scheme', color="black",  marker=".")
-    elif method=="all":
-        axs[2].scatter(dx_arr, arr_ftcs[0,1] , label=r'FTCS scheme', color="black",  marker=".")
-        axs[2].scatter(dx_arr, arr_rk4[0,1] , label=r'RK4 scheme', color="gray",  marker=".")
-        axs[2].scatter(dx_arr, arr_cn[0,1] , label=r'CN scheme', color="blue",  marker=".")        
-    
-    axs[2].legend(fontsize=body_size, loc="upper center")
-    axs[2].set_ylabel(r'$T$ (s)', fontsize=body_size)
-    axs[2].set_xlabel(r'$dx$', fontsize=body_size)
-
-    # plot cpu usage vs dx at constant dt:
-    axs[4].set_title(r'CPU usage against spatial step size with $dt={0:.1e}$'.format(dt0), fontsize=body_size)
-    
-    if method=="ftcs":
-        axs[4].scatter(dx_arr, arr[0,2] , label=r'FTCS scheme', color="black", marker=".")
-    elif method=="rk4":
-        axs[4].scatter(dx_arr, arr[0,2] , label=r'RK4 scheme', color="black", marker=".")
-    elif method=="cn":
-        axs[4].scatter(dx_arr, arr[0,2] , label=r'CN scheme', color="black",  marker=".")
-    elif method=="all":
-        axs[4].scatter(dx_arr, arr_ftcs[0,2] , label=r'FTCS scheme', color="black",  marker=".")
-        axs[4].scatter(dx_arr, arr_rk4[0,2] , label=r'RK4 scheme', color="gray",  marker=".")
-        axs[4].scatter(dx_arr, arr_cn[0,2] , label=r'CN scheme', color="blue",  marker=".")        
-    
-    axs[4].legend(fontsize=body_size, loc="upper center")
-    axs[4].set_ylabel(r'\% CPU ', fontsize=body_size)
-    axs[4].set_xlabel(r'$dx$', fontsize=body_size)
-
-    # plot err vs dt at constant dx:
-    axs[1].set_title(r'Total error against temporal step size with $dx={0:.1e}$'.format(dx0), fontsize=body_size)
-    
-    if method=="ftcs":
-        axs[1].scatter(dt_arr, arr[1,0] , label=r'FTCS scheme', color="black", marker=".")
-    elif method=="rk4":
-        axs[1].scatter(dt_arr, arr[1,0] , label=r'RK4 scheme', color="black", marker=".")
-    elif method=="cn":
-        axs[1].scatter(dt_arr, arr[1,0] , label=r'CN scheme', color="black",  marker=".")
-    elif method=="all":
-        axs[1].scatter(dt_arr, arr_ftcs[1,0] , label=r'FTCS scheme', color="black",  marker=".")
-        axs[1].scatter(dt_arr, arr_rk4[1,0] , label=r'RK4 scheme', color="gray",  marker=".")
-        axs[1].scatter(dt_arr, arr_cn[1,0] , label=r'CN scheme', color="blue",  marker=".")        
-    
-    axs[1].legend(fontsize=body_size, loc="upper center")
-    axs[1].set_ylabel(r'$\epsilon_{tot}$', fontsize=body_size)
-    axs[1].set_xlabel(r'$dt$', fontsize=body_size)
-
-    # plot comp time vs dx at constant dt:
-    axs[3].set_title(r'Computational time against temporal step size with $dx={0:.1e}$'.format(dx0), fontsize=body_size)
-    
-    if method=="ftcs":
-        axs[3].scatter(dt_arr, arr[1,1] , label=r'FTCS scheme', color="black", marker=".")
-    elif method=="rk4":
-        axs[3].scatter(dt_arr, arr[1,1] , label=r'RK4 scheme', color="black", marker=".")
-    elif method=="cn":
-        axs[3].scatter(dt_arr, arr[1,1] , label=r'CN scheme', color="black",  marker=".")
-    elif method=="all":
-        axs[3].scatter(dt_arr, arr_ftcs[1,1] , label=r'FTCS scheme', color="black",  marker=".")
-        axs[3].scatter(dt_arr, arr_rk4[1,1] , label=r'RK4 scheme', color="gray",  marker=".")
-        axs[3].scatter(dt_arr, arr_cn[1,1] , label=r'CN scheme', color="blue",  marker=".")        
-    
-    axs[3].legend(fontsize=body_size, loc="upper center")
-    axs[3].set_ylabel(r'$T$ (s)', fontsize=body_size)
-    axs[3].set_xlabel(r'$dt$', fontsize=body_size)
-
-    # plot cpu usage vs dx at constant dt:
-    axs[5].set_title(r'CPU usage against temporal step size with $dx={0:.1e}$'.format(dx0), fontsize=body_size)
-    
-    if method=="ftcs":
-        axs[5].scatter(dt_arr, arr[1,2] , label=r'FTCS scheme', color="black", marker=".")
-    elif method=="rk4":
-        axs[5].scatter(dt_arr, arr[1,2] , label=r'RK4 scheme', color="black", marker=".")
-    elif method=="cn":
-        axs[5].scatter(dt_arr, arr[1,2] , label=r'CN scheme', color="black",  marker=".")
-    elif method=="all":
-        axs[5].scatter(dt_arr, arr_ftcs[1,2] , label=r'FTCS scheme', color="black",  marker=".")
-        axs[5].scatter(dt_arr, arr_rk4[1,2] , label=r'RK4 scheme', color="gray",  marker=".")
-        axs[5].scatter(dt_arr, arr_cn[1,2] , label=r'CN scheme', color="blue",  marker=".")        
-    
-    axs[5].legend(fontsize=body_size, loc="upper center")
-    axs[5].set_ylabel(r'\% CPU ', fontsize=body_size)
-    axs[5].set_xlabel(r'$dt$', fontsize=body_size)
-
-    fig.savefig(os.path.join(out_dir, "precision1D.pdf"))
-    fig.show()
-
-# visualise caseB
-def vis_caseB(method, dx0, dt0, dx_arr, dt_arr):
-
-    # get data
-    if method=="all":
-        arr_ftcs, arr_rk4, arr_cn = run("caseB", method, dx0, dt0, dx_arr, dt_arr)
-    else: 
-        arr = run("caseB", method, dx0, dt0, dx_arr, dt_arr)
-
-    # set up figure
-    fig, axs = plt.subplots(3,2,figsize = [18,10])
-    fig.subplots_adjust(hspace = .5, wspace=.4) 
-    axs = axs.ravel()  
-
-    plt.suptitle(r'Evaluation of Numerical Schemes in 1D', fontsize=title_size)
-    
-    # plot err vs dx at constant dt:
-    axs[0].set_title(r'Total error against spatial step size with $dt={0:.1e}$'.format(dt0), fontsize=body_size)
-    
-    if method=="ftcs":
-        axs[0].scatter(dx_arr, arr[0,0] , label=r'FTCS scheme', color="black", marker=".")
-    elif method=="rk4":
-        axs[0].scatter(dx_arr, arr[0,0] , label=r'RK4 scheme', color="black", marker=".")
-    elif method=="cn":
-        axs[0].scatter(dx_arr, arr[0,0] , label=r'CN scheme', color="black",  marker=".")
-    elif method=="all":
-        axs[0].scatter(dx_arr, arr_ftcs[0,0] , label=r'FTCS scheme', color="black",  marker=".")
-        axs[0].scatter(dx_arr, arr_rk4[0,0] , label=r'RK4 scheme', color="gray",  marker=".")
-        axs[0].scatter(dx_arr, arr_cn[0,0] , label=r'CN scheme', color="blue",  marker=".")        
-    
-    axs[0].legend(fontsize=body_size, loc="upper center")
-    axs[0].set_ylabel(r'$\epsilon_{tot}$', fontsize=body_size)
-    axs[0].set_xlabel(r'$dx$, $dy$', fontsize=body_size)
-
-    # plot comp time vs dx at constant dt:
-    axs[2].set_title(r'Computational time against spatial step size with $dt={0:.1e}$'.format(dt0), fontsize=body_size)
-    
-    if method=="ftcs":
-        axs[2].scatter(dx_arr, arr[0,1] , label=r'FTCS scheme', color="black", marker=".")
-    elif method=="rk4":
-        axs[2].scatter(dx_arr, arr[0,1] , label=r'RK4 scheme', color="black", marker=".")
-    elif method=="cn":
-        axs[2].scatter(dx_arr, arr[0,1] , label=r'CN scheme', color="black",  marker=".")
-    elif method=="all":
-        axs[2].scatter(dx_arr, arr_ftcs[0,1] , label=r'FTCS scheme', color="black",  marker=".")
-        axs[2].scatter(dx_arr, arr_rk4[0,1] , label=r'RK4 scheme', color="gray",  marker=".")
-        axs[2].scatter(dx_arr, arr_cn[0,1] , label=r'CN scheme', color="blue",  marker=".")        
-    
-    axs[2].legend(fontsize=body_size, loc="upper center")
-    axs[2].set_ylabel(r'$T$ (s)', fontsize=body_size)
-    axs[2].set_xlabel(r'$dx$, $dy$', fontsize=body_size)
-
-    # plot cpu usage vs dx at constant dt:
-    axs[4].set_title(r'CPU usage against spatial step size with $dt={0:.1e}$'.format(dt0), fontsize=body_size)
-    
-    if method=="ftcs":
-        axs[4].scatter(dx_arr, arr[0,2] , label=r'FTCS scheme', color="black", marker=".")
-    elif method=="rk4":
-        axs[4].scatter(dx_arr, arr[0,2] , label=r'RK4 scheme', color="black", marker=".")
-    elif method=="cn":
-        axs[4].scatter(dx_arr, arr[0,2] , label=r'CN scheme', color="black",  marker=".")
-    elif method=="all":
-        axs[4].scatter(dx_arr, arr_ftcs[0,2] , label=r'FTCS scheme', color="black",  marker=".")
-        axs[4].scatter(dx_arr, arr_rk4[0,2] , label=r'RK4 scheme', color="gray",  marker=".")
-        axs[4].scatter(dx_arr, arr_cn[0,2] , label=r'CN scheme', color="blue",  marker=".")        
-    
-    axs[4].legend(fontsize=body_size, loc="upper center")
-    axs[4].set_ylabel(r'\% CPU ', fontsize=body_size)
-    axs[4].set_xlabel(r'$dx$, $dy$', fontsize=body_size)
-
-    # plot err vs dt at constant dx:
-    axs[1].set_title(r'Total error against temporal step size with $dx=dy={0:.1e}$'.format(dx0), fontsize=body_size)
-    
-    if method=="ftcs":
-        axs[1].scatter(dt_arr, arr[1,0] , label=r'FTCS scheme', color="black", marker=".")
-    elif method=="rk4":
-        axs[1].scatter(dt_arr, arr[1,0] , label=r'RK4 scheme', color="black", marker=".")
-    elif method=="cn":
-        axs[1].scatter(dt_arr, arr[1,0] , label=r'CN scheme', color="black",  marker=".")
-    elif method=="all":
-        axs[1].scatter(dt_arr, arr_ftcs[1,0] , label=r'FTCS scheme', color="black",  marker=".")
-        axs[1].scatter(dt_arr, arr_rk4[1,0] , label=r'RK4 scheme', color="gray",  marker=".")
-        axs[1].scatter(dt_arr, arr_cn[1,0] , label=r'CN scheme', color="blue",  marker=".")        
-    
-    axs[1].legend(fontsize=body_size, loc="upper center")
-    axs[1].set_ylabel(r'$\epsilon_{tot}$', fontsize=body_size)
-    axs[1].set_xlabel(r'$dt$', fontsize=body_size)
-
-    # plot comp time vs dx at constant dt:
-    axs[3].set_title(r'Computational time against temporal step size with $dx=dy={0:.1e}$'.format(dx0), fontsize=body_size)
-    
-    if method=="ftcs":
-        axs[3].scatter(dt_arr, arr[1,1] , label=r'FTCS scheme', color="black", marker=".")
-    elif method=="rk4":
-        axs[3].scatter(dt_arr, arr[1,1] , label=r'RK4 scheme', color="black", marker=".")
-    elif method=="cn":
-        axs[3].scatter(dt_arr, arr[1,1] , label=r'CN scheme', color="black",  marker=".")
-    elif method=="all":
-        axs[3].scatter(dt_arr, arr_ftcs[1,1] , label=r'FTCS scheme', color="black",  marker=".")
-        axs[3].scatter(dt_arr, arr_rk4[1,1] , label=r'RK4 scheme', color="gray",  marker=".")
-        axs[3].scatter(dt_arr, arr_cn[1,1] , label=r'CN scheme', color="blue",  marker=".")        
-    
-    axs[3].legend(fontsize=body_size, loc="upper center")
-    axs[3].set_ylabel(r'$T$ (s)', fontsize=body_size)
-    axs[3].set_xlabel(r'$dt$', fontsize=body_size)
-
-    # plot cpu usage vs dx at constant dt:
-    axs[5].set_title(r'CPU usage against temporal step size with $dx=dy={0:.1e}$'.format(dx0), fontsize=body_size)
-    
-    if method=="ftcs":
-        axs[5].scatter(dt_arr, arr[1,2] , label=r'FTCS scheme', color="black", marker=".")
-    elif method=="rk4":
-        axs[5].scatter(dt_arr, arr[1,2] , label=r'RK4 scheme', color="black", marker=".")
-    elif method=="cn":
-        axs[5].scatter(dt_arr, arr[1,2] , label=r'CN scheme', color="black",  marker=".")
-    elif method=="all":
-        axs[5].scatter(dt_arr, arr_ftcs[1,2] , label=r'FTCS scheme', color="black",  marker=".")
-        axs[5].scatter(dt_arr, arr_rk4[1,2] , label=r'RK4 scheme', color="gray",  marker=".")
-        axs[5].scatter(dt_arr, arr_cn[1,2] , label=r'CN scheme', color="blue",  marker=".")        
-    
-    axs[5].legend(fontsize=body_size, loc="upper center")
-    axs[5].set_ylabel(r'\% CPU ', fontsize=body_size)
-    axs[5].set_xlabel(r'$dt$', fontsize=body_size)
-
-    fig.savefig(os.path.join(out_dir, "precision2D.pdf"))
-    fig.show()    
-
-# visualise error vs runtime
-def vis_err_v_T(method, dx0, dt0, dx_arr, dt_arr):
-
-    # get data
-    if method=="all":
-        arr_ftcs, arr_rk4, arr_cn = run("caseA", method, dx0, dt0, dx_arr, dt_arr)
-        arr_ftcs2d, arr_rk42d, arr_cn2d = run("caseB", method, dx0, dt0, dx_arr, dt_arr)
-    else: 
-        arr = run("caseA", method, dx0, dt0, dx_arr, dt_arr)
-        arr2d = run("caseB", method, dx0, dt0, dx_arr, dt_arr)
+    # customise description in each case
+    if case=="caseA":
+        description = "free propagation in 1D"
+    elif case=="caseB":
+        description = "free propagation in 2D"
+    elif case=="caseC":
+        description = "a finite 1D potential well"
+    elif case=="caseD":
+        description = "single-slit diffraction in 2D" 
+    elif case=="caseE":
+        description = "two-particle collision in 2D"               
 
     # set up figure
     fig, axs = plt.subplots(2,1,figsize = [18,10])
     fig.subplots_adjust(hspace = .5, wspace=.4) 
     axs = axs.ravel()  
 
-    plt.suptitle(r'Error on Numerical Schemes Versus Runtime', fontsize=title_size)
+    plt.suptitle(r'Evaluation of numerical schemes for {0}'.format(description), fontsize=title_size)
 
-    # 1D-case:
-    axs[0].set_title(r'One-dimensional case', fontsize=body_size)
+    # plot error against step size
+    if case=="caseA" or case=="caseB":
+        axs[0].set_title(r'Error w.r.t. analytical solution against step size (with ${0}={1:.1e}$)'.format(d_const,d0), fontsize=body_size)
+    else:
+        axs[0].set_title(r'Error on normalisation against step size (with ${0}={1:.1e}$)'.format(d_const,d0), fontsize=body_size)    
     
+    #fit function:
+    if method != "all" and fit==True:
+        z = np.polyfit(np.log(d_arr), np.log(arr[0]),1)
+        p = np.poly1d(z)
+        d_space = np.linspace(d_arr.min(), d_arr.max(), 100)
+
     if method=="ftcs":
-        axs[0].scatter(arr[0,1], arr[0,0] , label=r'FTCS scheme', color="black", marker=".")
-        axs[0].scatter(arr[1,1], arr[1,0] ,  color="black", marker=".")
+        axs[0].scatter(d_arr, arr[0] , label=r'FTCS scheme', color="black", marker=".")
+        if fit==True:
+            axs[0].plot(d_space,d_space**p[1]*np.exp(p[0]),color="red", ls="--" , label=r'best fit: $\epsilon \propto ({0})^{{ {1:.4f} }}$'.format(d, p[1])) 
     elif method=="rk4":
-        axs[0].scatter(arr[0,1], arr[0,0] , label=r'RK4 scheme', color="black", marker=".")
-        axs[0].scatter(arr[1,1], arr[1,0] ,  color="black", marker=".")
+        axs[0].scatter(d_arr, arr[0] , label=r'RK4 scheme', color="black", marker=".")
+        if fit==True:
+            axs[0].plot(d_space,d_space**p[1]*np.exp(p[0]),color="red", ls="--" , label=r'best fit: $\epsilon \propto ({0})^{{ {1:.4f} }}$'.format(d, p[1]))
     elif method=="cn":
-        axs[0].scatter(arr[0,1], arr[0,0] , label=r'CN scheme', color="black",  marker=".")
-        axs[0].scatter(arr[1,1], arr[1,0] ,  color="black", marker=".")
+        axs[0].scatter(d_arr, arr[0] , label=r'CN scheme', color="black",  marker=".")
+        if fit==True:
+            axs[0].plot(d_space,d_space**p[1]*np.exp(p[0]),color="red", ls="--" , label=r'best fit: $\epsilon \propto ({0})^{{ {1:.4f} }}$'.format(d, p[1]))
     elif method=="all":
-        axs[0].scatter(arr_ftcs[0,1], arr_ftcs[0,0] , label=r'FTCS scheme', color="black",  marker=".")
-        axs[0].scatter(arr_ftcs[1,1], arr_ftcs[1,0] ,  color="black",  marker=".")
-
-        axs[0].scatter(arr_rk4[0,1], arr_rk4[0,0] , label=r'RK4 scheme', color="gray",  marker=".")
-        axs[0].scatter(arr_rk4[1,1], arr_rk4[1,0] , color="gray",  marker=".")
-
-        axs[0].scatter(arr_cn[0,1], arr_cn[0,0] , label=r'CN scheme', color="blue",  marker=".") 
-        axs[0].scatter(arr_cn[1,1], arr_cn[1,0] , color="blue",  marker=".")         
+        axs[0].scatter(d_arr, arr_ftcs[0] , label=r'FTCS scheme', color="black",  marker=".")
+        axs[0].scatter(d_arr, arr_rk4[0] , label=r'RK4 scheme', color="gray",  marker=".")
+        axs[0].scatter(d_arr, arr_cn[0] , label=r'CN scheme', color="blue",  marker=".")        
     
     axs[0].legend(fontsize=body_size, loc="upper center")
-    axs[0].set_ylabel(r'$\epsilon_{tot} ', fontsize=body_size)
-    axs[0].set_xlabel(r'$T$ (s)', fontsize=body_size)
+    axs[0].set_ylabel(r'$\epsilon$', fontsize=body_size)
+    axs[0].set_xlabel(r'${0}$'.format(d), fontsize=body_size)
 
-    # 2D-case:
-    axs[1].set_title(r'Two-dimensional case', fontsize=body_size)
+    # plot error against time
+
+    #fit function:
+    if method != "all" and fit==True:
+        z = np.polyfit(np.log(arr[1]), np.log(arr[0]),1)
+        p = np.poly1d(z)
+        T_space = np.linspace(arr[1].min(), arr[1].max(), 100)
+
+    if case=="caseA" or case=="caseB":
+        axs[1].set_title(r'Error w.r.t. analytical solution against runtime (with ${0}={1:.1e}$)'.format(d_const,d0), fontsize=body_size)
+    else:
+        axs[1].set_title(r'Error on normalisation against runtime (with ${0}={1:.1e}$)'.format(d_const,d0), fontsize=body_size)
     
     if method=="ftcs":
-        axs[1].scatter(arr[0,1], arr[0,0] , label=r'FTCS scheme', color="black", marker=".")
-        axs[1].scatter(arr[1,1], arr[1,0] ,  color="black", marker=".")
+        axs[1].scatter(arr[1], arr[0] , label=r'FTCS scheme', color="black", marker=".")
+        if fit==True:
+            axs[1].plot(T_space,T_space**p[1]*np.exp(p[0]),color="red", ls="--" , label=r'best fit: $\epsilon \propto T^{{ {0:.4f} }}$'.format(p[1]))
     elif method=="rk4":
-        axs[1].scatter(arr[0,1], arr[0,0] , label=r'RK4 scheme', color="black", marker=".")
-        axs[1].scatter(arr[1,1], arr[1,0] ,  color="black", marker=".")
+        axs[1].scatter(arr[1], arr[0] , label=r'RK4 scheme', color="black", marker=".")
+        if fit==True:
+            axs[1].plot(T_space,T_space**p[1]*np.exp(p[0]),color="red", ls="--" , label=r'best fit: $\epsilon \propto T^{{ {0:.4f} }}$'.format(p[1]))
     elif method=="cn":
-        axs[1].scatter(arr[0,1], arr[0,0] , label=r'CN scheme', color="black",  marker=".")
-        axs[1].scatter(arr[1,1], arr[1,0] ,  color="black", marker=".")
+        axs[1].scatter(arr[1], arr[0] , label=r'CN scheme', color="black",  marker=".")
+        if fit==True:
+            axs[1].plot(T_space,T_space**p[1]*np.exp(p[0]),color="red", ls="--" , label=r'best fit: $\epsilon \propto T^{{ {0:.4f} }}$'.format(p[1]))
     elif method=="all":
-        axs[1].scatter(arr_ftcs[0,1], arr_ftcs[0,0] , label=r'FTCS scheme', color="black",  marker=".")
-        axs[1].scatter(arr_ftcs[1,1], arr_ftcs[1,0] ,  color="black",  marker=".")
-
-        axs[1].scatter(arr_rk4[0,1], arr_rk4[0,0] , label=r'RK4 scheme', color="gray",  marker=".")
-        axs[1].scatter(arr_rk4[1,1], arr_rk4[1,0] , color="gray",  marker=".")
-
-        axs[1].scatter(arr_cn[0,1], arr_cn[0,0] , label=r'CN scheme', color="blue",  marker=".") 
-        axs[1].scatter(arr_cn[1,1], arr_cn[1,0] , color="blue",  marker=".")         
+        axs[1].scatter(arr_ftcs[1], arr_ftcs[0] , label=r'FTCS scheme', color="black",  marker=".")
+        axs[1].scatter(arr_rk4[1], arr_rk4[0] , label=r'RK4 scheme', color="gray",  marker=".")
+        axs[1].scatter(arr_cn[1], arr_cn[0] , label=r'CN scheme', color="blue",  marker=".")        
     
     axs[1].legend(fontsize=body_size, loc="upper center")
-    axs[1].set_ylabel(r'$\epsilon_{tot} ', fontsize=body_size)
-    axs[1].set_xlabel(r'$T$ (s)', fontsize=body_size)
+    axs[1].set_ylabel(r'$\epsilon$', fontsize=body_size)
+    axs[1].set_xlabel(r'$T(s)$', fontsize=body_size)
 
-
-    fig.savefig(os.path.join(out_dir, "precision_err_v_time.pdf"))
+    # display and save figure
     fig.show()
+    fig.savefig(os.path.join(out_dir, "Eps_vs_step_T.pdf"))
+    
+    return 0
+
+# plot computational time and cpu usage against step size
+def time_cpu_vs_step(case, method, mode, d0, d_arr, fit):
+
+    # generate data
+    if mode=="space_loop":
+        
+        d_const = "dt"
+        if case != "caseB" and case != "caseD":
+            d = "dx"
+        else:
+            d = "dx, dy"    
+        
+        if method=="all":
+            arr_ftcs = space_loop(case, "ftcs", d0, d_arr)
+            arr_rk4 =  space_loop(case, "rk4", d0, d_arr)
+            arr_cn =   space_loop(case, "cn", d0, d_arr)
+        elif method=="ftcs" or method=="rk4" or method=="cn":
+            arr =  space_loop(case, method, d0, d_arr)  
+    elif mode=="time_loop":
+
+        d = "dt"
+        if case != "caseB" and case != "caseD":
+            d_const = "dx"
+        else:
+            d_const = "dx, dy"
+
+        if method=="all":
+            arr_ftcs = time_loop(case, "ftcs", d0, d_arr)
+            arr_rk4 =  time_loop(case, "rk4", d0, d_arr)
+            arr_cn =   time_loop(case, "cn", d0, d_arr)
+        elif method=="ftcs" or method=="rk4" or method=="cn":
+            arr =  time_loop(case, method, d0, d_arr)
+
+    # customise description in each case
+    if case=="caseA":
+        description = "free propagation in 1D"
+    elif case=="caseB":
+        description = "free propagation in 2D"
+    elif case=="caseC":
+        description = "a finite 1D potential well"
+    elif case=="caseD":
+        description = "single-slit diffraction in 2D" 
+    elif case=="caseE":
+        description = "two-particle collision in 2D"               
+
+    # set up figure
+    fig, axs = plt.subplots(2,1,figsize = [18,10])
+    fig.subplots_adjust(hspace = .5, wspace=.4) 
+    axs = axs.ravel()  
+
+    plt.suptitle(r'Evaluation of numerical schemes for {0}'.format(description), fontsize=title_size)
+
+    # plot runtime against step size
+    axs[0].set_title(r'Computational time against step size (with ${0}={1:.1e}$)'.format(d_const,d0), fontsize=body_size)
+
+    #fit function:
+    if method != "all" and fit==True:
+        z = np.polyfit(np.log(d_arr), np.log(arr[1]),1)
+        p = np.poly1d(z)
+        d_space = np.linspace(d_arr.min(), d_arr.max(), 100)
+    
+    if method=="ftcs":
+        axs[0].scatter(d_arr, arr[1] , label=r'FTCS scheme', color="black", marker=".")
+        if fit==True:
+            axs[0].plot(d_space,d_space**p[1]*np.exp(p[0]),color="red", ls="--" , label=r'best fit: $T \propto ({0})^{{ {1:.4f} }}$'.format(d, p[1])) 
+    elif method=="rk4":
+        axs[0].scatter(d_arr, arr[1] , label=r'RK4 scheme', color="black", marker=".")
+        if fit==True:
+            axs[0].plot(d_space,d_space**p[1]*np.exp(p[0]),color="red", ls="--" , label=r'best fit: $T \propto ({0})^{{ {1:.4f} }}$'.format(d, p[1])) 
+    elif method=="cn":
+        axs[0].scatter(d_arr, arr[1] , label=r'CN scheme', color="black",  marker=".")
+        if fit==True:
+            axs[0].plot(d_space,d_space**p[1]*np.exp(p[0]),color="red", ls="--" , label=r'best fit: $T \propto ({0})^{{ {1:.4f} }}$'.format(d, p[1])) 
+    elif method=="all":
+        axs[0].scatter(d_arr, arr_ftcs[1] , label=r'FTCS scheme', color="black",  marker=".")
+        axs[0].scatter(d_arr, arr_rk4[1] , label=r'RK4 scheme', color="gray",  marker=".")
+        axs[0].scatter(d_arr, arr_cn[1] , label=r'CN scheme', color="blue",  marker=".")        
+    
+    axs[0].legend(fontsize=body_size, loc="upper center")
+    axs[0].set_ylabel(r'$T (s)$', fontsize=body_size)
+    axs[0].set_xlabel(r'${0}$'.format(d), fontsize=body_size)
+
+    # plot cpu usage against step size
+    axs[1].set_title(r'CPU usage against step size (with ${0}={1:.1e}$)'.format(d_const,d0), fontsize=body_size)
+    
+    #fit function:
+    if method != "all" and fit==True:
+        z = np.polyfit(np.log(d_arr), np.log(arr[2]),1)
+        p = np.poly1d(z)
+        d_space = np.linspace(d_arr.min(), d_arr.max(), 100)
+
+    if method=="ftcs":
+        axs[1].scatter(d_arr, arr[2] , label=r'FTCS scheme', color="black", marker=".")
+        if fit==True:
+            axs[1].plot(d_space,d_space**p[1]*np.exp(p[0]),color="red", ls="--" , label=r'best fit: $\% CPU \propto ({0})^{{ {1:.4f} }}$'.format(d, p[1]))
+    elif method=="rk4":
+        axs[1].scatter(d_arr, arr[2] , label=r'RK4 scheme', color="black", marker=".")
+        if fit==True:
+            axs[1].plot(d_space,d_space**p[1]*np.exp(p[0]),color="red", ls="--" , label=r'best fit: $\% CPU \propto ({0})^{{ {1:.4f} }}$'.format(d, p[1]))
+    elif method=="cn":
+        axs[1].scatter(d_arr, arr[2] , label=r'CN scheme', color="black",  marker=".")
+        if fit==True:
+            axs[1].plot(d_space,d_space**p[1]*np.exp(p[0]),color="red", ls="--" , label=r'best fit: $\% CPU \propto ({0})^{{ {1:.4f} }}$'.format(d, p[1]))
+    elif method=="all":
+        axs[1].scatter(d_arr, arr_ftcs[2] , label=r'FTCS scheme', color="black",  marker=".")
+        axs[1].scatter(d_arr, arr_rk4[2] , label=r'RK4 scheme', color="gray",  marker=".")
+        axs[1].scatter(d_arr, arr_cn[2] , label=r'CN scheme', color="blue",  marker=".")        
+    
+    axs[1].legend(fontsize=body_size, loc="upper center")
+    axs[1].set_ylabel(r'$\% CPU$ ', fontsize=body_size)
+    axs[1].set_xlabel(r'${0}$'.format(d), fontsize=body_size)
+
+    # display and save figure
+    fig.show()
+    fig.savefig(os.path.join(out_dir, "T_CPU_vs_step.pdf"))
+
+    return 0
+
+# main function to run the code
+def main(case, method, mode, d0, d_arr, fit=True):    
+
+    if mode != "space_loop" and mode != "time_loop":
+        print("Error: argument mode must be equal to 'space_loop' or 'time_loop' ")
+        return 1
+    else:
+        err_vs_step_time(case,method, mode, d0, d_arr, fit) 
+        time_cpu_vs_step(case,method, mode, d0, d_arr, fit) 
+
+
 
 #####################
-method="all"
-case = "caseA"
-dt0 = 0.001
+dt0 = 0.0001 #0.00001 
 dx0 = 0.1
-dx_arr = [0.1, 0.2, 0.5, 0.01]
-dt_arr = [0.001, 0.01, 0.05]    
+dx_arr = np.linspace(0.5, 0.1, 100)
+dt_arr = [0.001] 
 
-vis_caseA(method, dx0, dt0, dx_arr, dt_arr)
+main("caseC", "ftcs", "space_loop", dt0, dx_arr, True)

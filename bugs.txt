@@ -1,0 +1,6 @@
+FATAL BUGS IN CODE (Version: 07.02)
+-----------------------------
+
+1. semistatic case does not work with ADD_MET != "no"
+2. semistatic case does not work with METHOD == "an"
+3. no case works with METHOD == ADD_MET
