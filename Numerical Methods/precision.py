@@ -1,6 +1,6 @@
 #@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@
-#     FUNCTIONS TO EVALUATE THE PRECISION OF NUMERICAL METHODS IN CASES A, B, C, D
-#           NOTE: CASE E STILL TO DO!
+#     FUNCTIONS TO EVALUATE THE PRECISION OF NUMERICAL METHODS IN CASES A, B, C, D, E
+#           
 
 # import modules
 import numpy as np
@@ -159,7 +159,21 @@ def single_run(case, method, dt, dx, dy):
 
         err = np.abs(val[0] -1)    
 
-    # do caseE !
+    if case=="caseE":
+        if method=="ftcs":
+            start = time.time() 
+            P, x, val, _ = ftcs_2particle(case, settings, sys_params, num_par) 
+            stop = time.time()
+        elif method=="rk4":
+            start = time.time()
+            P, x, val, _ = rk4_2particle(case,  settings, sys_params, num_par) 
+            stop = time.time()
+        elif method=="cn":
+            start = time.time()
+            P, x, val, _ = cn_2particle(case,  settings, sys_params, num_par) 
+            stop = time.time()    
+
+        err = np.abs(val[0] -1)
     
     cpu_frac = process.cpu_percent()    
 
