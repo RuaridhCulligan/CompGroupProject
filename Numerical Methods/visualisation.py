@@ -646,7 +646,7 @@ def visualise_2D(case,method, settings, sys_par, num_par):
     v = False
     V0 = sys_par[5]
     
-    if SHOW_V==1 and case=="caseB":
+    if SHOW_V==1 and case=="caseC":
             d = sys_par[6]
             w = sys_par[7]
             v = True
@@ -680,7 +680,8 @@ def visualise_2D(case,method, settings, sys_par, num_par):
                 ax.plot_surface(X,Y,P_diff[0],color="black", cmap="binary", label=r'Error on FTCS scheme (total: {0:.3f})'.format(integrate_2d(P_diff[0],x,y)))
 
             else:  
-                ax.plot_surface(X,Y,P[0], color="black" ,cmap="binary", label=r'FTCS scheme normalised to {0:.4f} '.format(val[0]))    
+                surf = ax.plot_surface(X,Y,P[0], color="black" ,cmap="binary", label=r'FTCS scheme normalised to {0:.4f} '.format(val[0])) 
+                 
 
             if v == True:
                 ax.set_xlim(-d/2, d/2)
@@ -689,9 +690,9 @@ def visualise_2D(case,method, settings, sys_par, num_par):
         elif method=="rk4" and ADD_MET == "no": 
             if diff == "True" and case == "caseB":
                 P_diff = np.abs(P - P_an)
-                ax.plot_surface(X,Y,P_diff[0],color="black", cmap="binary", label=r'Error on RK4 scheme (total: {0:.3f})'.format(integrate_2d(P_diff[0],x,y)))
+                surf = ax.plot_surface(X,Y,P_diff[0],color="black", cmap="binary", label=r'Error on RK4 scheme (total: {0:.3f})'.format(integrate_2d(P_diff[0],x,y)))
             else:
-                ax.plot_surface(X,Y,color="black", cmap="binary", label=r'RK4 method normalised to {0:.4f} '.format(val[0]))       
+                surf = ax.plot_surface(X,Y,color="black", cmap="binary", label=r'RK4 method normalised to {0:.4f} '.format(val[0]))       
 
             if v == True:
                 ax.set_xlim(-d/2, d/2)
@@ -700,9 +701,9 @@ def visualise_2D(case,method, settings, sys_par, num_par):
         elif method=="cn" and ADD_MET == "no": 
             if diff == "True" and case == "caseB":
                 P_diff = np.abs(P - P_an)
-                ax.plot_surface(X,Y,P_diff[0],color="black", cmap="binary", label=r'Error on CN scheme (total: {0:.3f})'.format(integrate_2d(P_diff[0],x,y)))
+                surf = ax.plot_surface(X,Y,P_diff[0],color="black", cmap="binary", label=r'Error on CN scheme (total: {0:.3f})'.format(integrate_2d(P_diff[0],x,y)))
             else:
-                ax.plot_surface(X,Y,P[0],color="black", cmap="binary", label=r'CN scheme normalised to {0:.4f} '.format(val[0]))
+                surf = ax.plot_surface(X,Y,P[0],color="black", cmap="binary", label=r'CN scheme normalised to {0:.4f} '.format(val[0]))
 
             if v == True:
                 ax.set_xlim(-d/2, d/2)
@@ -712,13 +713,19 @@ def visualise_2D(case,method, settings, sys_par, num_par):
             raise Exception("Overlay of different solutions can not be visualised in 2D.")
 
         elif (method=="an" and ADD_MET=="no" and case=="caseB"):
-            ax.plot_surface(X,Y,P[0],color="black", cmap="binary", label=r'Analytical solution normalised to {0:.4f}'.format(integrate_2d(P[0],x,y)))
+            surf = ax.plot_surface(X,Y,P[0],color="black", cmap="binary", label=r'Analytical solution normalised to {0:.4f}'.format(integrate_2d(P[0],x,y)))
 
             if v == True:
                 ax.set_xlim(-d/2, d/2)
                 ax.set_ylim(-w/2, w/2)
         
-        #ax.legend(fontsize=body_size, loc="upper right")
+
+        # fix legend
+        surf.set_facecolor("black")
+        surf._facecolors2d  = surf._facecolor3d
+        surf._edgecolors2d  = surf._edgecolor3d
+ 
+        ax.legend(fontsize=body_size, loc="upper right")
         ax.set_zlabel(r'Probability density $|\Psi(x,y,t)|^2$', fontsize=body_size)
         ax.set_xlabel(r'Spatial dimension $x$', fontsize=body_size)
         ax.set_ylabel(r'Spatial dimension $y$', fontsize=body_size)
@@ -749,24 +756,30 @@ def visualise_2D(case,method, settings, sys_par, num_par):
                     P_diff = np.abs(P - P_an)
                     for i in range(len(T)):
                         axs[i].set_title("t={0:.3f}".format(T[i]))
-                        axs[i].plot_surface(X,Y,P_diff[i],color="black", cmap="binary", label=r'Error on FTCS scheme (total: {0:.3f})'.format(integrate_2d(P_diff[i],x,y)))
-                        
+                        surf = axs[i].plot_surface(X,Y,P_diff[i],color="black", cmap="binary", label=r'Error on FTCS scheme (total: {0:.3f})'.format(integrate_2d(P_diff[i],x,y)))
+                        surf.set_facecolor("black")
+                        surf._facecolors2d  = surf._facecolor3d
+                        surf._edgecolors2d  = surf._edgecolor3d
+
                         if v == True:
                             axs[i].set_xlim(-d/2, d/2)
                             axs[i].set_ylim(-w/2, w/2)
-                        #axs[i].legend(fontsize=body_size, loc="upper right")
+                        axs[i].legend(fontsize=body_size, loc="upper right")
                         axs[i].set_zlabel(r'$|\Psi(x,y,t)|^2$', fontsize=body_size)
                         axs[i].set_xlabel(r'$x$', fontsize=body_size)
                         axs[i].set_ylabel(r'$y$', fontsize=body_size)
                 else:
                     for i in range(len(T)):
                         axs[i].set_title("t={0:.3f}".format(T[i]))
-                        axs[i].plot_surface(X,Y,P[i],color="black", cmap="binary", label= r'FTCS scheme normalised to {0:.4f}'.format(val[i]))
-                        
+                        surf = axs[i].plot_surface(X,Y,P[i],color="black", cmap="binary", label= r'FTCS scheme normalised to {0:.4f}'.format(val[i]))
+                        surf.set_facecolor("black")
+                        surf._facecolors2d  = surf._facecolor3d
+                        surf._edgecolors2d  = surf._edgecolor3d
+
                         if v == True:
                             axs[i].set_xlim(-d/2, d/2)
                             axs[i].set_ylim(-w/2, w/2)
-                        #axs[i].legend(fontsize=body_size, loc="upper right")
+                        axs[i].legend(fontsize=body_size, loc="upper right")
                         axs[i].set_zlabel(r'$|\Psi(x,y,t)|^2$', fontsize=body_size)
                         axs[i].set_xlabel(r'$x$', fontsize=body_size)
                         axs[i].set_ylabel(r'$y$', fontsize=body_size)
@@ -776,23 +789,30 @@ def visualise_2D(case,method, settings, sys_par, num_par):
                     P_diff = np.abs(P - P_an)
                     for i in range(len(T)):
                         axs[i].set_title("t={0:.3f}".format(T[i]))
-                        axs[i].plot_surface(X,Y,P_diff[i],color="black", cmap="binary", label=r'Error on RK4 method (total: {0:.3f})'.format(integrate_2d(P_diff[i],x,y)))
+                        surf = axs[i].plot_surface(X,Y,P_diff[i],color="black", cmap="binary", label=r'Error on RK4 method (total: {0:.3f})'.format(integrate_2d(P_diff[i],x,y)))
+                        surf.set_facecolor("black")
+                        surf._facecolors2d  = surf._facecolor3d
+                        surf._edgecolors2d  = surf._edgecolor3d
+                        
                         if v == True:
                             axs[i].set_xlim(-d/2, d/2)
                             axs[i].set_ylim(-w/2, w/2)
-                        #axs[i].legend(fontsize=body_size, loc="upper right")
+                        axs[i].legend(fontsize=body_size, loc="upper right")
                         axs[i].set_zlabel(r'$|\Psi(x,y,t)|^2$', fontsize=body_size)
                         axs[i].set_xlabel(r'$x$', fontsize=body_size)
                         axs[i].set_ylabel(r'$y$', fontsize=body_size)
                 else:
                     for i in range(len(T)):
                         axs[i].set_title("t={0:.3f}".format(T[i]))
-                        axs[i].plot_surface(X,Y,P[i],color="black", cmap="binary", label= r'RK4 method normalised to {0:.4f}'.format(val[i]))
-                        
+                        surf = axs[i].plot_surface(X,Y,P[i],color="black", cmap="binary", label= r'RK4 method normalised to {0:.4f}'.format(val[i]))
+                        surf.set_facecolor("black")
+                        surf._facecolors2d  = surf._facecolor3d
+                        surf._edgecolors2d  = surf._edgecolor3d
+
                         if v == True:
                             axs[i].set_xlim(-d/2, d/2)
                             axs[i].set_ylim(-w/2, w/2)
-                        #axs[i].legend(fontsize=body_size, loc="upper right")
+                        axs[i].legend(fontsize=body_size, loc="upper right")
                         axs[i].set_zlabel(r'$|\Psi(x,y,t)|^2$', fontsize=body_size)
                         axs[i].set_xlabel(r'$x$', fontsize=body_size)
                         axs[i].set_ylabel(r'$y$', fontsize=body_size)
@@ -803,24 +823,32 @@ def visualise_2D(case,method, settings, sys_par, num_par):
                     P_diff = np.abs(P - P_an)
                     for i in range(len(T)):
                         axs[i].set_title("t={0:.3f}".format(T[i]))
-                        axs[i].plot_surface(X,Y,P_diff[i],color="black", cmap="binary", label=r'Error on CN scheme (total: {0:.3f})'.format(integrate_2d(P_diff[i],x,y)))
+                        surf = axs[i].plot_surface(X,Y,P_diff[i],color="black", cmap="binary", label=r'Error on CN scheme (total: {0:.3f})'.format(integrate_2d(P_diff[i],x,y)))
+                        surf.set_facecolor("black")
+                        surf._facecolors2d  = surf._facecolor3d
+                        surf._edgecolors2d  = surf._edgecolor3d
+
                         if v == True:
                             axs[i].set_xlim(-d/2, d/2)
                             axs[i].set_ylim(-w/2, w/2)
-                        #axs[i].legend(fontsize=body_size, loc="upper right")
+                        axs[i].legend(fontsize=body_size, loc="upper right")
                         axs[i].set_zlabel(r'$|\Psi(x,y,t)|^2$', fontsize=body_size)
                         axs[i].set_xlabel(r'$x$', fontsize=body_size)
                         axs[i].set_ylabel(r'$y$', fontsize=body_size)
                 else:
                     for i in range(len(T)):
                         axs[i].set_title("t={0:.3f}".format(T[i]))
-                        axs[i].plot_surface(X,Y,P[i],color="black", cmap="binary", label= r'CN scheme normalised to {0:.4f}'.format(val[i]))
-                        
+                        surf = axs[i].plot_surface(X,Y,P[i],color="black", cmap="binary", label= r'CN scheme normalised to {0:.4f}'.format(val[i]))
+                        surf.set_facecolor("black")
+                        surf._facecolors2d  = surf._facecolor3d
+                        surf._edgecolors2d  = surf._edgecolor3d
+
+
                         if v == True:
                             axs[i].set_xlim(-d/2, d/2)
                             axs[i].set_ylim(-w/2, w/2)
 
-                        #axs[i].legend(fontsize=body_size, loc="upper right")
+                        axs[i].legend(fontsize=body_size, loc="upper right")
                         axs[i].set_zlabel(r'$|\Psi(x,y,t)|^2$', fontsize=body_size)
                         axs[i].set_xlabel(r'$x$', fontsize=body_size)
                         axs[i].set_ylabel(r'$y$', fontsize=body_size)
@@ -833,8 +861,12 @@ def visualise_2D(case,method, settings, sys_par, num_par):
             elif method == "an":
                 for i in range(len(T)):
                     axs[i].set_title("t={0:.3f}".format(T[i]))
-                    axs[i].plot_surface(X,Y,P[i],color="black", cmap="binary", label= r'Analytical solution normalised to {0:.4f}'.format(integrate_2d(P[i],x,y)))                       
-                    #axs[i].legend(fontsize=body_size, loc="upper right")
+                    surf = axs[i].plot_surface(X,Y,P[i],color="black", cmap="binary", label= r'Analytical solution normalised to {0:.4f}'.format(integrate_2d(P[i],x,y)))                       
+                    surf.set_facecolor("black")
+                    surf._facecolors2d  = surf._facecolor3d
+                    surf._edgecolors2d  = surf._edgecolor3d
+                    
+                    axs[i].legend(fontsize=body_size, loc="upper right")
                     axs[i].set_zlabel(r'$|\Psi(x,y,t)|^2$', fontsize=body_size)
                     axs[i].set_xlabel(r'$x$', fontsize=body_size)
                     axs[i].set_ylabel(r'$y$', fontsize=body_size)

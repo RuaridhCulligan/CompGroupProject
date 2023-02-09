@@ -1,7 +1,7 @@
 NECESSARY THINGS LEFT TO DO 
 ---------------------------
 
-1. Finish 2D visualisation (at least static and semistatic; missing: labels) 
+1. Finish 2D visualisation [static + semistatic done]
 2. Fix case D
 3. Fix case E 
 
