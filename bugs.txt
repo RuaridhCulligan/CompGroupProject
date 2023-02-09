@@ -1,6 +1,14 @@
-FATAL BUGS IN CODE (Version: 07.02)
------------------------------
+NECESSARY THINGS LEFT TO DO 
+---------------------------
 
-1. semistatic case does not work with ADD_MET != "no" []
-2. semistatic case does not work with METHOD == "an" [ fixed: 09.02]
-3. no case works with METHOD == ADD_MET [now raises value error; 09.02]
+1. Finish 2D visualisation (at least static and semistatic; missing: labels) 
+2. Fix case D
+3. Fix case E 
+
+FURTHER THINGS LEFT TO DO
+-------------------------
+
+1. Implement GUI
+2. Fix GIF in 1D and 2D
+3. Get RK4 / CN to work
+4. Improve runtime on FTCS
