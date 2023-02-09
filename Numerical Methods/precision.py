@@ -477,4 +477,4 @@ dx0 = 0.1
 dx_arr = np.linspace(0.5, 0.1, 100)
 dt_arr = [0.001] 
 
-main("caseC", "ftcs", "space_loop", dt0, dx_arr, True)
+main("caseA", "ftcs", "space_loop", dt0, dx_arr, True)

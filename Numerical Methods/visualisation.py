@@ -35,20 +35,42 @@ out_file  = os.path.join(out_dir, file_name)
 # visualise solution in one-dimensional case (cases A & C)
 def visualise_1D(case,method, settings, sys_par, num_par):
 
+    ADD_MET = settings[2]
+
+    # make sure all input is sensible
+    if method == ADD_MET:
+            raise Exception("Additional method cannot be primary method.")
+    if method == "an" and case != "caseA":
+            raise Exception("No analytical solution is defined for this case.")               
+
     diff = settings[5]
 
     # compute relevant numerical solutions
-    ADD_MET = settings[2]
+    
     if method=="ftcs" and ADD_MET == "no":
-        P, x, val, T = ftcs_1D(case, settings, sys_par, num_par)
+        if case=="caseE":
+            P, x, val, T = ftcs_2particle(case, settings, sys_par, num_par)
+        else:    
+            P, x, val, T = ftcs_1D(case, settings, sys_par, num_par)
     elif method=="rk4" and ADD_MET == "no":
-        P, x, val, T = rk4_1D(case, settings, sys_par, num_par)
+        if case=="caseE":
+            P, x, val, T = rk4_2particle(case, settings, sys_par, num_par)
+        else:    
+            P, x, val, T = rk4_1D(case, settings, sys_par, num_par)
     elif method=="cn" and ADD_MET == "no":
-        P, x, val, T = cn_1D(case, settings, sys_par, num_par)
+        if case=="caseE":
+            P, x, val, T = cn_2particle(case, settings, sys_par, num_par)
+        else:
+            P, x, val, T = cn_1D(case, settings, sys_par, num_par)    
     elif method=="all" and ADD_MET == "no":
-        P_ftcs, x, val_ftcs, T = ftcs_1D(case, settings, sys_par, num_par)
-        P_rk4, x, val_rk4, T   = rk4_1D(case, settings, sys_par, num_par)
-        P_cn, x, val_cn, T     = cn_1D(case, settings, sys_par, num_par)
+        if case=="caseE":
+            P_ftcs, x, val_ftcs, T = ftcs_2particle(case, settings, sys_par, num_par)
+            P_rk4, x, val_rk4, T   = rk4_2particle(case, settings, sys_par, num_par)
+            P_cn, x, val_cn, T     = cn_2particle(case, settings, sys_par, num_par)
+        else:    
+            P_ftcs, x, val_ftcs, T = ftcs_1D(case, settings, sys_par, num_par)
+            P_rk4, x, val_rk4, T   = rk4_1D(case, settings, sys_par, num_par)
+            P_cn, x, val_cn, T     = cn_1D(case, settings, sys_par, num_par)
     elif method=="an":
         x_min   = num_par[0]
         x_max   = num_par[1]
@@ -78,14 +100,26 @@ def visualise_1D(case,method, settings, sys_par, num_par):
     # the variable ADD_MET in the log file
     
     elif (method == "ftcs" and ADD_MET == "rk4") or (method == "rk4" and ADD_MET == "ftcs"):
-        P_ftcs, x, val_ftcs, T = ftcs_1D(case, settings, sys_par, num_par)
-        P_rk4, x, val_rk4, T = rk4_1D(case, settings, sys_par, num_par)
+        if case=="caseE":
+            P_ftcs, x, val_ftcs, T = ftcs_2particle(case, settings, sys_par, num_par)
+            P_rk4, x, val_rk4, T = rk4_2particle(case, settings, sys_par, num_par)
+        else:    
+            P_ftcs, x, val_ftcs, T = ftcs_1D(case, settings, sys_par, num_par)
+            P_rk4, x, val_rk4, T = rk4_1D(case, settings, sys_par, num_par)
     elif (method == "rk4" and ADD_MET == "cn") or (method == "cn" and ADD_MET == "rk4"):
-        P_rk4, x, val_rk4, T = rk4_1D(case, settings, sys_par, num_par)
-        P_cn, x, val_cn, T = cn_1D(case, settings, sys_par, num_par)
+        if case=="caseE":
+            P_rk4, x, val_rk4, T = rk4_2particle(case, settings, sys_par, num_par)
+            P_cn, x, val_cn, T = cn_2particle(case, settings, sys_par, num_par)
+        else:    
+            P_rk4, x, val_rk4, T = rk4_1D(case, settings, sys_par, num_par)
+            P_cn, x, val_cn, T = cn_1D(case, settings, sys_par, num_par)
     elif (method == "ftcs" and ADD_MET == "cn") or (method == "cn" and ADD_MET == "ftcs"):
-        P_ftcs, x, val_ftcs, T = ftcs_1D(case, settings, sys_par, num_par)
-        P_cn, x, val_cn, T = cn_1D(case, settings, sys_par, num_par)
+        if case=="caseE":
+            P_ftcs, x, val_ftcs, T = ftcs_2particle(case, settings, sys_par, num_par)
+            P_cn, x, val_cn, T = cn_2particle(case, settings, sys_par, num_par)
+        else:    
+            P_ftcs, x, val_ftcs, T = ftcs_1D(case, settings, sys_par, num_par)
+            P_cn, x, val_cn, T = cn_1D(case, settings, sys_par, num_par)
     
     # implement option to display potential in relevant cases
     SHOW_V = float(settings[3])
@@ -126,9 +160,10 @@ def visualise_1D(case,method, settings, sys_par, num_par):
             plt.title(r'Free propagation of a Gaussian wavepacket (at $t={0:.3f})$'.format(sys_par[0]), fontsize=title_size)
         elif case=="caseC":
             plt.title(r'Tunneling of a Gaussian wavepacket (at $t={0:.3f})$'.format(sys_par[0]), fontsize=title_size)
+        elif case=="caseE":
+            plt.title(r'Collision of two Gaussian wavepackets with inter-particle potential (at $t={0:.3f})$'.format(sys_par[0]), fontsize=title_size)    
         
 
-        
         if method=="ftcs" and ADD_MET == "no":
             if diff == "True" and case == "caseA":
                 P_diff = np.abs(P - P_an)
@@ -310,7 +345,8 @@ def visualise_1D(case,method, settings, sys_par, num_par):
             plt.suptitle(r'Free propagation of a Gaussian wavepacket', fontsize=title_size)
         elif case=="caseC":
             plt.suptitle(r'Tunneling of a Gaussian wavepacket', fontsize=title_size)
-        
+        elif case=="caseE":
+            plt.suptitle(r'Collision of two Gaussian wavepackets with inter-particle potential (at $t={0:.3f})$'.format(sys_par[0]), fontsize=title_size)
 
 
         if ADD_MET == "no":
@@ -430,10 +466,6 @@ def visualise_1D(case,method, settings, sys_par, num_par):
 
 
             elif method == "an":
-                if ADD_MET != "no":
-                    raise Exception("Cannot have additional method when primary method is the analytical solution.")#
-                if case == "caseC":
-                    raise Exception("No analytical solution for this case")
                 for i in range(len(T)):
                     axs[i].set_title("t={0}".format(T[i]))
                     axs[i].plot(x,P[i],color="black", label= r'Analytical solution normalised to {0:.4f}'.format(integrate_1d(P[i],x)))                       
@@ -441,8 +473,6 @@ def visualise_1D(case,method, settings, sys_par, num_par):
                     axs[i].set_ylabel(r'$|\Psi(x,t)|^2$', fontsize=body_size)
                     axs[i].set_xlabel(r'Spatial dimension $x$', fontsize=body_size)
 
-        elif method == ADD_MET:
-            raise Exception("Additional method cannot be primary method.")
         else:
             axs = axs.ravel()
             if (method == "rk4" and ADD_MET == "ftcs") or (method == "ftcs" and ADD_MET == "rk4"):
@@ -700,11 +730,3 @@ def visualise_2D(case,method, settings, sys_par, num_par):
     
     return 0
 
-# visualise solution in two-particle case (case E)
-def visualise_2particle(case, method, settings, sys_par, num_par):
-    
-    """
-    to do!
-    """
-    
-    return 0

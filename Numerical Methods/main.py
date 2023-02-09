@@ -76,12 +76,10 @@ def main(log_file="log.txt"):
     # extract information from log files
     case, method, settings, sys_par, num_par=read_log(log_file)
     
-    if case=="caseA" or case=="caseC":
+    if case=="caseA" or case=="caseC" or "caseE":
         visualise_1D(case,method, settings, sys_par, num_par)
-    if case=="caseB" or case=="caseD":
-        visualise_2D(case,method, settings, sys_par, num_par)
-    if case=="caseE":
-        visualise_2particle(case,method, settings, sys_par, num_par)    
+    elif case=="caseB" or case=="caseD":
+        visualise_2D(case,method, settings, sys_par, num_par)   
                                                    
 
 # execute
