@@ -36,7 +36,7 @@ def mod2_in_cond(x,a,k0):
 # define ranges in space and time
 x_min = -10
 x_max = 10
-Nx = 1000
+Nx = 100
 t_min = 0
 t_max = 10
 Nt = 100

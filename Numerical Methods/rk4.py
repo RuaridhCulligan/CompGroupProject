@@ -43,7 +43,7 @@ def rk4_1D(case, settings, sys_par, num_par):
         P   = np.empty(len(T), dtype="object")
         val = np.empty(len(T), dtype="float")
         j       = 0
-    if float(settings[0]) == 0.5: 
+    if float(settings[0]) == 0.5:
         T   = np.array([t_start,t_end/8,t_end/4,t_end/2, 3*t_end/4, t_end]) 
         P   = np.empty(len(T), dtype="object")
         val = np.empty(len(T))
