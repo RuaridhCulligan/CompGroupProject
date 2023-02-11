@@ -38,24 +38,27 @@ def rk4_1D(case, settings, sys_par, num_par):
         V = potential_C(x, sys_par)
     
     # make relevant adjustments for non-static/semi-static output:
-    if float(settings[0]) == 0.0:    
-        T   = np.arange(t_start, t_end+dt, dt*100)
-        P   = np.empty(len(T), dtype="object")
-        val = np.empty(len(T), dtype="float")
-        j       = 0
-    if float(settings[0]) == 0.5:
-        T   = np.array([t_start,t_end/8,t_end/4,t_end/2, 3*t_end/4, t_end]) 
-        P   = np.empty(len(T), dtype="object")
-        val = np.empty(len(T))
-        j   = 0
+    if float(settings[0]) == 0.0:  
+        k_arr = np.linspace(0, tn-1, 100, dtype="int")  
+        T     = np.empty(len(k_arr))
+        P     = np.empty(len(T), dtype="object")
+        val   = np.empty(len(T))
+        j     = 0
+    if float(settings[0]) == 0.5: 
+        k_arr = np.array([0,(tn-1)/8, (tn-1)/4 ,(tn-1)/2,3*(tn -1)/4 ,tn-1], dtype="int")
+        T     = np.empty(len(k_arr)) 
+        P     = np.empty(len(T), dtype="object")
+        val   = np.empty(len(T))
+        j     = 0
     if float(settings[0]) == 1.0:
-        T   = np.array([t_end])
-        P   = np.empty(1, dtype="object")
-        val = np.array([1], dtype="float")
-        j   = 0
+        k_arr = np.array([tn-1])
+        T     = np.array([t_end])
+        P     = np.empty(len(T), dtype="object")
+        val   = np.array([1])
+        j     = 0 
      
     #Loop over the time values and calculate the derivative
-    for i in range(1,tn):
+    for k in range(1,tn):
         f = np.zeros(xn).astype("complex"); k1 = np.zeros(xn).astype("complex");  k2 = np.zeros(xn).astype("complex"); k3 = np.zeros(xn).astype("complex"); k4 = np.zeros(xn).astype("complex")
 
         f[1:xn-1] = (1j/2)*(psi[0:xn-2]-2*psi[1:xn-1]+psi[2:xn])/(dx**2) + V[1:xn-1]*psi[1:xn-1]
@@ -73,7 +76,8 @@ def rk4_1D(case, settings, sys_par, num_par):
         #Force boundary conditions on the off chance something has gone wrong and they contain a value
         psi[0] = 0; psi[xn-1] = 0
 
-        if (t[i] in T):
+        if (k in k_arr):
+            T[j]   = t[k]
             P[j]   = np.abs(psi)**2
             val[j] = integrate_1d(P[j],x)
             j += 1
@@ -116,21 +120,25 @@ def rk4_2D(case, settings, sys_par, num_par):
         V = potential_D(x,sys_par)
         
     # make relevant adjustments for non-static/semi-static output:
-    if float(settings[0]) == 0.0:    
-        T   = np.arange(t_start, t_end+dt, dt*100)
-        P   = np.empty(len(T), dtype="object")
-        val = np.empty(len(T))
-        j       = 0
+    if float(settings[0]) == 0.0:  
+        k_arr = np.linspace(0, tn-1, 100, dtype="int")  
+        T     = np.empty(len(k_arr))
+        P     = np.empty(len(T), dtype="object")
+        val   = np.empty(len(T))
+        j     = 0
     if float(settings[0]) == 0.5: 
-        T   = np.array([t_start,t_end/8,t_end/4,t_end/2, 3*t_end/4, t_end]) 
-        P   = np.empty(len(T), dtype="object")
-        val = np.empty(len(T))
-        j   = 0
+        k_arr = np.array([0,(tn-1)/8 ,(tn-1)/4 ,(tn-1)/2,3*(tn -1)/4 ,tn-1], dtype="int")
+        T     = np.empty(len(k_arr)) 
+        P     = np.empty(len(T), dtype="object")
+        val   = np.empty(len(T))
+        j     = 0
     if float(settings[0]) == 1.0:
-        T   = np.array([t_end])
-        P   = np.empty((xn,yn))
-        val = np.array([1])
-        j   = 0   
+        k_arr = np.array([tn-1])
+        T     = np.array([t_end])
+        P     = np.empty(len(T), dtype="object")
+        val   = np.array([1])
+        j     = 0
+
     #Loop over the time values and calculate the derivative
     for k in range(1,tn):
         for i in range(1,xn):
@@ -151,9 +159,10 @@ def rk4_2D(case, settings, sys_par, num_par):
         #Force boundary conditions on the off chance something has gone wrong and they contain a value
         phi[0] = 0; phi[xn-1] = 0
 
-        if (t[k] in T):
+        if (k in k_arr):
+            T[j]   = t[k]
             P[j]   = np.abs(psi)**2
-            val[j] = integrate_2d(P[j],x,y)
+            val[j] = integrate_1d(P[j],x)
             j += 1   
                                                  
     # return output                                    

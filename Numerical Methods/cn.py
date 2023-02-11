@@ -39,21 +39,24 @@ def cn_1D(case, settings, sys_par, num_par):
         V = potential_C(x, sys_par)
     
     # make relevant adjustments for non-static/semi-static output:
-    if float(settings[0]) == 0:    
-        T   = np.arange(t_start, t_end+dt, dt*100)
-        P   = np.empty(len(T), dtype="object")
-        val = np.empty(len(T), dtype="float")
-        j       = 0
-    elif float(settings[0]) == 0.5: 
-        T   = np.array([t_start,t_end/8,t_end/4,t_end/2, 3*t_end/4, t_end]) 
-        P   = np.empty(len(T), dtype="object")
-        val = np.empty(len(T))
-        j   = 0
-    elif float(settings[0]) == 1.0:
-        T   = np.array([t_end])
-        P   = np.empty(1, dtype="object")
-        val = np.array([1], dtype="float")
-        j   = 0
+    if float(settings[0]) == 0.0:  
+        k_arr = np.linspace(0, tn-1, 100, dtype="int")  
+        T     = np.empty(len(k_arr))
+        P     = np.empty(len(T), dtype="object")
+        val   = np.empty(len(T))
+        j     = 0
+    if float(settings[0]) == 0.5: 
+        k_arr = np.array([0,(tn-1)/8 ,(tn-1)/4 ,(tn-1)/2,3*(tn -1)/4 ,tn-1], dtype="int")
+        T     = np.empty(len(k_arr)) 
+        P     = np.empty(len(T), dtype="object")
+        val   = np.empty(len(T))
+        j     = 0
+    if float(settings[0]) == 1.0:
+        k_arr = np.array([tn-1])
+        T     = np.array([t_end])
+        P     = np.empty(len(T), dtype="object")
+        val   = np.array([1])
+        j     = 0
 
     sigma = np.ones(xn)*(dt*1j)/(4*dx**2)
 
@@ -62,15 +65,16 @@ def cn_1D(case, settings, sys_par, num_par):
 
     
 
-    for i in range(1,tn):
+    for k in range(1,tn):
         psi = np.linalg.solve(np.diag(a,1)+np.diag(b)+np.diag(c,-1),M.dot(psi))
         
         psi[0] = 0; psi[xn-1] = 0
 
-        if (t[i] in T):
+        if (k in k_arr):
+            T[j]   = t[k]
             P[j]   = np.abs(psi)**2
             val[j] = integrate_1d(P[j],x)
-            j += 1   
+            j += 1  
                                                  
     # return output                                    
     return P, x, val, T
@@ -111,21 +115,24 @@ def cn_2D(case, settings, sys_par, num_par):
         V = potential_D(x,y,sys_par)
         
     # make relevant adjustments for non-static/semi-static output:
-    if float(settings[0]) == 0.0:    
-        T   = np.arange(t_start, t_end+dt, dt*100)
-        P   = np.empty(len(T), dtype="object")
-        val = np.empty(len(T))
-        j       = 0
-    elif float(settings[0]) == 0.5: 
-        T   = np.array([t_start,t_end/8,t_end/4,t_end/2, 3*t_end/4, t_end]) 
-        P   = np.empty(len(T), dtype="object")
-        val = np.empty(len(T))
-        j   = 0
-    elif float(settings[0]) == 1.0:
-        T   = np.array([t_end])
-        P   = np.empty((xn,yn))
-        val = np.array([1])
-        j   = 0
+    if float(settings[0]) == 0.0:  
+        k_arr = np.linspace(0, tn-1, 100, dtype="int")  
+        T     = np.empty(len(k_arr))
+        P     = np.empty(len(T), dtype="object")
+        val   = np.empty(len(T))
+        j     = 0
+    if float(settings[0]) == 0.5: 
+        k_arr = np.array([0,(tn-1)/8 ,(tn-1)/4 ,(tn-1)/2,3*(tn -1)/4 ,tn-1], dtype="int")
+        T     = np.empty(len(k_arr)) 
+        P     = np.empty(len(T), dtype="object")
+        val   = np.empty(len(T))
+        j     = 0
+    if float(settings[0]) == 1.0:
+        k_arr = np.array([tn-1])
+        T     = np.array([t_end])
+        P     = np.empty(len(T), dtype="object")
+        val   = np.array([1])
+        j     = 0
 
     #Loop over the time values and calculate the derivative
     sigma_y = np.ones(yn*xn - 1)*(dt*1j/(2*dy**2))
@@ -135,7 +142,7 @@ def cn_2D(case, settings, sys_par, num_par):
     A = np.diag(-sigma_y, 1) + np.diag(1+2*sigma_xy) + np.diag(-sigma_y, -1) + np.diag(-sigma_x, -yn) + np.diag(-sigma_x, yn)
     B = np.diag(sigma_y, 1) + np.diag(1-2*sigma_xy + V.flatten()) + np.diag(sigma_y, -1) + np.diag(-sigma_x, -yn) + np.diag(-sigma_x, yn)
 
-    for i in range(1,tn):
+    for k in range(1,tn):
 
         Psi = psi.flatten
         Psi = np.linalg.solve(A, B.dot(Psi))
@@ -143,7 +150,8 @@ def cn_2D(case, settings, sys_par, num_par):
         psi = Psi.reshape(xn,yn)
         psi[0,0:] = 0; psi[xn-1,0:] = 0; psi[0:,yn-1] = 0; psi[0:,0] = 0
 
-        if (t[i] in T):
+        if (k in k_arr):
+            T[j]   = t[k]
             P[j]   = np.abs(psi)**2
             val[j] = integrate_2d(P[j],x,y)
             j += 1   

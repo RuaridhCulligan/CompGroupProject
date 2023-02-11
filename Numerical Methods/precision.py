@@ -33,7 +33,7 @@ if os.path.exists(out_dir) ==False:
     os.mkdir(out_dir) 
 
 # define "standard set-up" for comparison of methods
-t_end = 10 # 10
+t_end = 1 # 10
 a     = 1 
 kx0    = 1 
 b     = 1 
@@ -474,7 +474,7 @@ def main(case, method, mode, d0, d_arr, fit=True):
 #####################
 dt0 = 0.0001 #0.00001 
 dx0 = 0.1
-dx_arr = np.linspace(0.5, 0.1, 100)
-dt_arr = [0.001] 
+dx_arr = np.linspace(0.5, 0.1, 100)  # np.array([0.1, 0.2]) 
+dt_arr = np.array([0.001])
 
-main("caseA", "ftcs", "space_loop", dt0, dx_arr, True)
+main("caseB", "ftcs", "space_loop", dt0, dx_arr, True)
