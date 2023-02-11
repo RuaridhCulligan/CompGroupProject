@@ -1074,23 +1074,139 @@ def visualise_2D(case,method, settings, sys_par, num_par):
         ax = plt.axes(projection='3d')
         
         if case=="caseB":
-            ax.set_title(r'Free propagation of a Gaussian wavepacket (at $t={0:.3f})$'.format(sys_par[0]), fontsize=title_size)
+            ax.set_title(r'Free propagation of a Gaussian wavepacket ', fontsize=title_size)
         elif case=="caseD":
-            ax.set_title(r'Gaussian wavepacket in an infinite potential well (at $t={0:.3f})$'.format(sys_par[0]), fontsize=title_size)
+            ax.set_title(r'Gaussian wavepacket in an infinite potential well ', fontsize=title_size)
 
         if method=="an" and case=="caseB":
             for i in np.arange(len(T)):
-                    #ax.text(0.95*x.min(),P[0].max(),'t={0:.3e}'.format(T[i]), animated=True, fontsize=body_size, ha="left",va="bottom")
-                    #l = ax.plot(x,P[i],color="black")
-                    surf = ax.plot_surface(X,Y,P[0],color="black", cmap="binary", label=r'Analytical solution normalised to {0:.4f}'.format(integrate_2d(P[0],x,y)))
-                    #ax.legend(l, [r'Analytical solution normalised to {0:.4f}'.format(integrate_1d(P[i],x))],  loc="upper right", fontsize=body_size)
+                    ax.text(0.95*x.min(),0.95*y.min(),1.1*P[0].max(),'t={0:.3e}'.format(T[i]), animated=True, fontsize=body_size, ha="left",va="bottom")
+                    
+                    surf = ax.plot_surface(X,Y,P_diff[i],color="black", cmap="binary")
+                    surf.set_facecolor("black")
+                    surf._facecolors2d  = surf._facecolor3d
+                    surf._edgecolors2d  = surf._edgecolor3d
+
+
+                    ax.legend([surf], [r'Analytical solution normalised to {0:.4f}'.format(integrate_2d(P[i],x,y))],  loc="upper right", fontsize=body_size)
                     ax.set_zlabel(r'Probability density $|\Psi(x,y,t)|^2$', fontsize=body_size)
                     ax.set_xlabel(r'Spatial dimension $x$', fontsize=body_size)
                     ax.set_ylabel(r'Spatial dimension $y$', fontsize=body_size)
                     camera.snap()  
-        """
-        to do! 
-        """  
+        
+        elif method=="ftcs":
+
+            if diff==True and case=="caseB":
+                P_diff = np.abs(P - P_an)
+                
+                for i in np.arange(len(T)):
+                    ax.text(0.95*x.min(),0.95*y.min(),1.1*P[0].max(),'t={0:.3e}'.format(T[i]), animated=True, fontsize=body_size, ha="left",va="bottom")
+                    
+                    surf = ax.plot_surface(X,Y,P[i],color="black", cmap="binary")
+                    surf.set_facecolor("black")
+                    surf._facecolors2d  = surf._facecolor3d
+                    surf._edgecolors2d  = surf._edgecolor3d
+
+                    ax.legend([surf], [r'Error on FTCS scheme (total: {0:.3f})'.format(integrate_2d(P_diff[i],x,y))],  loc="upper right", fontsize=body_size)
+                    ax.set_zlabel(r'Probability density $|\Psi(x,y,t)|^2$', fontsize=body_size)
+                    ax.set_xlabel(r'Spatial dimension $x$', fontsize=body_size)
+                    ax.set_ylabel(r'Spatial dimension $y$', fontsize=body_size)
+                    camera.snap() 
+
+            else: 
+                 for i in np.arange(len(T)):
+                    ax.text(0.95*x.min(),0.95*y.min(),1.1*P[0].max(),'t={0:.3e}'.format(T[i]), animated=True, fontsize=body_size, ha="left",va="bottom")
+                    
+                    surf = ax.plot_surface(X,Y,P_diff[i],color="black", cmap="binary")
+                    surf.set_facecolor("black")
+                    surf._facecolors2d  = surf._facecolor3d
+                    surf._edgecolors2d  = surf._edgecolor3d
+
+                    if v == True:
+                        ax.set_xlim(-d/2, d/2)
+                        ax.set_ylim(-w/2, w/2)
+
+                    ax.legend([surf], [r'FTCS scheme normalised to {0:.4f} '.format(val[i])],  loc="upper right", fontsize=body_size)
+                    ax.set_zlabel(r'Probability density $|\Psi(x,y,t)|^2$', fontsize=body_size)
+                    ax.set_xlabel(r'Spatial dimension $x$', fontsize=body_size)
+                    ax.set_ylabel(r'Spatial dimension $y$', fontsize=body_size)
+                    camera.snap() 
+        
+        elif method=="rk4":
+
+            if diff==True and case=="caseB":
+                P_diff = np.abs(P - P_an)
+                
+                for i in np.arange(len(T)):
+                    ax.text(0.95*x.min(),0.95*y.min(),1.1*P[0].max(),'t={0:.3e}'.format(T[i]), animated=True, fontsize=body_size, ha="left",va="bottom")
+                    
+                    surf = ax.plot_surface(X,Y,P[i],color="black", cmap="binary")
+                    surf.set_facecolor("black")
+                    surf._facecolors2d  = surf._facecolor3d
+                    surf._edgecolors2d  = surf._edgecolor3d
+
+                    ax.legend([surf], [r'Error on RK4 scheme (total: {0:.3f})'.format(integrate_2d(P_diff[i],x,y))],  loc="upper right", fontsize=body_size)
+                    ax.set_zlabel(r'Probability density $|\Psi(x,y,t)|^2$', fontsize=body_size)
+                    ax.set_xlabel(r'Spatial dimension $x$', fontsize=body_size)
+                    ax.set_ylabel(r'Spatial dimension $y$', fontsize=body_size)
+                    camera.snap() 
+
+            else: 
+                 for i in np.arange(len(T)):
+                    ax.text(0.95*x.min(),0.95*y.min(),1.1*P[0].max(),'t={0:.3e}'.format(T[i]), animated=True, fontsize=body_size, ha="left",va="bottom")
+                    
+                    surf = ax.plot_surface(X,Y,P_diff[i],color="black", cmap="binary")
+                    surf.set_facecolor("black")
+                    surf._facecolors2d  = surf._facecolor3d
+                    surf._edgecolors2d  = surf._edgecolor3d
+
+                    if v == True:
+                        ax.set_xlim(-d/2, d/2)
+                        ax.set_ylim(-w/2, w/2)
+
+                    ax.legend([surf], [r'RK$ scheme normalised to {0:.4f} '.format(val[i])],  loc="upper right", fontsize=body_size)
+                    ax.set_zlabel(r'Probability density $|\Psi(x,y,t)|^2$', fontsize=body_size)
+                    ax.set_xlabel(r'Spatial dimension $x$', fontsize=body_size)
+                    ax.set_ylabel(r'Spatial dimension $y$', fontsize=body_size)
+                    camera.snap()
+
+        elif method=="cn":
+
+            if diff==True and case=="caseB":
+                P_diff = np.abs(P - P_an)
+                
+                for i in np.arange(len(T)):
+                    ax.text(0.95*x.min(),0.95*y.min(),1.1*P[0].max(),'t={0:.3e}'.format(T[i]), animated=True, fontsize=body_size, ha="left",va="bottom")
+                    
+                    surf = ax.plot_surface(X,Y,P[i],color="black", cmap="binary")
+                    surf.set_facecolor("black")
+                    surf._facecolors2d  = surf._facecolor3d
+                    surf._edgecolors2d  = surf._edgecolor3d
+
+                    ax.legend([surf], [r'Error on CN scheme (total: {0:.3f})'.format(integrate_2d(P_diff[i],x,y))],  loc="upper right", fontsize=body_size)
+                    ax.set_zlabel(r'Probability density $|\Psi(x,y,t)|^2$', fontsize=body_size)
+                    ax.set_xlabel(r'Spatial dimension $x$', fontsize=body_size)
+                    ax.set_ylabel(r'Spatial dimension $y$', fontsize=body_size)
+                    camera.snap() 
+
+            else: 
+                 for i in np.arange(len(T)):
+                    ax.text(0.95*x.min(),0.95*y.min(),1.1*P[0].max(),'t={0:.3e}'.format(T[i]), animated=True, fontsize=body_size, ha="left",va="bottom")
+                    
+                    surf = ax.plot_surface(X,Y,P_diff[i],color="black", cmap="binary")
+                    surf.set_facecolor("black")
+                    surf._facecolors2d  = surf._facecolor3d
+                    surf._edgecolors2d  = surf._edgecolor3d
+
+                    if v == True:
+                        ax.set_xlim(-d/2, d/2)
+                        ax.set_ylim(-w/2, w/2)
+
+                    ax.legend([surf], [r'CN scheme normalised to {0:.4f} '.format(val[i])],  loc="upper right", fontsize=body_size)
+                    ax.set_zlabel(r'Probability density $|\Psi(x,y,t)|^2$', fontsize=body_size)
+                    ax.set_xlabel(r'Spatial dimension $x$', fontsize=body_size)
+                    ax.set_ylabel(r'Spatial dimension $y$', fontsize=body_size)
+                    camera.snap()
 
 
         animation = camera.animate()
