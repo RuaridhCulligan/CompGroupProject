@@ -1015,7 +1015,7 @@ def visualise_2D(case,method, settings, sys_par, num_par):
         if case=="caseB":
             ax.set_title(r'Free propagation of a Gaussian wavepacket (at $t={0:.3f})$'.format(sys_par[0]), fontsize=title_size)
         elif case=="caseD":
-            ax.set_title(r'Gaussian wavepacket in an infinite potential well (at $t={0:.3f})$'.format(sys_par[0]), fontsize=title_size)
+            ax.set_title(r'Single-slit diffraction of a Gaussian wavepacket (at $t={0:.3f})$'.format(sys_par[0]), fontsize=title_size)
         
         if method=="ftcs" and ADD_MET == "no":
             if diff == "True" and case == "caseB":
@@ -1071,7 +1071,7 @@ def visualise_2D(case,method, settings, sys_par, num_par):
         if case=="caseB":
             ax.set_title(r'Free propagation of a Gaussian wavepacket ', fontsize=title_size)
         elif case=="caseD":
-            ax.set_title(r'Gaussian wavepacket in an infinite potential well ', fontsize=title_size)
+            ax.set_title(r'Single-slit diffraction of a Gaussian wavepacket', fontsize=title_size)
 
         if method=="an" and case=="caseB":
             for i in np.arange(len(T)):
@@ -1209,7 +1209,7 @@ def visualise_2D(case,method, settings, sys_par, num_par):
         if case=="caseB":
             fig.suptitle(r'Free propagation of a Gaussian wavepacket'.format(sys_par[0]), fontsize=title_size)
         elif case=="caseD":
-            fig.suptitle(r'Gaussian wavepacket in an infinite potential well '.format(sys_par[0]), fontsize=title_size)
+            fig.suptitle(r'Single-slit diffraction of a Gaussian wavepacket'.format(sys_par[0]), fontsize=title_size)
 
 
         if ADD_MET == "no":
