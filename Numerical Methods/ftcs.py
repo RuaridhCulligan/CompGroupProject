@@ -105,11 +105,12 @@ def ftcs_2D(case, settings, sys_par, num_par):
     psi = wavepacket_2d(x,y, sys_par).astype("complex_")
     
     # set up relevant potential at each point
-    if case=="caseB":
-        V = np.zeros((xn,yn))
-    if case=="caseD":
-        V = potential_D(x,y, sys_par)
-        
+    V = potential_D(x,y,sys_par)
+
+    # potential barrier parameters
+    d  = sys_par[6]
+    w  = sys_par[7]
+ 
     # make relevant adjustments for non-static/semi-static output:
     if float(settings[0]) == 0.0:  
         k_arr = np.linspace(0, tn-1, 100, dtype="int")  
@@ -133,13 +134,10 @@ def ftcs_2D(case, settings, sys_par, num_par):
     #Loop to compute FCTS scheme
     for k in np.arange(tn):
 
-        psi[1:xn-1,1:yn-1] = psi[1:xn-1,1:yn-1] + (dt*1j/2)*((psi[1:xn-1,2:yn]-2*psi[1:xn-1,1:yn-1]+psi[1:xn-1,0:yn-2])/(dy**2) + (psi[2:xn,1:yn-1]-2*psi[1:xn-1,1:yn-1]+psi[0:xn-2,1:yn-1])/(dx**2) + V[1:xn-1,1:yn-1]*psi[1:xn-1,1:yn-1])
+        psi[1:xn-1,1:yn-1] = psi[1:xn-1,1:yn-1] + (dt*1j/2)*((psi[1:xn-1,2:yn]-2*psi[1:xn-1,1:yn-1]+psi[1:xn-1,0:yn-2])/(dy**2) + (psi[2:xn,1:yn-1]-2*psi[1:xn-1,1:yn-1]+psi[0:xn-2,1:yn-1])/(dx**2))
 
-        psi[0:,0] = 0
-        psi[0:, yn-1] = 0
-        psi[xn-1,0:] = 0
-        psi[0, 0:] = 0
-        
+        psi = psi*V
+         
         if (k in k_arr):
             T[j]   = t[k]
             P[j]   = np.abs(psi)**2
@@ -205,7 +203,7 @@ def ftcs_2particle(case, settings, sys_par, num_par):
 
         # update potential
         p = np.abs(psi)**2
-        maxima, _ = find_peaks(p)
+        maxima, _ = find_peaks(p, height=0.95*np.amax(p))
         V = potential_E(x,maxima[0],maxima[1],sys_par)
 
         if (k in k_arr):
