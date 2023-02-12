@@ -227,8 +227,8 @@ def visualise_1D(case,method, settings, sys_par, num_par):
                 plt.plot(V_x,np.array([0,P_ftcs[0].max()]),color="green",linestyle="--", label=r'Finite potential well of depth {0:.4f} '.format(V0))
                 plt.plot(-V_x,np.array([0,P_ftcs[0].max()]),color="green",linestyle="--")
             elif v==True and diff==True:  
-                plt.plot(V_x,np.array([0,P_diff1[-1].max()]),color="green",linestyle="--", label=r'Finite potential well of depth {0:.4f} '.format(V0))
-                plt.plot(-V_x,np.array([0,P_diff1[-1].max()]),color="green",linestyle="--")  
+                plt.plot(V_x,np.array([0,P_diff1[0].max()]),color="green",linestyle="--", label=r'Finite potential well of depth {0:.4f} '.format(V0))
+                plt.plot(-V_x,np.array([0,P_diff1[0].max()]),color="green",linestyle="--")  
 
         elif method=="an" and ADD_MET=="no":
             plt.plot(x,P[0],color="black", label=r'Analytical solution normalised to {0:.4f}'.format(integrate_1d(P[0],x)))
@@ -249,8 +249,8 @@ def visualise_1D(case,method, settings, sys_par, num_par):
                 plt.plot(V_x,np.array([0,P_ftcs[0].max()]),color="green",linestyle="--", label=r'Finite potential well of depth {0:.4f} '.format(V0))
                 plt.plot(-V_x,np.array([0,P_ftcs[0].max()]),color="green",linestyle="--")
             elif v==True and diff==True:  
-                plt.plot(V_x,np.array([0,P_diff1[-1].max()]),color="green",linestyle="--", label=r'Finite potential well of depth {0:.4f} '.format(V0))
-                plt.plot(-V_x,np.array([0,P_diff1[-1].max()]),color="green",linestyle="--")  
+                plt.plot(V_x,np.array([0,P_diff1[0].max()]),color="green",linestyle="--", label=r'Finite potential well of depth {0:.4f} '.format(V0))
+                plt.plot(-V_x,np.array([0,P_diff1[0].max()]),color="green",linestyle="--")  
         
         elif (method == "rk4" and ADD_MET == "cn") or (method == "cn" and ADD_MET == "rk4"):
             if diff == "True" and case == "caseA":
@@ -266,8 +266,8 @@ def visualise_1D(case,method, settings, sys_par, num_par):
                 plt.plot(V_x,np.array([0,P_cn[0].max()]),color="green",linestyle="--", label=r'Finite potential well of depth {0:.4f} '.format(V0))
                 plt.plot(-V_x,np.array([0,P_cn[0].max()]),color="green",linestyle="--")
             elif v==True and diff==True:  
-                plt.plot(V_x,np.array([0,P_diff2[-1].max()]),color="green",linestyle="--", label=r'Finite potential well of depth {0:.4f} '.format(V0))
-                plt.plot(-V_x,np.array([0,P_diff2[-1].max()]),color="green",linestyle="--") 
+                plt.plot(V_x,np.array([0,P_diff2[0].max()]),color="green",linestyle="--", label=r'Finite potential well of depth {0:.4f} '.format(V0))
+                plt.plot(-V_x,np.array([0,P_diff2[0].max()]),color="green",linestyle="--") 
         
         elif (method == "ftcs" and ADD_MET == "cn") or (method == "cn" and ADD_MET == "ftcs"):
             if diff == "True" and case == "caseA":
@@ -283,8 +283,8 @@ def visualise_1D(case,method, settings, sys_par, num_par):
                 plt.plot(V_x,np.array([0,P_ftcs[0].max()]),color="green",linestyle="--", label=r'Finite potential well of depth {0:.4f} '.format(V0))
                 plt.plot(-V_x,np.array([0,P_ftcs[0].max()]),color="green",linestyle="--")
             elif v==True and diff==True:  
-                plt.plot(V_x,np.array([0,P_diff1[-1].max()]),color="green",linestyle="--", label=r'Finite potential well of depth {0:.4f} '.format(V0))
-                plt.plot(-V_x,np.array([0,P_diff1[-1].max()]),color="green",linestyle="--") 
+                plt.plot(V_x,np.array([0,P_diff1[0].max()]),color="green",linestyle="--", label=r'Finite potential well of depth {0:.4f} '.format(V0))
+                plt.plot(-V_x,np.array([0,P_diff1[0].max()]),color="green",linestyle="--") 
 
         if an==True and method != "an" and diff == "False":
             plt.plot(x,P_an[0],color="red",linestyle="--", label=r'Analytical solution')
@@ -449,7 +449,7 @@ def visualise_1D(case,method, settings, sys_par, num_par):
 
                 for i in np.arange(len(T)):
                     ax = plt.subplot(1,1,1)
-                    ax.text(0.95*x.min(),P_diff1[-1].max(),'t={0:.3e}'.format(T[i]), animated=True, fontsize=body_size, ha="left",va="bottom")
+                    ax.text(0.95*x.min(),P_diff1[0].max(),'t={0:.3e}'.format(T[i]), animated=True, fontsize=body_size, ha="left",va="bottom")
                     l_ftcs, = ax.plot(x,P_diff1[i],color="black")
                     l_rk4, = ax.plot(x,P_diff2[i],color="black")
                     l_cn, = ax.plot(x,P_diff3[i],color="black")
@@ -459,8 +459,8 @@ def visualise_1D(case,method, settings, sys_par, num_par):
                     label_cn  = r'Error on CN scheme (total: {0:.3f})'.format(integrate_1d(P_diff3[i],x))
                     
                     if v ==True:
-                        l_p, = ax.plot(V_x,np.array([0,P_diff1[-1].max()]),color="green",linestyle="--")
-                        ax.plot(-V_x,np.array([0,P_diff1[-1].max()]),color="green",linestyle="--")
+                        l_p, = ax.plot(V_x,np.array([0,P_diff1[0].max()]),color="green",linestyle="--")
+                        ax.plot(-V_x,np.array([0,P_diff1[0].max()]),color="green",linestyle="--")
                         label_potential = r'Finite potential well of depth {0:.4f} '.format(V0)
 
                         ax.legend([l_ftcs, l_rk4, l_cn, l_p], [label_ftcs, label_rk4, label_cn, label_potential ],loc="upper right", fontsize=body_size )
@@ -519,7 +519,7 @@ def visualise_1D(case,method, settings, sys_par, num_par):
 
                 for i in np.arange(len(T)):
                     ax = plt.subplot(1,1,1)
-                    ax.text(0.95*x.min(),P_diff1[-1].max(),'t={0:.3e}'.format(T[i]), animated=True, fontsize=body_size, ha="left",va="bottom")
+                    ax.text(0.95*x.min(),P_diff1[0].max(),'t={0:.3e}'.format(T[i]), animated=True, fontsize=body_size, ha="left",va="bottom")
                     l_ftcs, = ax.plot(x,P_diff1[i],color="black")
                     l_rk4, = ax.plot(x,P_diff2[i],color="black")
 
@@ -527,8 +527,8 @@ def visualise_1D(case,method, settings, sys_par, num_par):
                     label_rk4 = r'Error on RK4 scheme (total: {0:.3f})'.format(integrate_1d(P_diff2[i],x))
                     
                     if v ==True:
-                        l_p, = ax.plot(V_x,np.array([0,P_diff1[-1].max()]),color="green",linestyle="--")
-                        ax.plot(-V_x,np.array([0,P_diff1[-1].max()]),color="green",linestyle="--")
+                        l_p, = ax.plot(V_x,np.array([0,P_diff1[0].max()]),color="green",linestyle="--")
+                        ax.plot(-V_x,np.array([0,P_diff1[0].max()]),color="green",linestyle="--")
                         label_potential = r'Finite potential well of depth {0:.4f} '.format(V0)
 
                         ax.legend([l_ftcs, l_rk4, l_p], [label_ftcs, label_rk4,  label_potential ],loc="upper right", fontsize=body_size )
@@ -574,7 +574,7 @@ def visualise_1D(case,method, settings, sys_par, num_par):
 
                 for i in np.arange(len(T)):
                     ax = plt.subplot(1,1,1)
-                    ax.text(0.95*x.min(),P_diff1[-1].max(),'t={0:.3e}'.format(T[i]), animated=True, fontsize=body_size, ha="left",va="bottom")
+                    ax.text(0.95*x.min(),P_diff1[0].max(),'t={0:.3e}'.format(T[i]), animated=True, fontsize=body_size, ha="left",va="bottom")
                     l_rk4, = ax.plot(x,P_diff2[i],color="black")
                     l_cn, = ax.plot(x,P_diff3[i],color="black")
 
@@ -582,8 +582,8 @@ def visualise_1D(case,method, settings, sys_par, num_par):
                     label_cn  = r'Error on CN scheme (total: {0:.3f})'.format(integrate_1d(P_diff3[i],x))
                     
                     if v ==True:
-                        l_p = ax.plot(V_x,np.array([0,P_diff1[-1].max()]),color="green",linestyle="--")
-                        ax.plot(-V_x,np.array([0,P_diff1[-1].max()]),color="green",linestyle="--")
+                        l_p = ax.plot(V_x,np.array([0,P_diff1[0].max()]),color="green",linestyle="--")
+                        ax.plot(-V_x,np.array([0,P_diff1[0].max()]),color="green",linestyle="--")
                         label_potential = r'Finite potential well of depth {0:.4f} '.format(V0)
 
                         ax.legend([l_rk4, l_cn, l_p], [label_rk4, label_cn, label_potential ],loc="upper right", fontsize=body_size )
@@ -629,7 +629,7 @@ def visualise_1D(case,method, settings, sys_par, num_par):
 
                 for i in np.arange(len(T)):
                     ax = plt.subplot(1,1,1)
-                    ax.text(0.95*x.min(),P_diff1[-1].max(),'t={0:.3e}'.format(T[i]), animated=True, fontsize=body_size, ha="left",va="bottom")
+                    ax.text(0.95*x.min(),P_diff1[0].max(),'t={0:.3e}'.format(T[i]), animated=True, fontsize=body_size, ha="left",va="bottom")
                     l_ftcs, = ax.plot(x,P_diff1[i],color="black")
                     l_cn, = ax.plot(x,P_diff3[i],color="black")
 
@@ -637,8 +637,8 @@ def visualise_1D(case,method, settings, sys_par, num_par):
                     label_cn  = r'Error on CN scheme (total: {0:.3f})'.format(integrate_1d(P_diff3[i],x))
                     
                     if v ==True:
-                        l_p, = ax.plot(V_x,np.array([0,P_diff1[-1].max()]),color="green",linestyle="--")
-                        ax.plot(-V_x,np.array([0,P_diff1[-1].max()]),color="green",linestyle="--")
+                        l_p, = ax.plot(V_x,np.array([0,P_diff1[0].max()]),color="green",linestyle="--")
+                        ax.plot(-V_x,np.array([0,P_diff1[0].max()]),color="green",linestyle="--")
                         label_potential = r'Finite potential well of depth {0:.4f} '.format(V0)
 
                         ax.legend([l_ftcs,  l_cn, l_p], [label_ftcs,  label_cn, label_potential ],loc="upper right", fontsize=body_size )
@@ -1026,10 +1026,6 @@ def visualise_2D(case,method, settings, sys_par, num_par):
                 surf = ax.plot_surface(X,Y,P[0], color="black" ,cmap="binary", label=r'FTCS scheme normalised to {0:.4f} '.format(val[0])) 
                  
 
-            if v == True:
-                ax.set_xlim(-d/2, d/2)
-                ax.set_ylim(-w/2, w/2)
-
         elif method=="rk4" and ADD_MET == "no": 
             if diff == "True" and case == "caseB":
                 P_diff = np.abs(P - P_an)
@@ -1037,20 +1033,13 @@ def visualise_2D(case,method, settings, sys_par, num_par):
             else:
                 surf = ax.plot_surface(X,Y,color="black", cmap="binary", label=r'RK4 method normalised to {0:.4f} '.format(val[0]))       
 
-            if v == True:
-                ax.set_xlim(-d/2, d/2)
-                ax.set_ylim(-w/2, w/2)
-       
+        
         elif method=="cn" and ADD_MET == "no": 
             if diff == "True" and case == "caseB":
                 P_diff = np.abs(P - P_an)
                 surf = ax.plot_surface(X,Y,P_diff[0],color="black", cmap="binary", label=r'Error on CN scheme (total: {0:.3f})'.format(integrate_2d(P_diff[0],x,y)))
             else:
                 surf = ax.plot_surface(X,Y,P[0],color="black", cmap="binary", label=r'CN scheme normalised to {0:.4f} '.format(val[0]))
-
-            if v == True:
-                ax.set_xlim(-d/2, d/2)
-                ax.set_ylim(-w/2, w/2)
         
         elif method=="all" and ADD_MET == "no":
             raise Exception("Overlay of different solutions can not be visualised in 2D.")
@@ -1128,9 +1117,7 @@ def visualise_2D(case,method, settings, sys_par, num_par):
                     surf._facecolors2d  = surf._facecolor3d
                     surf._edgecolors2d  = surf._edgecolor3d
 
-                    if v == True:
-                        ax.set_xlim(-d/2, d/2)
-                        ax.set_ylim(-w/2, w/2)
+                   
 
                     ax.legend([surf], [r'FTCS scheme normalised to {0:.4f} '.format(val[i])],  loc="upper right", fontsize=body_size)
                     ax.set_zlabel(r'Probability density $|\Psi(x,y,t)|^2$', fontsize=body_size)
@@ -1166,9 +1153,7 @@ def visualise_2D(case,method, settings, sys_par, num_par):
                     surf._facecolors2d  = surf._facecolor3d
                     surf._edgecolors2d  = surf._edgecolor3d
 
-                    if v == True:
-                        ax.set_xlim(-d/2, d/2)
-                        ax.set_ylim(-w/2, w/2)
+                   
 
                     ax.legend([surf], [r'RK$ scheme normalised to {0:.4f} '.format(val[i])],  loc="upper right", fontsize=body_size)
                     ax.set_zlabel(r'Probability density $|\Psi(x,y,t)|^2$', fontsize=body_size)
@@ -1204,9 +1189,7 @@ def visualise_2D(case,method, settings, sys_par, num_par):
                     surf._facecolors2d  = surf._facecolor3d
                     surf._edgecolors2d  = surf._edgecolor3d
 
-                    if v == True:
-                        ax.set_xlim(-d/2, d/2)
-                        ax.set_ylim(-w/2, w/2)
+                  
 
                     ax.legend([surf], [r'CN scheme normalised to {0:.4f} '.format(val[i])],  loc="upper right", fontsize=body_size)
                     ax.set_zlabel(r'Probability density $|\Psi(x,y,t)|^2$', fontsize=body_size)
@@ -1241,9 +1224,7 @@ def visualise_2D(case,method, settings, sys_par, num_par):
                         surf._facecolors2d  = surf._facecolor3d
                         surf._edgecolors2d  = surf._edgecolor3d
 
-                        if v == True:
-                            axs[i].set_xlim(-d/2, d/2)
-                            axs[i].set_ylim(-w/2, w/2)
+                      
                         axs[i].legend(fontsize=body_size, loc="upper right")
                         axs[i].set_zlabel(r'$|\Psi(x,y,t)|^2$', fontsize=body_size)
                         axs[i].set_xlabel(r'$x$', fontsize=body_size)
@@ -1256,9 +1237,7 @@ def visualise_2D(case,method, settings, sys_par, num_par):
                         surf._facecolors2d  = surf._facecolor3d
                         surf._edgecolors2d  = surf._edgecolor3d
 
-                        if v == True:
-                            axs[i].set_xlim(-d/2, d/2)
-                            axs[i].set_ylim(-w/2, w/2)
+                        
                         axs[i].legend(fontsize=body_size, loc="upper right")
                         axs[i].set_zlabel(r'$|\Psi(x,y,t)|^2$', fontsize=body_size)
                         axs[i].set_xlabel(r'$x$', fontsize=body_size)
@@ -1274,9 +1253,7 @@ def visualise_2D(case,method, settings, sys_par, num_par):
                         surf._facecolors2d  = surf._facecolor3d
                         surf._edgecolors2d  = surf._edgecolor3d
                         
-                        if v == True:
-                            axs[i].set_xlim(-d/2, d/2)
-                            axs[i].set_ylim(-w/2, w/2)
+                      
                         axs[i].legend(fontsize=body_size, loc="upper right")
                         axs[i].set_zlabel(r'$|\Psi(x,y,t)|^2$', fontsize=body_size)
                         axs[i].set_xlabel(r'$x$', fontsize=body_size)
@@ -1289,9 +1266,7 @@ def visualise_2D(case,method, settings, sys_par, num_par):
                         surf._facecolors2d  = surf._facecolor3d
                         surf._edgecolors2d  = surf._edgecolor3d
 
-                        if v == True:
-                            axs[i].set_xlim(-d/2, d/2)
-                            axs[i].set_ylim(-w/2, w/2)
+                      
                         axs[i].legend(fontsize=body_size, loc="upper right")
                         axs[i].set_zlabel(r'$|\Psi(x,y,t)|^2$', fontsize=body_size)
                         axs[i].set_xlabel(r'$x$', fontsize=body_size)
@@ -1308,9 +1283,7 @@ def visualise_2D(case,method, settings, sys_par, num_par):
                         surf._facecolors2d  = surf._facecolor3d
                         surf._edgecolors2d  = surf._edgecolor3d
 
-                        if v == True:
-                            axs[i].set_xlim(-d/2, d/2)
-                            axs[i].set_ylim(-w/2, w/2)
+                      
                         axs[i].legend(fontsize=body_size, loc="upper right")
                         axs[i].set_zlabel(r'$|\Psi(x,y,t)|^2$', fontsize=body_size)
                         axs[i].set_xlabel(r'$x$', fontsize=body_size)
@@ -1322,11 +1295,6 @@ def visualise_2D(case,method, settings, sys_par, num_par):
                         surf.set_facecolor("black")
                         surf._facecolors2d  = surf._facecolor3d
                         surf._edgecolors2d  = surf._edgecolor3d
-
-
-                        if v == True:
-                            axs[i].set_xlim(-d/2, d/2)
-                            axs[i].set_ylim(-w/2, w/2)
 
                         axs[i].legend(fontsize=body_size, loc="upper right")
                         axs[i].set_zlabel(r'$|\Psi(x,y,t)|^2$', fontsize=body_size)
