@@ -1137,10 +1137,6 @@ def visualise_2D(case,method, settings, sys_par, num_par):
                     surf._facecolors2d  = surf._facecolor3d
                     surf._edgecolors2d  = surf._edgecolor3d
 
-                    v= True
-                    d= 5
-                    w = 5
-
                     if v==True:
                         pot, = ax.plot([-d/2, -d/2],[y.min(), -w/2],[P[i].max(),P[i].max()], color="green", ls="--")
                         ax.plot([-d/2, +d/2],[-w/2, -w/2],[P[i].max(),P[i].max()], color="green", ls="--")
