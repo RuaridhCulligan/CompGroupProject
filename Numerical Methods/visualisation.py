@@ -179,8 +179,8 @@ def visualise_1D(case,method, settings, sys_par, num_par):
                 plt.plot(V_x,np.array([0,P[0].max()]),color="green",linestyle="--", label=r'Finite potential well of depth {0:.4f} '.format(V0))
                 plt.plot(-V_x,np.array([0,P[0].max()]),color="green",linestyle="--")
             elif v==True and diff==True:  
-                plt.plot(V_x,np.array([0,P_diff[-1].max()]),color="green",linestyle="--", label=r'Finite potential well of depth {0:.4f} '.format(V0))
-                plt.plot(-V_x,np.array([0,P_diff[-1].max()]),color="green",linestyle="--")  
+                plt.plot(V_x,np.array([0,P_diff[0].max()]),color="green",linestyle="--", label=r'Finite potential well of depth {0:.4f} '.format(V0))
+                plt.plot(-V_x,np.array([0,P_diff[0].max()]),color="green",linestyle="--")  
 
         elif method=="rk4" and ADD_MET == "no": 
             if diff == "True" and case == "caseA":
@@ -193,8 +193,8 @@ def visualise_1D(case,method, settings, sys_par, num_par):
                 plt.plot(V_x,np.array([0,P[0].max()]),color="green",linestyle="--", label=r'Finite potential well of depth {0:.4f} '.format(V0))
                 plt.plot(-V_x,np.array([0,P[0].max()]),color="green",linestyle="--")
             elif v==True and diff==True:  
-                plt.plot(V_x,np.array([0,P_diff[-1].max()]),color="green",linestyle="--", label=r'Finite potential well of depth {0:.4f} '.format(V0))
-                plt.plot(-V_x,np.array([0,P_diff[-1].max()]),color="green",linestyle="--")  
+                plt.plot(V_x,np.array([0,P_diff[0].max()]),color="green",linestyle="--", label=r'Finite potential well of depth {0:.4f} '.format(V0))
+                plt.plot(-V_x,np.array([0,P_diff[0].max()]),color="green",linestyle="--")  
        
         elif method=="cn" and ADD_MET == "no": 
             if diff == "True" and case == "caseA":
@@ -207,8 +207,8 @@ def visualise_1D(case,method, settings, sys_par, num_par):
                 plt.plot(V_x,np.array([0,P[0].max()]),color="green",linestyle="--", label=r'Finite potential well of depth {0:.4f} '.format(V0))
                 plt.plot(-V_x,np.array([0,P[0].max()]),color="green",linestyle="--")
             elif v==True and diff==True:  
-                plt.plot(V_x,np.array([0,P_diff[-1].max()]),color="green",linestyle="--", label=r'Finite potential well of depth {0:.4f} '.format(V0))
-                plt.plot(-V_x,np.array([0,P_diff[-1].max()]),color="green",linestyle="--")  
+                plt.plot(V_x,np.array([0,P_diff[0].max()]),color="green",linestyle="--", label=r'Finite potential well of depth {0:.4f} '.format(V0))
+                plt.plot(-V_x,np.array([0,P_diff[0].max()]),color="green",linestyle="--")  
         
         elif method=="all" and ADD_MET == "no":
             if diff == "True" and case == "caseA":
@@ -314,12 +314,12 @@ def visualise_1D(case,method, settings, sys_par, num_par):
                 P_diff = np.abs(P - P_an)
                 for i in np.arange(len(T)):
                     ax = plt.subplot(1,1,1)
-                    ax.text(0.95*x.min(),P_diff[-1].max(),'t={0:.3e}'.format(T[i]), animated=True, fontsize=body_size, ha="left",va="bottom")
+                    ax.text(0.95*x.min(),P_diff[0].max(),'t={0:.3e}'.format(T[i]), animated=True, fontsize=body_size, ha="left",va="bottom")
                     l, = ax.plot(x,P_diff[i],color="black")
                     
                     if v ==True:
-                        l2, = ax.plot(V_x,np.array([0,P_diff[-1].max()]),color="green",linestyle="--", label=r'Finite potential well of depth {0:.4f} '.format(V0))
-                        l3 = ax.plot(-V_x,np.array([0,P_diff[-1].max()]),color="green",linestyle="--")
+                        l2, = ax.plot(V_x,np.array([0,P_diff[0].max()]),color="green",linestyle="--", label=r'Finite potential well of depth {0:.4f} '.format(V0))
+                        l3 = ax.plot(-V_x,np.array([0,P_diff[0].max()]),color="green",linestyle="--")
                         ax.legend([l, l2], [r'Error on FTCS scheme (total: {0:.3f})'.format(integrate_1d(P_diff[i],x)),r'Finite potential well of depth {0:.4f} '.format(V0) ],loc="upper right", fontsize=body_size )
                     else:
                         ax.legend([l], [r'Error on FTCS scheme (total: {0:.3f})'.format(integrate_1d(P_diff[i],x))],  loc="upper right", fontsize=body_size)
@@ -358,12 +358,12 @@ def visualise_1D(case,method, settings, sys_par, num_par):
                 P_diff = np.abs(P - P_an)
                 for i in np.arange(len(T)):
                     ax = plt.subplot(1,1,1)
-                    ax.text(0.95*x.min(),P_diff[-1].max(),'t={0:.3e}'.format(T[i]), animated=True, fontsize=body_size, ha="left",va="bottom")
+                    ax.text(0.95*x.min(),P_diff[0].max(),'t={0:.3e}'.format(T[i]), animated=True, fontsize=body_size, ha="left",va="bottom")
                     l, = ax.plot(x,P_diff[i],color="black")
                     
                     if v ==True:
-                        l2, = ax.plot(V_x,np.array([0,P_diff[-1].max()]),color="green",linestyle="--", label=r'Finite potential well of depth {0:.4f} '.format(V0))
-                        l3 = ax.plot(-V_x,np.array([0,P_diff[-1].max()]),color="green",linestyle="--")
+                        l2, = ax.plot(V_x,np.array([0,P_diff[0].max()]),color="green",linestyle="--", label=r'Finite potential well of depth {0:.4f} '.format(V0))
+                        l3 = ax.plot(-V_x,np.array([0,P_diff[0].max()]),color="green",linestyle="--")
                         ax.legend([l, l2], [r'Error on RK4 scheme (total: {0:.3f})'.format(integrate_1d(P_diff[i],x)),r'Finite potential well of depth {0:.4f} '.format(V0) ],loc="upper right", fontsize=body_size )
                     else:
                         ax.legend([l], [r'Error on RK4 scheme (total: {0:.3f})'.format(integrate_1d(P_diff[i],x))],  loc="upper right", fontsize=body_size)
@@ -402,12 +402,12 @@ def visualise_1D(case,method, settings, sys_par, num_par):
                 P_diff = np.abs(P - P_an)
                 for i in np.arange(len(T)):
                     ax = plt.subplot(1,1,1)
-                    ax.text(0.95*x.min(),P_diff[-1].max(),'t={0:.3e}'.format(T[i]), animated=True, fontsize=body_size, ha="left",va="bottom")
+                    ax.text(0.95*x.min(),P_diff[0].max(),'t={0:.3e}'.format(T[i]), animated=True, fontsize=body_size, ha="left",va="bottom")
                     l, = ax.plot(x,P_diff[i],color="black")
                     
                     if v ==True:
-                        l2, = ax.plot(V_x,np.array([0,P_diff[-1].max()]),color="green",linestyle="--", label=r'Finite potential well of depth {0:.4f} '.format(V0))
-                        l3 = ax.plot(-V_x,np.array([0,P_diff[-1].max()]),color="green",linestyle="--")
+                        l2, = ax.plot(V_x,np.array([0,P_diff[0].max()]),color="green",linestyle="--", label=r'Finite potential well of depth {0:.4f} '.format(V0))
+                        l3 = ax.plot(-V_x,np.array([0,P_diff[0].max()]),color="green",linestyle="--")
                         ax.legend([l, l2], [r'Error on CN scheme (total: {0:.3f})'.format(integrate_1d(P_diff[i],x)),r'Finite potential well of depth {0:.4f} '.format(V0) ],loc="upper right", fontsize=body_size )
                     else:
                         ax.legend([l], [r'Error on CN scheme (total: {0:.3f})'.format(integrate_1d(P_diff[i],x))],  loc="upper right", fontsize=body_size)
