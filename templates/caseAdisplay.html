@@ -1,0 +1,17 @@
+{% extends "base.html" %}
+{% block title %}Free Wavepacket 1D displayed result{% endblock %}
+{% block navbar %}
+<nav class="navbar">
+    <ul>
+        <li><a href="caseA.html">Return to case homepage</a></li>
+    </ul>
+</nav>
+{% endblock %}
+{% block bodycontent %}
+<div class = "bodycontent">
+    <h1>Test</h1>
+    <p>Click <a href={{ pathname }}>here</a> to view the outputted PDF.</p>
+</div>
+<embed src = "/docs/output.pdf" />
+
+{% endblock %}

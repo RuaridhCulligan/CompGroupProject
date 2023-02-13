@@ -64,8 +64,8 @@
 #------------------------------------------------------------------------------
 
 import os
-from visualisation import visualise_1D, visualise_2D
-from log_handling import create_log, read_log
+from NumericalMethods.visualisation import visualise_1D, visualise_2D
+from NumericalMethods.log_handling import create_log, read_log
 
 def main(log_file="log.txt"):
     
