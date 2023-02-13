@@ -989,7 +989,7 @@ def visualise_2D(case,method, settings, sys_par, num_par):
     v = False
     V0 = sys_par[5]
     
-    if SHOW_V==1 and case=="caseC":
+    if SHOW_V==1 and case=="caseD":
             d = sys_par[6]
             w = sys_par[7]
             v = True
@@ -1031,6 +1031,12 @@ def visualise_2D(case,method, settings, sys_par, num_par):
                     ax.plot([-d/2, -d/2],[y.max(), +w/2],[P[0].max(),P[0].max()], color="green", ls="--")
                     ax.plot([-d/2, +d/2],[w/2, +w/2],[P[0].max(),P[0].max()], color="green", ls="--")
                     ax.plot([+d/2, +d/2],[y.max(), +w/2],[P[0].max(),P[0].max()], color="green", ls="--")
+
+                    ax.plot([+d/2, +d/2],[+w/2, +w/2],[P[0].max(),0], color="green", ls="--")
+                    ax.plot([+d/2, +d/2],[-w/2, -w/2],[P[0].max(),0], color="green", ls="--")
+                    ax.plot([-d/2, -d/2],[+w/2, +w/2],[P[0].max(),0], color="green", ls="--")
+                    ax.plot([-d/2, -d/2],[-w/2, -w/2],[P[0].max(),0], color="green", ls="--")
+
                 
         elif method=="rk4" and ADD_MET == "no": 
             if diff == "True" and case == "caseB":
@@ -1045,7 +1051,12 @@ def visualise_2D(case,method, settings, sys_par, num_par):
                     ax.plot([+d/2, +d/2],[y.min(), -w/2],[P[0].max(),P[0].max()], color="green", ls="--")
                     ax.plot([-d/2, -d/2],[y.max(), +w/2],[P[0].max(),P[0].max()], color="green", ls="--")
                     ax.plot([-d/2, +d/2],[w/2, +w/2],[P[0].max(),P[0].max()], color="green", ls="--")
-                    ax.plot([+d/2, +d/2],[y.max(), +w/2],[P[0].max(),P[0].max()], color="green", ls="--")     
+                    ax.plot([+d/2, +d/2],[y.max(), +w/2],[P[0].max(),P[0].max()], color="green", ls="--")
+
+                    ax.plot([+d/2, +d/2],[+w/2, +w/2],[P[0].max(),0], color="green", ls="--")
+                    ax.plot([+d/2, +d/2],[-w/2, -w/2],[P[0].max(),0], color="green", ls="--")
+                    ax.plot([-d/2, -d/2],[+w/2, +w/2],[P[0].max(),0], color="green", ls="--")
+                    ax.plot([-d/2, -d/2],[-w/2, -w/2],[P[0].max(),0], color="green", ls="--")     
 
         elif method=="cn" and ADD_MET == "no": 
             if diff == "True" and case == "caseB":
@@ -1061,6 +1072,11 @@ def visualise_2D(case,method, settings, sys_par, num_par):
                     ax.plot([-d/2, -d/2],[y.max(), +w/2],[P[0].max(),P[0].max()], color="green", ls="--")
                     ax.plot([-d/2, +d/2],[w/2, +w/2],[P[0].max(),P[0].max()], color="green", ls="--")
                     ax.plot([+d/2, +d/2],[y.max(), +w/2],[P[0].max(),P[0].max()], color="green", ls="--")
+
+                    ax.plot([+d/2, +d/2],[+w/2, +w/2],[P[0].max(),0], color="green", ls="--")
+                    ax.plot([+d/2, +d/2],[-w/2, -w/2],[P[0].max(),0], color="green", ls="--")
+                    ax.plot([-d/2, -d/2],[+w/2, +w/2],[P[0].max(),0], color="green", ls="--")
+                    ax.plot([-d/2, -d/2],[-w/2, -w/2],[P[0].max(),0], color="green", ls="--")
         
         elif method=="all" and ADD_MET == "no":
             raise Exception("Overlay of different solutions can not be visualised in 2D.")
@@ -1144,8 +1160,14 @@ def visualise_2D(case,method, settings, sys_par, num_par):
                         ax.plot([-d/2, -d/2],[y.max(), +w/2],[P[i].max(),P[i].max()], color="green", ls="--")
                         ax.plot([-d/2, +d/2],[w/2, +w/2],[P[i].max(),P[i].max()], color="green", ls="--")
                         ax.plot([+d/2, +d/2],[y.max(), +w/2],[P[i].max(),P[i].max()], color="green", ls="--")
+                        ax.plot([+d/2, +d/2],[+w/2, +w/2],[P[i].max(),0], color="green", ls="--")
+                        ax.plot([+d/2, +d/2],[-w/2, -w/2],[P[i].max(),0], color="green", ls="--")
+                        ax.plot([-d/2, -d/2],[+w/2, +w/2],[P[i].max(),0], color="green", ls="--")
+                        ax.plot([-d/2, -d/2],[-w/2, -w/2],[P[i].max(),0], color="green", ls="--")
 
-                    ax.legend([surf, pot], [r'FTCS scheme normalised to {0:.4f} '.format(val[i]),r'Slit'],  loc="upper right", fontsize=body_size)
+                        ax.legend([surf, pot], [r'FTCS scheme normalised to {0:.4f} '.format(val[i]),r'Slit'],  loc="upper right", fontsize=body_size)
+                    else:
+                        ax.legend([surf], [r'FTCS scheme normalised to {0:.4f} '.format(val[i])],  loc="upper right", fontsize=body_size)
                     ax.set_zlabel(r'Probability density $|\Psi(x,y,t)|^2$', fontsize=body_size)
                     ax.set_xlabel(r'Spatial dimension $x$', fontsize=body_size)
                     ax.set_ylabel(r'Spatial dimension $y$', fontsize=body_size)
@@ -1186,8 +1208,14 @@ def visualise_2D(case,method, settings, sys_par, num_par):
                         ax.plot([-d/2, -d/2],[y.max(), +w/2],[P[i].max(),P[i].max()], color="green", ls="--")
                         ax.plot([-d/2, +d/2],[w/2, +w/2],[P[i].max(),P[i].max()], color="green", ls="--")
                         ax.plot([+d/2, +d/2],[y.max(), +w/2],[P[i].max(),P[i].max()], color="green", ls="--")
-
-                    ax.legend([surf, pot], [r'RK$ scheme normalised to {0:.4f} '.format(val[i]), r'Slit'],  loc="upper right", fontsize=body_size)
+                        ax.plot([+d/2, +d/2],[+w/2, +w/2],[P[i].max(),0], color="green", ls="--")
+                        ax.plot([+d/2, +d/2],[-w/2, -w/2],[P[i].max(),0], color="green", ls="--")
+                        ax.plot([-d/2, -d/2],[+w/2, +w/2],[P[i].max(),0], color="green", ls="--")
+                        ax.plot([-d/2, -d/2],[-w/2, -w/2],[P[i].max(),0], color="green", ls="--")
+                        ax.legend([surf, pot], [r'RK4 scheme normalised to {0:.4f} '.format(val[i]), r'Slit'],  loc="upper right", fontsize=body_size)
+                    else:
+                        ax.legend([surf], [r'RK4 scheme normalised to {0:.4f} '.format(val[i])],  loc="upper right", fontsize=body_size)
+                    
                     ax.set_zlabel(r'Probability density $|\Psi(x,y,t)|^2$', fontsize=body_size)
                     ax.set_xlabel(r'Spatial dimension $x$', fontsize=body_size)
                     ax.set_ylabel(r'Spatial dimension $y$', fontsize=body_size)
@@ -1228,8 +1256,13 @@ def visualise_2D(case,method, settings, sys_par, num_par):
                         ax.plot([-d/2, -d/2],[y.max(), +w/2],[P[i].max(),P[i].max()], color="green", ls="--")
                         ax.plot([-d/2, +d/2],[w/2, +w/2],[P[i].max(),P[i].max()], color="green", ls="--")
                         ax.plot([+d/2, +d/2],[y.max(), +w/2],[P[i].max(),P[i].max()], color="green", ls="--")
-
-                    ax.legend([surf, pot], [r'CN scheme normalised to {0:.4f} '.format(val[i]), r'Slit'],  loc="upper right", fontsize=body_size)
+                        ax.plot([+d/2, +d/2],[+w/2, +w/2],[P[i].max(),0], color="green", ls="--")
+                        ax.plot([+d/2, +d/2],[-w/2, -w/2],[P[i].max(),0], color="green", ls="--")
+                        ax.plot([-d/2, -d/2],[+w/2, +w/2],[P[i].max(),0], color="green", ls="--")
+                        ax.plot([-d/2, -d/2],[-w/2, -w/2],[P[i].max(),0], color="green", ls="--")
+                        ax.legend([surf, pot], [r'CN scheme normalised to {0:.4f} '.format(val[i]), r'Slit'],  loc="upper right", fontsize=body_size)
+                    else:
+                        ax.legend([surf], [r'CN scheme normalised to {0:.4f} '.format(val[i])],  loc="upper right", fontsize=body_size)
                     ax.set_zlabel(r'Probability density $|\Psi(x,y,t)|^2$', fontsize=body_size)
                     ax.set_xlabel(r'Spatial dimension $x$', fontsize=body_size)
                     ax.set_ylabel(r'Spatial dimension $y$', fontsize=body_size)
@@ -1282,6 +1315,10 @@ def visualise_2D(case,method, settings, sys_par, num_par):
                             axs[i].plot([-d/2, -d/2],[y.max(), +w/2],[P[i].max(),P[i].max()], color="green", ls="--")
                             axs[i].plot([-d/2, +d/2],[w/2, +w/2],[P[i].max(),P[i].max()], color="green", ls="--")
                             axs[i].plot([+d/2, +d/2],[y.max(), +w/2],[P[i].max(),P[i].max()], color="green", ls="--")
+                            axs[i].plot([+d/2, +d/2],[+w/2, +w/2],[P[i].max(),0], color="green", ls="--")
+                            axs[i].plot([+d/2, +d/2],[-w/2, -w/2],[P[i].max(),0], color="green", ls="--")
+                            axs[i].plot([-d/2, -d/2],[+w/2, +w/2],[P[i].max(),0], color="green", ls="--")
+                            axs[i].plot([-d/2, -d/2],[-w/2, -w/2],[P[i].max(),0], color="green", ls="--")
                         
                         axs[i].legend(fontsize=body_size, loc="upper right")
                         axs[i].set_zlabel(r'$|\Psi(x,y,t)|^2$', fontsize=body_size)
@@ -1318,6 +1355,10 @@ def visualise_2D(case,method, settings, sys_par, num_par):
                             axs[i].plot([-d/2, -d/2],[y.max(), +w/2],[P[i].max(),P[i].max()], color="green", ls="--")
                             axs[i].plot([-d/2, +d/2],[w/2, +w/2],[P[i].max(),P[i].max()], color="green", ls="--")
                             axs[i].plot([+d/2, +d/2],[y.max(), +w/2],[P[i].max(),P[i].max()], color="green", ls="--")
+                            axs[i].plot([+d/2, +d/2],[+w/2, +w/2],[P[i].max(),0], color="green", ls="--")
+                            axs[i].plot([+d/2, +d/2],[-w/2, -w/2],[P[i].max(),0], color="green", ls="--")
+                            axs[i].plot([-d/2, -d/2],[+w/2, +w/2],[P[i].max(),0], color="green", ls="--")
+                            axs[i].plot([-d/2, -d/2],[-w/2, -w/2],[P[i].max(),0], color="green", ls="--")
                       
                         axs[i].legend(fontsize=body_size, loc="upper right")
                         axs[i].set_zlabel(r'$|\Psi(x,y,t)|^2$', fontsize=body_size)
@@ -1355,6 +1396,10 @@ def visualise_2D(case,method, settings, sys_par, num_par):
                             axs[i].plot([-d/2, -d/2],[y.max(), +w/2],[P[i].max(),P[i].max()], color="green", ls="--")
                             axs[i].plot([-d/2, +d/2],[w/2, +w/2],[P[i].max(),P[i].max()], color="green", ls="--")
                             axs[i].plot([+d/2, +d/2],[y.max(), +w/2],[P[i].max(),P[i].max()], color="green", ls="--")
+                            axs[i].plot([+d/2, +d/2],[+w/2, +w/2],[P[i].max(),0], color="green", ls="--")
+                            axs[i].plot([+d/2, +d/2],[-w/2, -w/2],[P[i].max(),0], color="green", ls="--")
+                            axs[i].plot([-d/2, -d/2],[+w/2, +w/2],[P[i].max(),0], color="green", ls="--")
+                            axs[i].plot([-d/2, -d/2],[-w/2, -w/2],[P[i].max(),0], color="green", ls="--")
                         
                         axs[i].legend(fontsize=body_size, loc="upper right")
                         axs[i].set_zlabel(r'$|\Psi(x,y,t)|^2$', fontsize=body_size)
