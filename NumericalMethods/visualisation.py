@@ -7,11 +7,11 @@ from celluloid import Camera
 import matplotlib.pyplot as plt
 import os
 
-from NumericalMethods.ftcs import ftcs_1D, ftcs_2D, ftcs_2particle
-from NumericalMethods.rk4 import rk4_1D, rk4_2D, rk4_2particle
-from NumericalMethods.cn import cn_1D, cn_2D, cn_2particle
-from NumericalMethods.num_aux import integrate_1d, integrate_2d
-from NumericalMethods.wavefuncs import an_sol_1D, an_sol_2D
+from ftcs import ftcs_1D, ftcs_2D, ftcs_2particle
+from rk4 import rk4_1D, rk4_2D, rk4_2particle
+from cn import cn_1D, cn_2D, cn_2particle
+from num_aux import integrate_1d, integrate_2d
+from wavefuncs import an_sol_1D, an_sol_2D
 
 # set standardised layout of plots
 fig_dim    = [16, 8]   # dimensions
@@ -1020,15 +1020,18 @@ def visualise_2D(case,method, settings, sys_par, num_par):
         if method=="ftcs" and ADD_MET == "no":
             if diff == "True" and case == "caseB":
                 P_diff = np.abs(P - P_an)
-                ax.plot_surface(X,Y,P_diff[0],color="black", cmap="binary", label=r'Error on FTCS scheme (total: {0:.3f})'.format(integrate_2d(P_diff[0],x,y)))
+                surf = ax.plot_surface(X,Y,P_diff[0],color="black", cmap="binary", label=r'Error on FTCS scheme (total: {0:.3f})'.format(integrate_2d(P_diff[0],x,y)))
             else:  
                 surf = ax.plot_surface(X,Y,P[0], color="black" ,cmap="binary", label=r'FTCS scheme normalised to {0:.4f} '.format(val[0])) 
 
                 if v==True:
-                    # do something
-                    placeholder = 0
-                 
-
+                    ax.plot([-d/2, -d/2],[y.min(), -w/2],[P[0].max(),P[0].max()], color="green", ls="--", label=r'Slit')
+                    ax.plot([-d/2, +d/2],[-w/2, -w/2],[P[0].max(),P[0].max()], color="green", ls="--")
+                    ax.plot([+d/2, +d/2],[y.min(), -w/2],[P[0].max(),P[0].max()], color="green", ls="--")
+                    ax.plot([-d/2, -d/2],[y.max(), +w/2],[P[0].max(),P[0].max()], color="green", ls="--")
+                    ax.plot([-d/2, +d/2],[w/2, +w/2],[P[0].max(),P[0].max()], color="green", ls="--")
+                    ax.plot([+d/2, +d/2],[y.max(), +w/2],[P[0].max(),P[0].max()], color="green", ls="--")
+                
         elif method=="rk4" and ADD_MET == "no": 
             if diff == "True" and case == "caseB":
                 P_diff = np.abs(P - P_an)
@@ -1037,8 +1040,12 @@ def visualise_2D(case,method, settings, sys_par, num_par):
                 surf = ax.plot_surface(X,Y,color="black", cmap="binary", label=r'RK4 method normalised to {0:.4f} '.format(val[0]))  
 
                 if v==True:
-                    # do something
-                    placeholder = 0     
+                    ax.plot([-d/2, -d/2],[y.min(), -w/2],[P[0].max(),P[0].max()], color="green", ls="--", label=r'Slit')
+                    ax.plot([-d/2, +d/2],[-w/2, -w/2],[P[0].max(),P[0].max()], color="green", ls="--")
+                    ax.plot([+d/2, +d/2],[y.min(), -w/2],[P[0].max(),P[0].max()], color="green", ls="--")
+                    ax.plot([-d/2, -d/2],[y.max(), +w/2],[P[0].max(),P[0].max()], color="green", ls="--")
+                    ax.plot([-d/2, +d/2],[w/2, +w/2],[P[0].max(),P[0].max()], color="green", ls="--")
+                    ax.plot([+d/2, +d/2],[y.max(), +w/2],[P[0].max(),P[0].max()], color="green", ls="--")     
 
         elif method=="cn" and ADD_MET == "no": 
             if diff == "True" and case == "caseB":
@@ -1048,8 +1055,12 @@ def visualise_2D(case,method, settings, sys_par, num_par):
                 surf = ax.plot_surface(X,Y,P[0],color="black", cmap="binary", label=r'CN scheme normalised to {0:.4f} '.format(val[0]))
 
                 if v==True:
-                    # do something
-                    placeholder = 0
+                    ax.plot([-d/2, -d/2],[y.min(), -w/2],[P[0].max(),P[0].max()], color="green", ls="--", label=r'Slit')
+                    ax.plot([-d/2, +d/2],[-w/2, -w/2],[P[0].max(),P[0].max()], color="green", ls="--")
+                    ax.plot([+d/2, +d/2],[y.min(), -w/2],[P[0].max(),P[0].max()], color="green", ls="--")
+                    ax.plot([-d/2, -d/2],[y.max(), +w/2],[P[0].max(),P[0].max()], color="green", ls="--")
+                    ax.plot([-d/2, +d/2],[w/2, +w/2],[P[0].max(),P[0].max()], color="green", ls="--")
+                    ax.plot([+d/2, +d/2],[y.max(), +w/2],[P[0].max(),P[0].max()], color="green", ls="--")
         
         elif method=="all" and ADD_MET == "no":
             raise Exception("Overlay of different solutions can not be visualised in 2D.")
@@ -1127,10 +1138,14 @@ def visualise_2D(case,method, settings, sys_par, num_par):
                     surf._edgecolors2d  = surf._edgecolor3d
 
                     if v==True:
-                        # do something
-                        placeholder = 0
+                        pot, = ax.plot([-d/2, -d/2],[y.min(), -w/2],[P[i].max(),P[i].max()], color="green", ls="--")
+                        ax.plot([-d/2, +d/2],[-w/2, -w/2],[P[i].max(),P[i].max()], color="green", ls="--")
+                        ax.plot([+d/2, +d/2],[y.min(), -w/2],[P[i].max(),P[i].max()], color="green", ls="--")
+                        ax.plot([-d/2, -d/2],[y.max(), +w/2],[P[i].max(),P[i].max()], color="green", ls="--")
+                        ax.plot([-d/2, +d/2],[w/2, +w/2],[P[i].max(),P[i].max()], color="green", ls="--")
+                        ax.plot([+d/2, +d/2],[y.max(), +w/2],[P[i].max(),P[i].max()], color="green", ls="--")
 
-                    ax.legend([surf], [r'FTCS scheme normalised to {0:.4f} '.format(val[i])],  loc="upper right", fontsize=body_size)
+                    ax.legend([surf, pot], [r'FTCS scheme normalised to {0:.4f} '.format(val[i]),r'Slit'],  loc="upper right", fontsize=body_size)
                     ax.set_zlabel(r'Probability density $|\Psi(x,y,t)|^2$', fontsize=body_size)
                     ax.set_xlabel(r'Spatial dimension $x$', fontsize=body_size)
                     ax.set_ylabel(r'Spatial dimension $y$', fontsize=body_size)
@@ -1165,10 +1180,14 @@ def visualise_2D(case,method, settings, sys_par, num_par):
                     surf._edgecolors2d  = surf._edgecolor3d
 
                     if v==True:
-                        # do something
-                        placeholder = 0
+                        pot, = ax.plot([-d/2, -d/2],[y.min(), -w/2],[P[i].max(),P[i].max()], color="green", ls="--")
+                        ax.plot([-d/2, +d/2],[-w/2, -w/2],[P[i].max(),P[i].max()], color="green", ls="--")
+                        ax.plot([+d/2, +d/2],[y.min(), -w/2],[P[i].max(),P[i].max()], color="green", ls="--")
+                        ax.plot([-d/2, -d/2],[y.max(), +w/2],[P[i].max(),P[i].max()], color="green", ls="--")
+                        ax.plot([-d/2, +d/2],[w/2, +w/2],[P[i].max(),P[i].max()], color="green", ls="--")
+                        ax.plot([+d/2, +d/2],[y.max(), +w/2],[P[i].max(),P[i].max()], color="green", ls="--")
 
-                    ax.legend([surf], [r'RK$ scheme normalised to {0:.4f} '.format(val[i])],  loc="upper right", fontsize=body_size)
+                    ax.legend([surf, pot], [r'RK$ scheme normalised to {0:.4f} '.format(val[i]), r'Slit'],  loc="upper right", fontsize=body_size)
                     ax.set_zlabel(r'Probability density $|\Psi(x,y,t)|^2$', fontsize=body_size)
                     ax.set_xlabel(r'Spatial dimension $x$', fontsize=body_size)
                     ax.set_ylabel(r'Spatial dimension $y$', fontsize=body_size)
@@ -1203,10 +1222,14 @@ def visualise_2D(case,method, settings, sys_par, num_par):
                     surf._edgecolors2d  = surf._edgecolor3d
 
                     if v==True:
-                        # do something
-                        placeholder = 0
+                        pot, = ax.plot([-d/2, -d/2],[y.min(), -w/2],[P[i].max(),P[i].max()], color="green", ls="--")
+                        ax.plot([-d/2, +d/2],[-w/2, -w/2],[P[i].max(),P[i].max()], color="green", ls="--")
+                        ax.plot([+d/2, +d/2],[y.min(), -w/2],[P[i].max(),P[i].max()], color="green", ls="--")
+                        ax.plot([-d/2, -d/2],[y.max(), +w/2],[P[i].max(),P[i].max()], color="green", ls="--")
+                        ax.plot([-d/2, +d/2],[w/2, +w/2],[P[i].max(),P[i].max()], color="green", ls="--")
+                        ax.plot([+d/2, +d/2],[y.max(), +w/2],[P[i].max(),P[i].max()], color="green", ls="--")
 
-                    ax.legend([surf], [r'CN scheme normalised to {0:.4f} '.format(val[i])],  loc="upper right", fontsize=body_size)
+                    ax.legend([surf, pot], [r'CN scheme normalised to {0:.4f} '.format(val[i]), r'Slit'],  loc="upper right", fontsize=body_size)
                     ax.set_zlabel(r'Probability density $|\Psi(x,y,t)|^2$', fontsize=body_size)
                     ax.set_xlabel(r'Spatial dimension $x$', fontsize=body_size)
                     ax.set_ylabel(r'Spatial dimension $y$', fontsize=body_size)
@@ -1253,8 +1276,12 @@ def visualise_2D(case,method, settings, sys_par, num_par):
                         surf._edgecolors2d  = surf._edgecolor3d
 
                         if v==True:
-                            # do something
-                            placeholder = 0
+                            axs[i].plot([-d/2, -d/2],[y.min(), -w/2],[P[i].max(),P[i].max()], color="green", ls="--", label=r'Slit')
+                            axs[i].plot([-d/2, +d/2],[-w/2, -w/2],[P[i].max(),P[i].max()], color="green", ls="--")
+                            axs[i].plot([+d/2, +d/2],[y.min(), -w/2],[P[i].max(),P[i].max()], color="green", ls="--")
+                            axs[i].plot([-d/2, -d/2],[y.max(), +w/2],[P[i].max(),P[i].max()], color="green", ls="--")
+                            axs[i].plot([-d/2, +d/2],[w/2, +w/2],[P[i].max(),P[i].max()], color="green", ls="--")
+                            axs[i].plot([+d/2, +d/2],[y.max(), +w/2],[P[i].max(),P[i].max()], color="green", ls="--")
                         
                         axs[i].legend(fontsize=body_size, loc="upper right")
                         axs[i].set_zlabel(r'$|\Psi(x,y,t)|^2$', fontsize=body_size)
@@ -1285,8 +1312,12 @@ def visualise_2D(case,method, settings, sys_par, num_par):
                         surf._edgecolors2d  = surf._edgecolor3d
 
                         if v==True:
-                            # do something
-                            placeholder = 0
+                            axs[i].plot([-d/2, -d/2],[y.min(), -w/2],[P[i].max(),P[i].max()], color="green", ls="--", label=r'Slit')
+                            axs[i].plot([-d/2, +d/2],[-w/2, -w/2],[P[i].max(),P[i].max()], color="green", ls="--")
+                            axs[i].plot([+d/2, +d/2],[y.min(), -w/2],[P[i].max(),P[i].max()], color="green", ls="--")
+                            axs[i].plot([-d/2, -d/2],[y.max(), +w/2],[P[i].max(),P[i].max()], color="green", ls="--")
+                            axs[i].plot([-d/2, +d/2],[w/2, +w/2],[P[i].max(),P[i].max()], color="green", ls="--")
+                            axs[i].plot([+d/2, +d/2],[y.max(), +w/2],[P[i].max(),P[i].max()], color="green", ls="--")
                       
                         axs[i].legend(fontsize=body_size, loc="upper right")
                         axs[i].set_zlabel(r'$|\Psi(x,y,t)|^2$', fontsize=body_size)
@@ -1318,9 +1349,13 @@ def visualise_2D(case,method, settings, sys_par, num_par):
                         surf._edgecolors2d  = surf._edgecolor3d
 
                         if v==True:
-                            # do something
-                            placeholder = 0
-
+                            axs[i].plot([-d/2, -d/2],[y.min(), -w/2],[P[i].max(),P[i].max()], color="green", ls="--", label=r'Slit')
+                            axs[i].plot([-d/2, +d/2],[-w/2, -w/2],[P[i].max(),P[i].max()], color="green", ls="--")
+                            axs[i].plot([+d/2, +d/2],[y.min(), -w/2],[P[i].max(),P[i].max()], color="green", ls="--")
+                            axs[i].plot([-d/2, -d/2],[y.max(), +w/2],[P[i].max(),P[i].max()], color="green", ls="--")
+                            axs[i].plot([-d/2, +d/2],[w/2, +w/2],[P[i].max(),P[i].max()], color="green", ls="--")
+                            axs[i].plot([+d/2, +d/2],[y.max(), +w/2],[P[i].max(),P[i].max()], color="green", ls="--")
+                        
                         axs[i].legend(fontsize=body_size, loc="upper right")
                         axs[i].set_zlabel(r'$|\Psi(x,y,t)|^2$', fontsize=body_size)
                         axs[i].set_xlabel(r'$x$', fontsize=body_size)

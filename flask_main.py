@@ -2,7 +2,7 @@ from flask import Flask, redirect, url_for, render_template, request, send_file,
 import os
 from NumericalMethods.main import main
 
-log_file = os.path.join("Numerical Methods", "log.txt")
+log_file = os.path.join("NumericalMethods", "log.txt")
 #pdf_output = os.path.join(main_dir_path, main_dir_path, "Numerical Methods", "output", "visualisation.pdf")
 
 
