@@ -133,9 +133,10 @@ def ftcs_2D(case, settings, sys_par, num_par):
     #Loop to compute FCTS scheme
     for k in np.arange(tn):
 
+        psi = psi*V
+
         psi[1:xn-1,1:yn-1] = psi[1:xn-1,1:yn-1] + (dt*1j/2)*((psi[1:xn-1,2:yn]-2*psi[1:xn-1,1:yn-1]+psi[1:xn-1,0:yn-2])/(dy**2) + (psi[2:xn,1:yn-1]-2*psi[1:xn-1,1:yn-1]+psi[0:xn-2,1:yn-1])/(dx**2))
 
-        psi = psi*V
 
         psi[0:,0] = 0
         psi[0:, yn-1] = 0
