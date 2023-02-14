@@ -255,7 +255,7 @@ def err_vs_step_time(case,method,mode, d0, d_arr, fit ):
     elif case=="caseB":
         description = "free propagation in 2D"
     elif case=="caseC":
-        description = "a finite 1D potential well"
+        description = "a finite 1D potential barrier"
     elif case=="caseD":
         description = "single-slit diffraction in 2D" 
     elif case=="caseE":
