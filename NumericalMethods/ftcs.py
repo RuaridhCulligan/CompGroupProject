@@ -206,10 +206,15 @@ def ftcs_2particle(case, settings, sys_par, num_par):
         psi[0] = 0
         psi[xn-1] = 0
 
+        
         # update potential
         p = np.abs(psi)**2
         maxima, _ = find_peaks(p, height=0.95*np.amax(p))
-        V = potential_E(x,maxima[0],maxima[1],sys_par)
+
+        if len(maxima) == 2:
+            V = potential_E(x,maxima[0],maxima[1],sys_par)
+        else:
+            V = np.zeros(xn)
 
         if (k in k_arr):
             T[j]   = t[k]
