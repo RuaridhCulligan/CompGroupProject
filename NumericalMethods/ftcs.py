@@ -105,12 +105,11 @@ def ftcs_2D(case, settings, sys_par, num_par):
     psi = wavepacket_2d(x,y, sys_par).astype("complex_")
     
     # set up relevant potential at each point
-    V = potential_D(x,y,sys_par)
+    if case=="caseB":
+        V = np.ones((xn,yn))
+    if case=="caseD":
+       V = potential_D(x,y,sys_par)
 
-    # potential barrier parameters
-    d  = sys_par[6]
-    w  = sys_par[7]
- 
     # make relevant adjustments for non-static/semi-static output:
     if float(settings[0]) == 0.0:  
         k_arr = np.linspace(0, tn-1, 100, dtype="int")  
@@ -137,6 +136,11 @@ def ftcs_2D(case, settings, sys_par, num_par):
         psi[1:xn-1,1:yn-1] = psi[1:xn-1,1:yn-1] + (dt*1j/2)*((psi[1:xn-1,2:yn]-2*psi[1:xn-1,1:yn-1]+psi[1:xn-1,0:yn-2])/(dy**2) + (psi[2:xn,1:yn-1]-2*psi[1:xn-1,1:yn-1]+psi[0:xn-2,1:yn-1])/(dx**2))
 
         psi = psi*V
+
+        psi[0:,0] = 0
+        psi[0:, yn-1] = 0
+        psi[xn-1,0:] = 0
+        psi[0, 0:] = 0
          
         if (k in k_arr):
             T[j]   = t[k]
