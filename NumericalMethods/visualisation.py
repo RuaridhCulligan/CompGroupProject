@@ -176,11 +176,13 @@ def visualise_1D(case,method, settings, sys_par, num_par):
                 plt.plot(x,P[0],color="black", label=r'FTCS scheme normalised to {0:.4f} '.format(val[0]))
 
             if v==True and diff==False:
-                plt.plot(V_x,np.array([0,P[0].max()]),color="green",linestyle="--", label=r'Finite potential barrier of height {0:.4f} '.format(V0))
+                plt.plot(V_x,np.array([0,P[0].max()]),color="green",linestyle="--", label=r'Finite potential barrier of height {0:.1f}'.format(V0))
                 plt.plot(-V_x,np.array([0,P[0].max()]),color="green",linestyle="--")
+                plt.plot([-d/2, d/2],np.array([P[0].max(),P[0].max()]),color="green",linestyle="--")
             elif v==True and diff==True:  
-                plt.plot(V_x,np.array([0,P_diff[0].max()]),color="green",linestyle="--", label=r'Finite potential barrier of height {0:.4f} '.format(V0))
+                plt.plot(V_x,np.array([0,P_diff[0].max()]),color="green",linestyle="--", label=r'Finite potential barrier of height {0:.1f}'.format(V0))
                 plt.plot(-V_x,np.array([0,P_diff[0].max()]),color="green",linestyle="--")  
+                plt.plot([-d/2, d/2],np.array([P[0].max(),P[0].max()]),color="green",linestyle="--")
 
         elif method=="rk4" and ADD_MET == "no": 
             if diff == "True" and case == "caseA":
@@ -192,9 +194,11 @@ def visualise_1D(case,method, settings, sys_par, num_par):
             if v==True and diff==False:
                 plt.plot(V_x,np.array([0,P[0].max()]),color="green",linestyle="--", label=r'Finite potential barrier of height {0:.4f}' .format(V0))
                 plt.plot(-V_x,np.array([0,P[0].max()]),color="green",linestyle="--")
+                plt.plot([-d/2, d/2],np.array([P[0].max(),P[0].max()]),color="green",linestyle="--")
             elif v==True and diff==True:  
-                plt.plot(V_x,np.array([0,P_diff[0].max()]),color="green",linestyle="--", label=r'Finite potential barrier of height {0:.4f} '.format(V0))
-                plt.plot(-V_x,np.array([0,P_diff[0].max()]),color="green",linestyle="--")  
+                plt.plot(V_x,np.array([0,P_diff[0].max()]),color="green",linestyle="--", label=r'Finite potential barrier of height {0:.1f}'.format(V0))
+                plt.plot(-V_x,np.array([0,P_diff[0].max()]),color="green",linestyle="--")
+                plt.plot([-d/2, d/2],np.array([P[0].max(),P[0].max()]),color="green",linestyle="--")  
        
         elif method=="cn" and ADD_MET == "no": 
             if diff == "True" and case == "caseA":
@@ -204,11 +208,13 @@ def visualise_1D(case,method, settings, sys_par, num_par):
                 plt.plot(x,P[0],color="black", label=r'CN scheme normalised to {0:.4f} '.format(val[0]))
 
             if v==True and diff==False:
-                plt.plot(V_x,np.array([0,P[0].max()]),color="green",linestyle="--", label=r'Finite potential barrier of height {0:.4f} '.format(V0))
+                plt.plot(V_x,np.array([0,P[0].max()]),color="green",linestyle="--", label=r'Finite potential barrier of height {0:.1f}'.format(V0))
                 plt.plot(-V_x,np.array([0,P[0].max()]),color="green",linestyle="--")
+                plt.plot([-d/2, d/2],np.array([P[0].max(),P[0].max()]),color="green",linestyle="--")
             elif v==True and diff==True:  
-                plt.plot(V_x,np.array([0,P_diff[0].max()]),color="green",linestyle="--", label=r'Finite potential barrier of height {0:.4f} '.format(V0))
+                plt.plot(V_x,np.array([0,P_diff[0].max()]),color="green",linestyle="--", label=r'Finite potential barrier of height {0:.1f}'.format(V0))
                 plt.plot(-V_x,np.array([0,P_diff[0].max()]),color="green",linestyle="--")  
+                plt.plot([-d/2, d/2],np.array([P[0].max(),P[0].max()]),color="green",linestyle="--")
         
         elif method=="all" and ADD_MET == "no":
             if diff == "True" and case == "caseA":
@@ -224,11 +230,13 @@ def visualise_1D(case,method, settings, sys_par, num_par):
                 plt.plot(x,P_cn[0],color="blue", label=r'CN scheme normalised to {0:.4f} '.format(val_cn[0]))
                 
             if v==True and diff==False:
-                plt.plot(V_x,np.array([0,P_ftcs[0].max()]),color="green",linestyle="--", label=r'Finite potential barrier of height {0:.4f} '.format(V0))
+                plt.plot(V_x,np.array([0,P_ftcs[0].max()]),color="green",linestyle="--", label=r'Finite potential barrier of height {0:.1f}'.format(V0))
                 plt.plot(-V_x,np.array([0,P_ftcs[0].max()]),color="green",linestyle="--")
+                plt.plot([-d/2, d/2],np.array([P[0].max(),P[0].max()]),color="green",linestyle="--")
             elif v==True and diff==True:  
-                plt.plot(V_x,np.array([0,P_diff1[0].max()]),color="green",linestyle="--", label=r'Finite potential barrier of height {0:.4f} '.format(V0))
+                plt.plot(V_x,np.array([0,P_diff1[0].max()]),color="green",linestyle="--", label=r'Finite potential barrier of height {0:.1f}'.format(V0))
                 plt.plot(-V_x,np.array([0,P_diff1[0].max()]),color="green",linestyle="--")  
+                plt.plot([-d/2, d/2],np.array([P[0].max(),P[0].max()]),color="green",linestyle="--")
 
         elif method=="an" and ADD_MET=="no":
             plt.plot(x,P[0],color="black", label=r'Analytical solution normalised to {0:.4f}'.format(integrate_1d(P[0],x)))
@@ -246,11 +254,13 @@ def visualise_1D(case,method, settings, sys_par, num_par):
                 plt.plot(x,P_rk4[0],color="grey", label=r'RK4 scheme normalised to {0:.4f} '.format(val_rk4[0]))
                 
             if v==True and diff==False:
-                plt.plot(V_x,np.array([0,P_ftcs[0].max()]),color="green",linestyle="--", label=r'Finite potential barrier of height {0:.4f} '.format(V0))
+                plt.plot(V_x,np.array([0,P_ftcs[0].max()]),color="green",linestyle="--", label=r'Finite potential barrier of height {0:.1f}'.format(V0))
                 plt.plot(-V_x,np.array([0,P_ftcs[0].max()]),color="green",linestyle="--")
+                plt.plot([-d/2, d/2],np.array([P[0].max(),P[0].max()]),color="green",linestyle="--")
             elif v==True and diff==True:  
-                plt.plot(V_x,np.array([0,P_diff1[0].max()]),color="green",linestyle="--", label=r'Finite potential barrier of height {0:.4f} '.format(V0))
+                plt.plot(V_x,np.array([0,P_diff1[0].max()]),color="green",linestyle="--", label=r'Finite potential barrier of height {0:.1f}'.format(V0))
                 plt.plot(-V_x,np.array([0,P_diff1[0].max()]),color="green",linestyle="--")  
+                plt.plot([-d/2, d/2],np.array([P[0].max(),P[0].max()]),color="green",linestyle="--")
         
         elif (method == "rk4" and ADD_MET == "cn") or (method == "cn" and ADD_MET == "rk4"):
             if diff == "True" and case == "caseA":
@@ -263,11 +273,13 @@ def visualise_1D(case,method, settings, sys_par, num_par):
                 plt.plot(x,P_cn[0],color="blue", label=r'CN scheme normalised to {0:.4f} '.format(val_cn[0])) 
 
             if v==True and diff==False:
-                plt.plot(V_x,np.array([0,P_cn[0].max()]),color="green",linestyle="--", label=r'Finite potential barrier of height {0:.4f} '.format(V0))
+                plt.plot(V_x,np.array([0,P_cn[0].max()]),color="green",linestyle="--", label=r'Finite potential barrier of height {0:.1f}'.format(V0))
                 plt.plot(-V_x,np.array([0,P_cn[0].max()]),color="green",linestyle="--")
+                plt.plot([-d/2, d/2],np.array([P[0].max(),P[0].max()]),color="green",linestyle="--")
             elif v==True and diff==True:  
-                plt.plot(V_x,np.array([0,P_diff2[0].max()]),color="green",linestyle="--", label=r'Finite potential barrier of height {0:.4f} '.format(V0))
+                plt.plot(V_x,np.array([0,P_diff2[0].max()]),color="green",linestyle="--", label=r'Finite potential barrier of height {0:.1f}'.format(V0))
                 plt.plot(-V_x,np.array([0,P_diff2[0].max()]),color="green",linestyle="--") 
+                plt.plot([-d/2, d/2],np.array([P[0].max(),P[0].max()]),color="green",linestyle="--")
         
         elif (method == "ftcs" and ADD_MET == "cn") or (method == "cn" and ADD_MET == "ftcs"):
             if diff == "True" and case == "caseA":
@@ -280,11 +292,13 @@ def visualise_1D(case,method, settings, sys_par, num_par):
                 plt.plot(x,P_cn[0],color="blue", label=r'CN scheme normalised to {0:.4f} '.format(val_cn[0]))
                         
             if v==True and diff==False:
-                plt.plot(V_x,np.array([0,P_ftcs[0].max()]),color="green",linestyle="--", label=r'Finite potential barrier of height {0:.4f} '.format(V0))
+                plt.plot(V_x,np.array([0,P_ftcs[0].max()]),color="green",linestyle="--", label=r'Finite potential barrier of height {0:.1f}'.format(V0))
                 plt.plot(-V_x,np.array([0,P_ftcs[0].max()]),color="green",linestyle="--")
+                plt.plot([-d/2, d/2],np.array([P[0].max(),P[0].max()]),color="green",linestyle="--")
             elif v==True and diff==True:  
-                plt.plot(V_x,np.array([0,P_diff1[0].max()]),color="green",linestyle="--", label=r'Finite potential barrier of height {0:.4f} '.format(V0))
+                plt.plot(V_x,np.array([0,P_diff1[0].max()]),color="green",linestyle="--", label=r'Finite potential barrier of height {0:.1f}'.format(V0))
                 plt.plot(-V_x,np.array([0,P_diff1[0].max()]),color="green",linestyle="--") 
+                plt.plot([-d/2, d/2],np.array([P[0].max(),P[0].max()]),color="green",linestyle="--")
 
         if an==True and method != "an" and diff == "False":
             plt.plot(x,P_an[0],color="red",linestyle="--", label=r'Analytical solution')
@@ -318,9 +332,10 @@ def visualise_1D(case,method, settings, sys_par, num_par):
                     l, = ax.plot(x,P_diff[i],color="black")
                     
                     if v ==True:
-                        l2, = ax.plot(V_x,np.array([0,P_diff[0].max()]),color="green",linestyle="--", label=r'Finite potential barrier of height {0:.4f} '.format(V0))
+                        l2, = ax.plot(V_x,np.array([0,P_diff[0].max()]),color="green",linestyle="--", label=r'Finite potential barrier of height {0:.1f}'.format(V0))
                         l3 = ax.plot(-V_x,np.array([0,P_diff[0].max()]),color="green",linestyle="--")
-                        ax.legend([l, l2], [r'Error on FTCS scheme (total: {0:.3f})'.format(integrate_1d(P_diff[i],x)),r'Finite potential barrier of height {0:.4f} '.format(V0) ],loc="upper right", fontsize=body_size )
+                        l4 = ax.plot([-d/2, d/2],np.array([P[0].max(),P[0].max()]),color="green",linestyle="--")
+                        ax.legend([l, l2], [r'Error on FTCS scheme (total: {0:.3f})'.format(integrate_1d(P_diff[i],x)),r'Finite potential barrier of height {0:.1f}'.format(V0) ],loc="upper right", fontsize=body_size )
                     else:
                         ax.legend([l], [r'Error on FTCS scheme (total: {0:.3f})'.format(integrate_1d(P_diff[i],x))],  loc="upper right", fontsize=body_size)
                     
@@ -338,7 +353,8 @@ def visualise_1D(case,method, settings, sys_par, num_par):
                     if v ==True:
                         l_p, = ax.plot(V_x,np.array([0,P[0].max()]),color="green",linestyle="--")
                         ax.plot(-V_x,np.array([0,P[0].max()]),color="green",linestyle="--")
-                        label_potential = r'Finite potential barrier of height {0:.4f} '.format(V0) 
+                        ax.plot([-d/2, d/2],np.array([P[0].max(),P[0].max()]),color="green",linestyle="--")
+                        label_potential = r'Finite potential barrier of height {0:.1f}'.format(V0) 
 
                         ax.legend([l, l_p], [label,label_potential],loc="upper right", fontsize=body_size )
                     elif an==True:
@@ -362,9 +378,10 @@ def visualise_1D(case,method, settings, sys_par, num_par):
                     l, = ax.plot(x,P_diff[i],color="black")
                     
                     if v ==True:
-                        l2, = ax.plot(V_x,np.array([0,P_diff[0].max()]),color="green",linestyle="--", label=r'Finite potential barrier of height {0:.4f} '.format(V0))
+                        l2, = ax.plot(V_x,np.array([0,P_diff[0].max()]),color="green",linestyle="--", label=r'Finite potential barrier of height {0:.1f}'.format(V0))
                         l3 = ax.plot(-V_x,np.array([0,P_diff[0].max()]),color="green",linestyle="--")
-                        ax.legend([l, l2], [r'Error on RK4 scheme (total: {0:.3f})'.format(integrate_1d(P_diff[i],x)),r'Finite potential barrier of height {0:.4f} '.format(V0) ],loc="upper right", fontsize=body_size )
+                        ax.plot([-d/2, d/2],np.array([P[0].max(),P[0].max()]),color="green",linestyle="--")
+                        ax.legend([l, l2], [r'Error on RK4 scheme (total: {0:.3f})'.format(integrate_1d(P_diff[i],x)),r'Finite potential barrier of height {0:.1f}'.format(V0) ],loc="upper right", fontsize=body_size )
                     else:
                         ax.legend([l], [r'Error on RK4 scheme (total: {0:.3f})'.format(integrate_1d(P_diff[i],x))],  loc="upper right", fontsize=body_size)
                     
@@ -382,7 +399,8 @@ def visualise_1D(case,method, settings, sys_par, num_par):
                     if v ==True:
                         l_p, = ax.plot(V_x,np.array([0,P[0].max()]),color="green",linestyle="--")
                         ax.plot(-V_x,np.array([0,P[0].max()]),color="green",linestyle="--")
-                        label_potential = r'Finite potential barrier of height {0:.4f} '.format(V0) 
+                        ax.plot([-d/2, d/2],np.array([P[0].max(),P[0].max()]),color="green",linestyle="--")
+                        label_potential = r'Finite potential barrier of height {0:.1f}'.format(V0) 
 
                         ax.legend([l, l_p], [label,label_potential],loc="upper right", fontsize=body_size )
                     elif an==True:
@@ -406,9 +424,10 @@ def visualise_1D(case,method, settings, sys_par, num_par):
                     l, = ax.plot(x,P_diff[i],color="black")
                     
                     if v ==True:
-                        l2, = ax.plot(V_x,np.array([0,P_diff[0].max()]),color="green",linestyle="--", label=r'Finite potential barrier of height {0:.4f} '.format(V0))
+                        l2, = ax.plot(V_x,np.array([0,P_diff[0].max()]),color="green",linestyle="--", label=r'Finite potential barrier of height {0:.1f}'.format(V0))
                         l3 = ax.plot(-V_x,np.array([0,P_diff[0].max()]),color="green",linestyle="--")
-                        ax.legend([l, l2], [r'Error on CN scheme (total: {0:.3f})'.format(integrate_1d(P_diff[i],x)),r'Finite potential barrier of height {0:.4f} '.format(V0) ],loc="upper right", fontsize=body_size )
+                        ax.plot([-d/2, d/2],np.array([P[0].max(),P[0].max()]),color="green",linestyle="--")
+                        ax.legend([l, l2], [r'Error on CN scheme (total: {0:.3f})'.format(integrate_1d(P_diff[i],x)),r'Finite potential barrier of height {0:.1f}'.format(V0) ],loc="upper right", fontsize=body_size )
                     else:
                         ax.legend([l], [r'Error on CN scheme (total: {0:.3f})'.format(integrate_1d(P_diff[i],x))],  loc="upper right", fontsize=body_size)
                     
@@ -426,7 +445,8 @@ def visualise_1D(case,method, settings, sys_par, num_par):
                     if v ==True:
                         l_p, = ax.plot(V_x,np.array([0,P[0].max()]),color="green",linestyle="--")
                         ax.plot(-V_x,np.array([0,P[0].max()]),color="green",linestyle="--")
-                        label_potential = r'Finite potential barrier of height {0:.4f}  '.format(V0) 
+                        ax.plot([-d/2, d/2],np.array([P[0].max(),P[0].max()]),color="green",linestyle="--")
+                        label_potential = r'Finite potential barrier of height {0:.1f}'.format(V0) 
 
                         ax.legend([l, l_p], [label,label_potential],loc="upper right", fontsize=body_size )
                     elif an==True:
@@ -461,7 +481,8 @@ def visualise_1D(case,method, settings, sys_par, num_par):
                     if v ==True:
                         l_p, = ax.plot(V_x,np.array([0,P_diff1[0].max()]),color="green",linestyle="--")
                         ax.plot(-V_x,np.array([0,P_diff1[0].max()]),color="green",linestyle="--")
-                        label_potential = r'Finite potential barrier of height {0:.4f}  '.format(V0)
+                        ax.plot([-d/2, d/2],np.array([P[0].max(),P[0].max()]),color="green",linestyle="--")
+                        label_potential = r'Finite potential barrier of height {0:.1f}'.format(V0)
 
                         ax.legend([l_ftcs, l_rk4, l_cn, l_p], [label_ftcs, label_rk4, label_cn, label_potential ],loc="upper right", fontsize=body_size )
                     else:
@@ -484,9 +505,10 @@ def visualise_1D(case,method, settings, sys_par, num_par):
                     label_cn  = r'CN scheme normalised to {0:.4f} '.format(val_cn[i])
                     
                     if v ==True:
-                        l_p = ax.plot(V_x,np.array([0,P[0].max()]),color="green",linestyle="--", label=r'Finite potential barrier of height {0:.4f}  '.format(V0))
+                        l_p = ax.plot(V_x,np.array([0,P[0].max()]),color="green",linestyle="--", label=r'Finite potential barrier of height {0:.1f}'.format(V0))
                         ax.plot(-V_x,np.array([0,P[0].max()]),color="green",linestyle="--")
-                        label_potential = r'Finite potential barrier of height {0:.4f}  '.format(V0)
+                        ax.plot([-d/2, d/2],np.array([P[0].max(),P[0].max()]),color="green",linestyle="--")
+                        label_potential = r'Finite potential barrier of height {0:.1f}'.format(V0)
 
                         ax.legend([l_ftcs, l_rk4, l_cn, l_p], [label_ftcs, label_rk4, label_cn, label_potential ],loc="upper right", fontsize=body_size )
                     elif an==True:
@@ -526,14 +548,7 @@ def visualise_1D(case,method, settings, sys_par, num_par):
                     label_ftcs = r'Error on FTCS scheme (total: {0:.3f})'.format(integrate_1d(P_diff1[i],x))
                     label_rk4 = r'Error on RK4 scheme (total: {0:.3f})'.format(integrate_1d(P_diff2[i],x))
                     
-                    if v ==True:
-                        l_p, = ax.plot(V_x,np.array([0,P_diff1[0].max()]),color="green",linestyle="--")
-                        ax.plot(-V_x,np.array([0,P_diff1[0].max()]),color="green",linestyle="--")
-                        label_potential = r'Finite potential barrier of height {0:.4f}  '.format(V0)
-
-                        ax.legend([l_ftcs, l_rk4, l_p], [label_ftcs, label_rk4,  label_potential ],loc="upper right", fontsize=body_size )
-                    else:
-                        ax.legend([l_ftcs, l_rk4], [label_ftcs, label_rk4 ],loc="upper right", fontsize=body_size )
+                    ax.legend([l_ftcs, l_rk4], [label_ftcs, label_rk4 ],loc="upper right", fontsize=body_size )
                     
                     ax.set_ylabel(r'Probability density $|\Psi(x,t)|^2$', fontsize=body_size)
                     ax.set_xlabel(r'Spatial dimension $x$', fontsize=body_size)
@@ -550,9 +565,10 @@ def visualise_1D(case,method, settings, sys_par, num_par):
                     label_rk4 = r'RK4 scheme normalised to {0:.4f} '.format(val_rk4[i])
                     
                     if v ==True:
-                        l_p, = ax.plot(V_x,np.array([0,P[0].max()]),color="green",linestyle="--", label=r'Finite potential barrier of height {0:.4f}  '.format(V0))
+                        l_p, = ax.plot(V_x,np.array([0,P[0].max()]),color="green",linestyle="--", label=r'Finite potential barrier of height {0:.1f}'.format(V0))
                         ax.plot(-V_x,np.array([0,P[0].max()]),color="green",linestyle="--")
-                        label_potential = r'Finite potential barrier of height {0:.4f}  '.format(V0)
+                        ax.plot([-d/2, d/2],np.array([P[0].max(),P[0].max()]),color="green",linestyle="--")
+                        label_potential = r'Finite potential barrier of height {0:.1f}'.format(V0)
 
                         ax.legend([l_ftcs, l_rk4, l_p], [label_ftcs, label_rk4, label_potential ],loc="upper right", fontsize=body_size )
                     elif an==True:
@@ -581,14 +597,8 @@ def visualise_1D(case,method, settings, sys_par, num_par):
                     label_rk4 = r'Error on RK4 scheme (total: {0:.3f})'.format(integrate_1d(P_diff2[i],x))
                     label_cn  = r'Error on CN scheme (total: {0:.3f})'.format(integrate_1d(P_diff3[i],x))
                     
-                    if v ==True:
-                        l_p = ax.plot(V_x,np.array([0,P_diff1[0].max()]),color="green",linestyle="--")
-                        ax.plot(-V_x,np.array([0,P_diff1[0].max()]),color="green",linestyle="--")
-                        label_potential = r'Finite potential barrier of height {0:.4f}  '.format(V0)
 
-                        ax.legend([l_rk4, l_cn, l_p], [label_rk4, label_cn, label_potential ],loc="upper right", fontsize=body_size )
-                    else:
-                        ax.legend([ l_rk4, l_cn], [label_rk4, label_cn],loc="upper right", fontsize=body_size )
+                    ax.legend([ l_rk4, l_cn], [label_rk4, label_cn],loc="upper right", fontsize=body_size )
                     
                     ax.set_ylabel(r'Probability density $|\Psi(x,t)|^2$', fontsize=body_size)
                     ax.set_xlabel(r'Spatial dimension $x$', fontsize=body_size)
@@ -605,9 +615,10 @@ def visualise_1D(case,method, settings, sys_par, num_par):
                     label_cn  = r'CN scheme normalised to {0:.4f} '.format(val_cn[i])
                     
                     if v ==True:
-                        l_p, = ax.plot(V_x,np.array([0,P[0].max()]),color="green",linestyle="--", label=r'Finite potential barrier of height {0:.4f}  '.format(V0))
+                        l_p, = ax.plot(V_x,np.array([0,P[0].max()]),color="green",linestyle="--", label=r'Finite potential barrier of height {0:.1f}'.format(V0))
                         ax.plot(-V_x,np.array([0,P[0].max()]),color="green",linestyle="--")
-                        label_potential = r'Finite potential barrier of height {0:.4f}  '.format(V0)
+                        ax.plot([-d/2, d/2],np.array([P[0].max(),P[0].max()]),color="green",linestyle="--")
+                        label_potential = r'Finite potential barrier of height {0:.1f}'.format(V0)
 
                         ax.legend([l_rk4, l_cn, l_p], [label_rk4, label_cn, label_potential ],loc="upper right", fontsize=body_size )
                     elif an==True:
@@ -636,14 +647,8 @@ def visualise_1D(case,method, settings, sys_par, num_par):
                     label_ftcs = r'Error on FTCS scheme (total: {0:.3f})'.format(integrate_1d(P_diff1[i],x))
                     label_cn  = r'Error on CN scheme (total: {0:.3f})'.format(integrate_1d(P_diff3[i],x))
                     
-                    if v ==True:
-                        l_p, = ax.plot(V_x,np.array([0,P_diff1[0].max()]),color="green",linestyle="--")
-                        ax.plot(-V_x,np.array([0,P_diff1[0].max()]),color="green",linestyle="--")
-                        label_potential = r'Finite potential barrier of height {0:.4f}  '.format(V0)
-
-                        ax.legend([l_ftcs,  l_cn, l_p], [label_ftcs,  label_cn, label_potential ],loc="upper right", fontsize=body_size )
-                    else:
-                        ax.legend([l_ftcs, l_cn], [label_ftcs, label_cn],loc="upper right", fontsize=body_size )
+                   
+                    ax.legend([l_ftcs, l_cn], [label_ftcs, label_cn],loc="upper right", fontsize=body_size )
                     
                     ax.set_ylabel(r'Probability density $|\Psi(x,t)|^2$', fontsize=body_size)
                     ax.set_xlabel(r'Spatial dimension $x$', fontsize=body_size)
@@ -660,9 +665,10 @@ def visualise_1D(case,method, settings, sys_par, num_par):
                     label_cn  = r'CN scheme normalised to {0:.4f} '.format(val_cn[i])
                     
                     if v ==True:
-                        l_p, = ax.plot(V_x,np.array([0,P[0].max()]),color="green",linestyle="--", label=r'Finite potential barrier of height {0:.4f}  '.format(V0))
+                        l_p, = ax.plot(V_x,np.array([0,P[0].max()]),color="green",linestyle="--", label=r'Finite potential barrier of height {0:.1f}'.format(V0))
                         ax.plot(-V_x,np.array([0,P[0].max()]),color="green",linestyle="--")
-                        label_potential = r'Finite potential barrier of height {0:.4f}  '.format(V0)
+                        ax.plot([-d/2, d/2],np.array([P[0].max(),P[0].max()]),color="green",linestyle="--")
+                        label_potential = r'Finite potential barrier of height {0:.1f}'.format(V0)
 
                         ax.legend([l_ftcs,  l_cn, l_p], [label_ftcs,  label_cn, label_potential ],loc="upper right", fontsize=body_size )
                     elif an==True:
@@ -702,9 +708,6 @@ def visualise_1D(case,method, settings, sys_par, num_par):
                         axs[i].set_title("t={0:.3f}".format(T[i]))
                         axs[i].plot(x,P_diff[i],color="black", label=r'Error on FTCS scheme (total: {0:.3f})'.format(integrate_1d(P_diff[i],x)))
                         
-                        if v == True:
-                            axs[i].plot(V_x,np.array([0,P_diff[0].max()]),color="green",linestyle="--", label=r'Finite potential barrier of height {0:.4f}  '.format(V0))
-                            axs[i].plot(-V_x,np.array([0,P_diff[0].max()]),color="green",linestyle="--")
                         axs[i].legend(fontsize=body_size, loc="upper right")
                         axs[i].set_ylabel(r'$|\Psi(x,t)|^2$', fontsize=body_size)
                         axs[i].set_xlabel(r'Spatial dimension $x$', fontsize=body_size)
@@ -715,8 +718,9 @@ def visualise_1D(case,method, settings, sys_par, num_par):
                         if an==True and method != "an" and diff == "False":
                             axs[i].plot(x,P_an[i],color="red",linestyle="--", label=r'Analytical solution')
                         if v == True:
-                            axs[i].plot(V_x,np.array([0,P[0].max()]),color="green",linestyle="--", label=r'Finite potential barrier of height {0:.4f}  '.format(V0))
+                            axs[i].plot(V_x,np.array([0,P[0].max()]),color="green",linestyle="--", label=r'Finite potential barrier of height {0:.1f}'.format(V0))
                             axs[i].plot(-V_x,np.array([0,P[0].max()]),color="green",linestyle="--")
+                            axs[i].plot([-d/2, d/2],np.array([P[0].max(),P[0].max()]),color="green",linestyle="--")
                         axs[i].legend(fontsize=body_size, loc="upper right")
                         axs[i].set_ylabel(r'$|\Psi(x,t)|^2$', fontsize=body_size)
                         axs[i].set_xlabel(r'Spatial dimension $x$', fontsize=body_size)
@@ -727,9 +731,7 @@ def visualise_1D(case,method, settings, sys_par, num_par):
                     for i in range(len(T)):
                         axs[i].set_title("t={0:.3f}".format(T[i]))
                         axs[i].plot(x,P_diff[i],color="black", label=r'Error on RK4 method (total: {0:.3f})'.format(integrate_1d(P_diff[i],x)))
-                        if v == True:
-                            axs[i].plot(V_x,np.array([0,P_diff[0].max()]),color="green",linestyle="--", label=r'Finite potential barrier of height {0:.4f}  '.format(V0))
-                            axs[i].plot(-V_x,np.array([0,P_diff[0].max()]),color="green",linestyle="--") 
+                       
                         axs[i].legend(fontsize=body_size, loc="upper right")
                         axs[i].set_ylabel(r'$|\Psi(x,t)|^2$', fontsize=body_size)
                         axs[i].set_xlabel(r'Spatial dimension $x$', fontsize=body_size)
@@ -740,8 +742,9 @@ def visualise_1D(case,method, settings, sys_par, num_par):
                         if an==True and method != "an" and diff == "False":
                             axs[i].plot(x,P_an[i],color="red",linestyle="--", label=r'Analytical solution')
                         if v == True:
-                            axs[i].plot(V_x,np.array([0,P[0].max()]),color="green",linestyle="--", label=r'Finite potential barrier of height {0:.4f}  '.format(V0))
-                            axs[i].plot(-V_x,np.array([0,P[0].max()]),color="green",linestyle="--")  
+                            axs[i].plot(V_x,np.array([0,P[0].max()]),color="green",linestyle="--", label=r'Finite potential barrier of height {0:.1f}'.format(V0))
+                            axs[i].plot(-V_x,np.array([0,P[0].max()]),color="green",linestyle="--")
+                            axs[i].plot([-d/2, d/2],np.array([P[0].max(),P[0].max()]),color="green",linestyle="--")  
                         axs[i].legend(fontsize=body_size, loc="upper right")
                         axs[i].set_ylabel(r'$|\Psi(x,t)|^2$', fontsize=body_size)
                         axs[i].set_xlabel(r'Spatial dimension $x$', fontsize=body_size)
@@ -753,9 +756,7 @@ def visualise_1D(case,method, settings, sys_par, num_par):
                     for i in range(len(T)):
                         axs[i].set_title("t={0:.3f}".format(T[i]))
                         axs[i].plot(x,P_diff[i],color="black", label=r'Error on CN scheme (total: {0:.3f})'.format(integrate_1d(P_diff[i],x)))
-                        if v == True:
-                            axs[i].plot(V_x,np.array([0,P_diff[0].max()]),color="green",linestyle="--", label=r'Finite potential barrier of height {0:.4f}  '.format(V0))
-                            axs[i].plot(-V_x,np.array([0,P_diff[0].max()]),color="green",linestyle="--") 
+                        
                         axs[i].legend(fontsize=body_size, loc="upper right")
                         axs[i].set_ylabel(r'$|\Psi(x,t)|^2$', fontsize=body_size)
                         axs[i].set_xlabel(r'Spatial dimension $x$', fontsize=body_size)
@@ -766,8 +767,9 @@ def visualise_1D(case,method, settings, sys_par, num_par):
                         if an==True and method != "an" and diff == "False":
                             axs[i].plot(x,P_an[i],color="red",linestyle="--", label=r'Analytical solution') 
                         if v == True:
-                            axs[i].plot(V_x,np.array([0,P[0].max()]),color="green",linestyle="--", label=r'Finite potential barrier of height {0:.4f}  '.format(V0))
+                            axs[i].plot(V_x,np.array([0,P[0].max()]),color="green",linestyle="--", label=r'Finite potential barrier of height {0:.1f}'.format(V0))
                             axs[i].plot(-V_x,np.array([0,P[0].max()]),color="green",linestyle="--")
+                            axs[i].plot([-d/2, d/2],np.array([P[0].max(),P[0].max()]),color="green",linestyle="--")
                         axs[i].legend(fontsize=body_size, loc="upper right")
                         axs[i].set_ylabel(r'$|\Psi(x,t)|^2$', fontsize=body_size)
                         axs[i].set_xlabel(r'Spatial dimension $x$', fontsize=body_size)
@@ -784,9 +786,6 @@ def visualise_1D(case,method, settings, sys_par, num_par):
                         axs[i].plot(x,P_diff2[i],color="gray", label=r'Error on RK4 method (total: {0:.3f})'.format(integrate_1d(P_diff2[i],x)))
                         axs[i].plot(x,P_diff3[i],color="blue", label=r'Error on CN scheme (total: {0:.3f})'.format(integrate_1d(P_diff3[i],x)))
                         
-                        if v == True:
-                            axs[i].plot(V_x,np.array([0,P_diff1[0].max()]),color="green",linestyle="--", label=r'Finite potential barrier of height {0:.4f}  '.format(V0))
-                            axs[i].plot(-V_x,np.array([0,P_diff1[0].max()]),color="green",linestyle="--") 
                         axs[i].legend(fontsize=body_size, loc="upper right")
                         axs[i].set_ylabel(r'$|\Psi(x,t)|^2$', fontsize=body_size)
                         axs[i].set_xlabel(r'Spatial dimension $x$', fontsize=body_size)
@@ -799,8 +798,9 @@ def visualise_1D(case,method, settings, sys_par, num_par):
                         if an==True and method != "an" and diff == "False":
                             axs[i].plot(x,P_an[i],color="red",linestyle="--", label=r'Analytical solution')       
                         if v == True:
-                            axs[i].plot(V_x,np.array([0,P_ftcs[0].max()]),color="green",linestyle="--", label=r'Finite potential barrier of height {0:.4f}  '.format(V0))
-                            axs[i].plot(-V_x,np.array([0,P_ftcs[0].max()]),color="green",linestyle="--")                   
+                            axs[i].plot(V_x,np.array([0,P_ftcs[0].max()]),color="green",linestyle="--", label=r'Finite potential barrier of height {0:.1f}'.format(V0))
+                            axs[i].plot(-V_x,np.array([0,P_ftcs[0].max()]),color="green",linestyle="--")
+                            axs[i].plot([-d/2, d/2],np.array([P[0].max(),P[0].max()]),color="green",linestyle="--")                   
                         axs[i].legend(fontsize=body_size, loc="upper right")
                         axs[i].set_ylabel(r'$|\Psi(x,t)|^2$', fontsize=body_size)
                         axs[i].set_xlabel(r'Spatial dimension $x$', fontsize=body_size)
@@ -825,9 +825,6 @@ def visualise_1D(case,method, settings, sys_par, num_par):
                         axs[i].plot(x,P_diff1[i],color="black", label=r'Error on RK4 method (total: {0:.3f})'.format(integrate_1d(P_diff1[i],x)))
                         axs[i].plot(x,P_diff2[i],color="gray", label=r'Error on FTCS scheme (total: {0:.3f})'.format(integrate_1d(P_diff2[i],x)))
                           
-                        if v == True:
-                            axs[i].plot(V_x,np.array([0,P_diff1[0].max()]),color="green",linestyle="--", label=r'Finite potential barrier of height {0:.4f}  '.format(V0))
-                            axs[i].plot(-V_x,np.array([0,P_diff1[0].max()]),color="green",linestyle="--")
                         axs[i].legend(fontsize=body_size, loc="upper right")
                         axs[i].set_ylabel(r'$|\Psi(x,t)|^2$', fontsize=body_size)
                         axs[i].set_xlabel(r'Spatial dimension $x$', fontsize=body_size)
@@ -839,8 +836,9 @@ def visualise_1D(case,method, settings, sys_par, num_par):
                         if an==True and method != "an" and diff == "False":
                             axs[i].plot(x,P_an[i],color="red",linestyle="--", label=r'Analytical solution') 
                         if v == True:
-                            axs[i].plot(V_x,np.array([0,P_rk4[0].max()]),color="green",linestyle="--", label=r'Finite potential barrier of height {0:.4f}  '.format(V0))
-                            axs[i].plot(-V_x,np.array([0,P_rk4[0].max()]),color="green",linestyle="--")                      
+                            axs[i].plot(V_x,np.array([0,P_rk4[0].max()]),color="green",linestyle="--", label=r'Finite potential barrier of height {0:.1f}'.format(V0))
+                            axs[i].plot(-V_x,np.array([0,P_rk4[0].max()]),color="green",linestyle="--")  
+                            axs[i].plot([-d/2, d/2],np.array([P[0].max(),P[0].max()]),color="green",linestyle="--")                    
                         axs[i].legend(fontsize=body_size, loc="upper right")
                         axs[i].set_ylabel(r'$|\Psi(x,t)|^2$', fontsize=body_size)
                         axs[i].set_xlabel(r'Spatial dimension $x$', fontsize=body_size)
@@ -855,9 +853,6 @@ def visualise_1D(case,method, settings, sys_par, num_par):
                         axs[i].plot(x,P_diff1[i],color="black", label=r'Error on RK4 method (total: {0:.3f})'.format(integrate_1d(P_diff1[i],x)))
                         axs[i].plot(x,P_diff2[i],color="gray", label=r'Error on CN scheme (total: {0:.3f})'.format(integrate_1d(P_diff2[i],x)))
                          
-                        if v == True:
-                            axs[i].plot(V_x,np.array([0,P_diff1[0].max()]),color="green",linestyle="--", label=r'Finite potential barrier of height {0:.4f}  '.format(V0))
-                            axs[i].plot(-V_x,np.array([0,P_diff2[0].max()]),color="green",linestyle="--")
                         axs[i].legend(fontsize=body_size, loc="upper right")
                         axs[i].set_ylabel(r'$|\Psi(x,t)|^2$', fontsize=body_size)
                         axs[i].set_xlabel(r'Spatial dimension $x$', fontsize=body_size)
@@ -869,8 +864,9 @@ def visualise_1D(case,method, settings, sys_par, num_par):
                         if an==True and method != "an" and diff == "False":
                             axs[i].plot(x,P_an[i],color="red",linestyle="--", label=r'Analytical solution') 
                         if v == True:
-                            axs[i].plot(V_x,np.array([0,P_rk4[0].max()]),color="green",linestyle="--", label=r'Finite potential barrier of height {0:.4f}  '.format(V0))
-                            axs[i].plot(-V_x,np.array([0,P_rk4[0].max()]),color="green",linestyle="--")                   
+                            axs[i].plot(V_x,np.array([0,P_rk4[0].max()]),color="green",linestyle="--", label=r'Finite potential barrier of height {0:.1f}'.format(V0))
+                            axs[i].plot(-V_x,np.array([0,P_rk4[0].max()]),color="green",linestyle="--")     
+                            axs[i].plot([-d/2, d/2],np.array([P[0].max(),P[0].max()]),color="green",linestyle="--")              
                         axs[i].legend(fontsize=body_size, loc="upper right")
                         axs[i].set_ylabel(r'$|\Psi(x,t)|^2$', fontsize=body_size)
                         axs[i].set_xlabel(r'Spatial dimension $x$', fontsize=body_size)
@@ -885,9 +881,6 @@ def visualise_1D(case,method, settings, sys_par, num_par):
                         axs[i].plot(x,P_diff1[i],color="black", label=r'Error on FTCS scheme (total: {0:.3f})'.format(integrate_1d(P_diff1[i],x)))
                         axs[i].plot(x,P_diff2[i],color="gray", label=r'Error on CN scheme (total: {0:.3f})'.format(integrate_1d(P_diff2[i],x)))
                         
-                        if v == True:
-                            axs[i].plot(V_x,np.array([0,P_diff1[0].max()]),color="green",linestyle="--", label=r'Finite potential barrier of height {0:.4f}  '.format(V0))
-                            axs[i].plot(-V_x,np.array([0,P_diff1[0].max()]),color="green",linestyle="--")
                         axs[i].legend(fontsize=body_size, loc="upper right")
                         axs[i].set_ylabel(r'$|\Psi(x,t)|^2$', fontsize=body_size)
                         axs[i].set_xlabel(r'Spatial dimension $x$', fontsize=body_size)
@@ -899,8 +892,9 @@ def visualise_1D(case,method, settings, sys_par, num_par):
                         if an==True and method != "an" and diff == "False":
                             axs[i].plot(x,P_an[i],color="red",linestyle="--", label=r'Analytical solution')
                         if v == True:
-                            axs[i].plot(V_x,np.array([0,P_ftcs[0].max()]),color="green",linestyle="--", label=r'Finite potential barrier of height {0:.4f}  '.format(V0))
-                            axs[i].plot(-V_x,np.array([0,P_ftcs[0].max()]),color="green",linestyle="--")                 
+                            axs[i].plot(V_x,np.array([0,P_ftcs[0].max()]),color="green",linestyle="--", label=r'Finite potential barrier of height {0:.1f}'.format(V0))
+                            axs[i].plot(-V_x,np.array([0,P_ftcs[0].max()]),color="green",linestyle="--") 
+                            axs[i].plot([-d/2, d/2],np.array([P[0].max(),P[0].max()]),color="green",linestyle="--")                
                         axs[i].legend(fontsize=body_size, loc="upper right")
                         axs[i].set_ylabel(r'$|\Psi(x,t)|^2$', fontsize=body_size)
                         axs[i].set_xlabel(r'Spatial dimension $x$', fontsize=body_size)
