@@ -56,7 +56,7 @@ def ftcs_1D(case, settings, sys_par, num_par):
         k_arr = np.array([tn-1])
         T     = np.array([t_end])
         P     = np.empty(len(T), dtype="object")
-        val   = np.array([1])
+        val   = np.array([1.0])
         j     = 0 
      
     # run loop to compute FTCS scheme and write mod square of result to file
@@ -127,7 +127,7 @@ def ftcs_2D(case, settings, sys_par, num_par):
         k_arr = np.array([tn-1])
         T     = np.array([t_end])
         P     = np.empty(len(T), dtype="object")
-        val   = np.array([1])
+        val   = np.array([1.0])
         j     = 0    
     
     #Loop to compute FCTS scheme
@@ -197,7 +197,7 @@ def ftcs_2particle(case, settings, sys_par, num_par):
         k_arr = np.array([tn-1])
         T     = np.array([t_end])
         P     = np.empty(len(T), dtype="object")
-        val   = np.array([1])
+        val   = np.array([1.0])
         j     = 0 
 
     # run loop to compute FTCS scheme and write mod square of result to file

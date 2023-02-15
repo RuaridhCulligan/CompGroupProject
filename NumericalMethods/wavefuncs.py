@@ -25,7 +25,7 @@ def wavepacket_2d(x,y,sys_params):
     
     f = np.zeros((len(x), len(y))).astype("complex")
     for i in np.arange(len(y)):
-        f[i,0:] = (2*a/np.pi)**(1/4) * (2*b/np.pi)**(1/4) * np.exp(-a*(x[i]+x0)**2 - b*(y[0:]+y0)**2) * np.exp(1j*(kx0*(x[i]-x0) + ky0*(y[0:]-y0)))
+        f[i,0:] = (2*a/np.pi)**(1/4) * (2*b/np.pi)**(1/4) * np.exp(-a*(x[i]-x0)**2 - b*(y[0:]-y0)**2) * np.exp(1j*(kx0*(x[i]-x0) + ky0*(y[0:]-y0)))
         
     return f
 

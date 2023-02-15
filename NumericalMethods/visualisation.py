@@ -814,7 +814,7 @@ def visualise_1D(case,method, settings, sys_par, num_par):
                         if v == True:
                             axs[i].plot(V_x,np.array([0,P_rk4[0].max()]),color="green",linestyle="--", label=r'Finite potential barrier of height {0:.1f}'.format(V0))
                             axs[i].plot(-V_x,np.array([0,P_rk4[0].max()]),color="green",linestyle="--")  
-                            axs[i].plot([-d/2, d/2],np.array([P[0].max(),P[0].max()]),color="green",linestyle="--")                    
+                            axs[i].plot([-d/2, d/2],np.array([P_rk4[0].max(),P_rk4[0].max()]),color="green",linestyle="--")                    
                         axs[i].legend(fontsize=body_size, loc="upper right")
                         axs[i].set_ylabel(r'$|\Psi(x,t)|^2$', fontsize=body_size)
                         axs[i].set_xlabel(r'Spatial dimension $x$', fontsize=body_size)
@@ -842,7 +842,7 @@ def visualise_1D(case,method, settings, sys_par, num_par):
                         if v == True:
                             axs[i].plot(V_x,np.array([0,P_rk4[0].max()]),color="green",linestyle="--", label=r'Finite potential barrier of height {0:.1f}'.format(V0))
                             axs[i].plot(-V_x,np.array([0,P_rk4[0].max()]),color="green",linestyle="--")     
-                            axs[i].plot([-d/2, d/2],np.array([P[0].max(),P[0].max()]),color="green",linestyle="--")              
+                            axs[i].plot([-d/2, d/2],np.array([P_rk4[0].max(),P_rk4[0].max()]),color="green",linestyle="--")              
                         axs[i].legend(fontsize=body_size, loc="upper right")
                         axs[i].set_ylabel(r'$|\Psi(x,t)|^2$', fontsize=body_size)
                         axs[i].set_xlabel(r'Spatial dimension $x$', fontsize=body_size)
@@ -870,7 +870,7 @@ def visualise_1D(case,method, settings, sys_par, num_par):
                         if v == True:
                             axs[i].plot(V_x,np.array([0,P_ftcs[0].max()]),color="green",linestyle="--", label=r'Finite potential barrier of height {0:.1f}'.format(V0))
                             axs[i].plot(-V_x,np.array([0,P_ftcs[0].max()]),color="green",linestyle="--") 
-                            axs[i].plot([-d/2, d/2],np.array([P[0].max(),P[0].max()]),color="green",linestyle="--")                
+                            axs[i].plot([-d/2, d/2],np.array([P_ftcs[0].max(),P_ftcs[0].max()]),color="green",linestyle="--")                
                         axs[i].legend(fontsize=body_size, loc="upper right")
                         axs[i].set_ylabel(r'$|\Psi(x,t)|^2$', fontsize=body_size)
                         axs[i].set_xlabel(r'Spatial dimension $x$', fontsize=body_size)
