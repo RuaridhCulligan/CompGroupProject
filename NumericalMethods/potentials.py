@@ -27,7 +27,7 @@ def potential_D(x,y, sys_params):
     for i in range(xn):
         for j in range(yn):
             if np.abs(x[i]) < d/2 and np.abs(y[j]) > w/2:
-                V[i,j] = 0
+                V[j,i] = 0
 
     V[0:,0] = 0
     V[0:, yn-1] = 0
