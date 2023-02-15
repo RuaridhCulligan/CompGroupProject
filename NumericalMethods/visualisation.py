@@ -175,14 +175,11 @@ def visualise_1D(case,method, settings, sys_par, num_par):
             else:
                 plt.plot(x,P[0],color="black", label=r'FTCS scheme normalised to {0:.4f} '.format(val[0]))
 
-            if v==True and diff==False:
+            if v==True:
                 plt.plot(V_x,np.array([0,P[0].max()]),color="green",linestyle="--", label=r'Finite potential barrier of height {0:.1f}'.format(V0))
                 plt.plot(-V_x,np.array([0,P[0].max()]),color="green",linestyle="--")
                 plt.plot([-d/2, d/2],np.array([P[0].max(),P[0].max()]),color="green",linestyle="--")
-            elif v==True and diff==True:  
-                plt.plot(V_x,np.array([0,P_diff[0].max()]),color="green",linestyle="--", label=r'Finite potential barrier of height {0:.1f}'.format(V0))
-                plt.plot(-V_x,np.array([0,P_diff[0].max()]),color="green",linestyle="--")  
-                plt.plot([-d/2, d/2],np.array([P[0].max(),P[0].max()]),color="green",linestyle="--")
+           
 
         elif method=="rk4" and ADD_MET == "no": 
             if diff == "True" and case == "caseA":
@@ -191,14 +188,10 @@ def visualise_1D(case,method, settings, sys_par, num_par):
             else:
                 plt.plot(x,P[0],color="black", label=r'RK4 method normalised to {0:.4f} '.format(val[0]))
 
-            if v==True and diff==False:
-                plt.plot(V_x,np.array([0,P[0].max()]),color="green",linestyle="--", label=r'Finite potential barrier of height {0:.4f}' .format(V0))
+            if v==True:
+                plt.plot(V_x,np.array([0,P[0].max()]),color="green",linestyle="--", label=r'Finite potential barrier of height {0:.1f}'.format(V0))
                 plt.plot(-V_x,np.array([0,P[0].max()]),color="green",linestyle="--")
                 plt.plot([-d/2, d/2],np.array([P[0].max(),P[0].max()]),color="green",linestyle="--")
-            elif v==True and diff==True:  
-                plt.plot(V_x,np.array([0,P_diff[0].max()]),color="green",linestyle="--", label=r'Finite potential barrier of height {0:.1f}'.format(V0))
-                plt.plot(-V_x,np.array([0,P_diff[0].max()]),color="green",linestyle="--")
-                plt.plot([-d/2, d/2],np.array([P[0].max(),P[0].max()]),color="green",linestyle="--")  
        
         elif method=="cn" and ADD_MET == "no": 
             if diff == "True" and case == "caseA":
@@ -207,13 +200,9 @@ def visualise_1D(case,method, settings, sys_par, num_par):
             else:
                 plt.plot(x,P[0],color="black", label=r'CN scheme normalised to {0:.4f} '.format(val[0]))
 
-            if v==True and diff==False:
+            if v==True:
                 plt.plot(V_x,np.array([0,P[0].max()]),color="green",linestyle="--", label=r'Finite potential barrier of height {0:.1f}'.format(V0))
                 plt.plot(-V_x,np.array([0,P[0].max()]),color="green",linestyle="--")
-                plt.plot([-d/2, d/2],np.array([P[0].max(),P[0].max()]),color="green",linestyle="--")
-            elif v==True and diff==True:  
-                plt.plot(V_x,np.array([0,P_diff[0].max()]),color="green",linestyle="--", label=r'Finite potential barrier of height {0:.1f}'.format(V0))
-                plt.plot(-V_x,np.array([0,P_diff[0].max()]),color="green",linestyle="--")  
                 plt.plot([-d/2, d/2],np.array([P[0].max(),P[0].max()]),color="green",linestyle="--")
         
         elif method=="all" and ADD_MET == "no":
@@ -229,14 +218,10 @@ def visualise_1D(case,method, settings, sys_par, num_par):
                 plt.plot(x,P_rk4[0],color="grey", label=r'RK4 scheme normalised to {0:.4f} '.format(val_rk4[0]))
                 plt.plot(x,P_cn[0],color="blue", label=r'CN scheme normalised to {0:.4f} '.format(val_cn[0]))
                 
-            if v==True and diff==False:
+            if v==True:
                 plt.plot(V_x,np.array([0,P_ftcs[0].max()]),color="green",linestyle="--", label=r'Finite potential barrier of height {0:.1f}'.format(V0))
                 plt.plot(-V_x,np.array([0,P_ftcs[0].max()]),color="green",linestyle="--")
-                plt.plot([-d/2, d/2],np.array([P[0].max(),P[0].max()]),color="green",linestyle="--")
-            elif v==True and diff==True:  
-                plt.plot(V_x,np.array([0,P_diff1[0].max()]),color="green",linestyle="--", label=r'Finite potential barrier of height {0:.1f}'.format(V0))
-                plt.plot(-V_x,np.array([0,P_diff1[0].max()]),color="green",linestyle="--")  
-                plt.plot([-d/2, d/2],np.array([P[0].max(),P[0].max()]),color="green",linestyle="--")
+                plt.plot([-d/2, d/2],np.array([P_ftcs[0].max(),P_ftcs[0].max()]),color="green",linestyle="--")
 
         elif method=="an" and ADD_MET=="no":
             plt.plot(x,P[0],color="black", label=r'Analytical solution normalised to {0:.4f}'.format(integrate_1d(P[0],x)))
@@ -253,14 +238,11 @@ def visualise_1D(case,method, settings, sys_par, num_par):
                 plt.plot(x,P_ftcs[0],color="black", label=r'FTCS scheme normalised to {0:.4f} '.format(val_ftcs[0]))
                 plt.plot(x,P_rk4[0],color="grey", label=r'RK4 scheme normalised to {0:.4f} '.format(val_rk4[0]))
                 
-            if v==True and diff==False:
+            if v==True:
                 plt.plot(V_x,np.array([0,P_ftcs[0].max()]),color="green",linestyle="--", label=r'Finite potential barrier of height {0:.1f}'.format(V0))
                 plt.plot(-V_x,np.array([0,P_ftcs[0].max()]),color="green",linestyle="--")
-                plt.plot([-d/2, d/2],np.array([P[0].max(),P[0].max()]),color="green",linestyle="--")
-            elif v==True and diff==True:  
-                plt.plot(V_x,np.array([0,P_diff1[0].max()]),color="green",linestyle="--", label=r'Finite potential barrier of height {0:.1f}'.format(V0))
-                plt.plot(-V_x,np.array([0,P_diff1[0].max()]),color="green",linestyle="--")  
-                plt.plot([-d/2, d/2],np.array([P[0].max(),P[0].max()]),color="green",linestyle="--")
+                plt.plot([-d/2, d/2],np.array([P_ftcs[0].max(),P_ftcs[0].max()]),color="green",linestyle="--")
+            
         
         elif (method == "rk4" and ADD_MET == "cn") or (method == "cn" and ADD_MET == "rk4"):
             if diff == "True" and case == "caseA":
@@ -275,11 +257,8 @@ def visualise_1D(case,method, settings, sys_par, num_par):
             if v==True and diff==False:
                 plt.plot(V_x,np.array([0,P_cn[0].max()]),color="green",linestyle="--", label=r'Finite potential barrier of height {0:.1f}'.format(V0))
                 plt.plot(-V_x,np.array([0,P_cn[0].max()]),color="green",linestyle="--")
-                plt.plot([-d/2, d/2],np.array([P[0].max(),P[0].max()]),color="green",linestyle="--")
-            elif v==True and diff==True:  
-                plt.plot(V_x,np.array([0,P_diff2[0].max()]),color="green",linestyle="--", label=r'Finite potential barrier of height {0:.1f}'.format(V0))
-                plt.plot(-V_x,np.array([0,P_diff2[0].max()]),color="green",linestyle="--") 
-                plt.plot([-d/2, d/2],np.array([P[0].max(),P[0].max()]),color="green",linestyle="--")
+                plt.plot([-d/2, d/2],np.array([P_cn[0].max(),P_cn[0].max()]),color="green",linestyle="--")
+            
         
         elif (method == "ftcs" and ADD_MET == "cn") or (method == "cn" and ADD_MET == "ftcs"):
             if diff == "True" and case == "caseA":
@@ -291,14 +270,11 @@ def visualise_1D(case,method, settings, sys_par, num_par):
                 plt.plot(x,P_ftcs[0],color="black", label=r'FTCS scheme normalised to {0:.4f} '.format(val_ftcs[0]))
                 plt.plot(x,P_cn[0],color="blue", label=r'CN scheme normalised to {0:.4f} '.format(val_cn[0]))
                         
-            if v==True and diff==False:
+            if v==True:
                 plt.plot(V_x,np.array([0,P_ftcs[0].max()]),color="green",linestyle="--", label=r'Finite potential barrier of height {0:.1f}'.format(V0))
                 plt.plot(-V_x,np.array([0,P_ftcs[0].max()]),color="green",linestyle="--")
-                plt.plot([-d/2, d/2],np.array([P[0].max(),P[0].max()]),color="green",linestyle="--")
-            elif v==True and diff==True:  
-                plt.plot(V_x,np.array([0,P_diff1[0].max()]),color="green",linestyle="--", label=r'Finite potential barrier of height {0:.1f}'.format(V0))
-                plt.plot(-V_x,np.array([0,P_diff1[0].max()]),color="green",linestyle="--") 
-                plt.plot([-d/2, d/2],np.array([P[0].max(),P[0].max()]),color="green",linestyle="--")
+                plt.plot([-d/2, d/2],np.array([P_ftcs[0].max(),P_ftcs[0].max()]),color="green",linestyle="--")
+           
 
         if an==True and method != "an" and diff == "False":
             plt.plot(x,P_an[0],color="red",linestyle="--", label=r'Analytical solution')
