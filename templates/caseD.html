@@ -1,22 +1,21 @@
 {% extends "base.html" %}
-{% block title %}Free Wavepacket 1D{% endblock %}
+{% block title %}Single slit diffraction 1D{% endblock %}
 {% block navbar %}
 <nav class="navbar">
     <ul>
         <li><a href="/">Home</a></li>
-        <li><a class = "active" href="caseA">Free Wavepacket 1D</a></li>
+        <li><a href="caseA">Free Wavepacket 1D</a></li>
         <li><a href="caseB">Free Wavepacket 2D</a></li>
         <li><a href="caseC">Finite Potential Barrier</a></li>
-        <li><a href="caseD">Single-slit Diffraction</a></li>
+        <li><a class = "active" href="caseD">Single-slit Diffraction</a></li>
         <li><a href="caseE">Two-Particle Interference</a></li>
     </ul>
 </nav>
 {% endblock %}
 {% block bodycontent %}
 <div class = "bodycontent">
-    <h1>Free Wavepacket in 1D</h1>
-    <h3>Description of Scenario</h3>
-    <p>This scenario describes a situation in one dimension where there is no external potential, and the Gaussian wavepacket is allowed to spread and move freely.</p>
+    <h1>Single-slit diffraction in 2D</h1>
+    <p>This scenario describes a situation in which the Gaussian wavepacket is propagated through a single slit, and a diffraction pattern is observed.</p>
 </div>
 {% endblock %}
 
@@ -41,9 +40,9 @@
             <p class = "answer"><input type="radio" name = "STATIC" value=0.5 />Semi-static visualisation</p>
             <p class = "answer"><input type="radio" name = "STATIC" value=0.0 />Non-static visualisation</p>
 
-            <p>Do you wish to overlay the analytical solution?</p>
-            <p class = "answer"><input type="radio" name = "HIDE_A" value=0 />Yes</p>
-            <p class = "answer"><input type="radio" name = "HIDE_A" value=1 />No</p>
+            <p>Do you wish to overlay the potential?</p>
+            <p class="answer"><input type="radio" name="SHOW_V" value="1">Yes</p>
+            <p class="answer"><input type="radio" name="SHOW_V" value="0">No</p>
 
             <p>Select additional integration method:</p>
             <p class = "answer"><input type="radio" name = "ADD_MET" value="no" />No additional method</p>
@@ -51,28 +50,31 @@
             <p class = "answer"><input type="radio" name = "ADD_MET" value="rk4" />RK4</p>
             <p class = "answer"><input type="radio" name = "ADD_MET" value="rkf" />RKF</p>
 
-
             <p>Value of desired end time: </p>
             <p><input type="text" name = "t_end" value = "4" /></p>
         </div>
-
+        
         <div class = "sys_pars">
             <h4>System parameters</h4>
             <p>Value of a: </p>
             <p><input type="text" name = "a" value = "1" /></p>
+            <p>Value of b: </p>
+            <p><input type="text" name = "b" value = "1" /></p>
             <p>Value of k0: </p>
             <p><input type="text" name = "k0" value = "1" /></p>
-            <p>Value of x0: </p>
+            <p>Value of ky0: </p>
+            <p><input type="text" name = "ky0" value = "0" /></p>
+            <p>Value of x0 and y0: </p>
             <p><input type="text" name = "x0" value = "0" /></p>
         </div>
 
         <div class = "num_pars">
             <h4>Numerical parameters</h4>
-            <p>Min x-value: </p>
+            <p>Min x-value and y-value: </p>
             <p class = "question"><input type="text" name = "x_min" value = "-20" /></p>
-            <p>Max x-value: </p>
+            <p>Max x-value and y-value: </p>
             <p class = "question"><input type="text" name = "x_max" value = "20" /></p>
-            <p>Value of dx: </p>
+            <p>Value of dx and dy: </p>
             <p class = "question"><input type="text" name = "dx" value = "0.1" /></p>
             <p>Value of dt: </p>
             <p class = "question"><input type="text" name = "dt" value = "0.0001" /></p>

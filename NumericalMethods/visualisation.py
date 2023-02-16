@@ -7,11 +7,11 @@ from celluloid import Camera
 import matplotlib.pyplot as plt
 import os
 
-from ftcs import ftcs_1D, ftcs_2D, ftcs_2particle
-from rk4 import rk4_1D, rk4_2D, rk4_2particle
-from rkf import rkf_1D, rkf_2D, rkf_2particle
-from num_aux import integrate_1d, integrate_2d
-from wavefuncs import an_sol_1D, an_sol_2D
+from NumericalMethods.ftcs import ftcs_1D, ftcs_2D, ftcs_2particle
+from NumericalMethods.rk4 import rk4_1D, rk4_2D, rk4_2particle
+from NumericalMethods.rkf import rkf_1D, rkf_2D, rkf_2particle
+from NumericalMethods.num_aux import integrate_1d, integrate_2d
+from NumericalMethods.wavefuncs import an_sol_1D, an_sol_2D
 
 # set standardised layout of plots
 fig_dim    = [16, 8]   # dimensions
@@ -23,7 +23,7 @@ plt.rcParams['mathtext.fontset'] = 'cm' # use LateX font for maths
 plt.rcParams['font.family'] = 'STIXGeneral' # use LateX font for text
 
 # set output path
-out_dir   = "output"
+out_dir   = os.path.join("static", "docsoutput")
 file_name = "visualisation.pdf"
 file_name2D = "visualisation2D.pdf"
 
@@ -283,7 +283,7 @@ def visualise_1D(case,method, settings, sys_par, num_par):
         plt.ylabel(r'Probability density $|\Psi(x,t)|^2$', fontsize=body_size)
         plt.xlabel(r'Spatial dimension $x$', fontsize=body_size)
         plt.savefig(out_file)
-        plt.show()
+
  
     # produce visualisation in the non-static (GIF) case:
     if float(settings[0])==0:
@@ -878,7 +878,7 @@ def visualise_1D(case,method, settings, sys_par, num_par):
         
         plt.legend(fontsize=body_size, loc="upper right")
         plt.savefig(out_file)
-        plt.show()
+
     
     return 0
 
@@ -1064,7 +1064,6 @@ def visualise_2D(case,method, settings, sys_par, num_par):
         ax.set_xlabel(r'Spatial dimension $x$', fontsize=body_size)
         ax.set_ylabel(r'Spatial dimension $y$', fontsize=body_size)
         plt.savefig(out_file2D)
-        plt.show()
 
     # produce visualisation in the non-static (GIF) case:
     if float(settings[0])==0:
@@ -1400,7 +1399,7 @@ def visualise_2D(case,method, settings, sys_par, num_par):
                 raise Exception("Overlay of different solutions can not be visualised in 2D.")
             
         plt.savefig(out_file2D)
-        plt.show()
+
       
 
     return 0

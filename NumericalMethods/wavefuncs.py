@@ -20,8 +20,8 @@ def wavepacket_2d(x,y,sys_params):
     b   = sys_params[3]
     ky0 = sys_params[4]
 
-    x0 = sys_params[9]
-    y0 = sys_params[10]
+    y0 = sys_params[9]
+    x0 = sys_params[10]
     
     f = np.zeros((len(x), len(y))).astype("complex")
     for i in np.arange(len(y)):

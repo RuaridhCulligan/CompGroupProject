@@ -2,9 +2,9 @@
 #     CN SCHEMES
 
 import numpy as np
-from wavefuncs import wavepacket_1d, wavepacket_2d
-from potentials import potential_C, potential_D
-from num_aux import integrate_1d, integrate_2d, tridiag_solver
+from NumericalMethods.wavefuncs import wavepacket_1d, wavepacket_2d
+from NumericalMethods.potentials import potential_C, potential_D
+from NumericalMethods.num_aux import integrate_1d, integrate_2d, tridiag_solver
 
 import warnings
 warnings.simplefilter(action='ignore', category=RuntimeWarning) # surpress RuntimeWarnings 

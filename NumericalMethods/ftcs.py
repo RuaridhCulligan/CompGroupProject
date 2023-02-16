@@ -2,9 +2,9 @@
 #     FTCS SCHEMES
 
 import numpy as np
-from wavefuncs import wavepacket_1d, wavepacket_2d, wavepacket_2particle
-from potentials import potential_C, potential_D, potential_E
-from num_aux import integrate_1d, integrate_2d
+from NumericalMethods.wavefuncs import wavepacket_1d, wavepacket_2d, wavepacket_2particle
+from NumericalMethods.potentials import potential_C, potential_D, potential_E
+from NumericalMethods.num_aux import integrate_1d, integrate_2d
 from scipy.signal import find_peaks
 import matplotlib.pyplot as plt
 

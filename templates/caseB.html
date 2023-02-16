@@ -1,11 +1,14 @@
 {% extends "base.html" %}
-{% block title %}Free Wavepacket{% endblock %}
+{% block title %}Free Wavepacket 2D{% endblock %}
 {% block navbar %}
 <nav class="navbar">
     <ul>
         <li><a href="/">Home</a></li>
-        <li><a href="caseA.html">Free Wavepacket 1D</a></li>
-        <li><a class = "active" href="caseB.html">Free Wavepacket 2D</a></li>
+        <li><a href="caseA">Free Wavepacket 1D</a></li>
+        <li><a class = "active" href="caseB">Free Wavepacket 2D</a></li>
+        <li><a href="caseC">Finite Potential Barrier</a></li>
+        <li><a href="caseD">Single-slit Diffraction</a></li>
+        <li><a href="caseE">Two-Particle Interference</a></li>
     </ul>
 </nav>
 {% endblock %}
@@ -13,14 +16,74 @@
 <div class = "bodycontent">
     <h1>Free Wavepacket in 2D</h1>
     <h3>Description of Scenario</h3>
-    <p>This scenario describes a situation in two dimensions where there is no external potential, and the wavepacket is allowed to spread and move freely.</p>
+    <p>This scenario describes a situation in two dimensions where there is no external potential, and the Gaussian wavepacket is allowed to spread and move freely.</p>
 </div>
 {% endblock %}
 
 {% block form %}
 <div class="form">
+
     <h3>Enter values here:</h3>
     <form action = "#" method = "post">
+        <div class = "settings">
+            <h4>Settings</h4>
+            <p>Select integration method:</p>
+            <p class = "answer"><input type="radio" name = "METHOD" value="ftcs" />FTCS</p>
+            <p class = "answer"><input type="radio" name = "METHOD" value="rk4" />RK4</p>
+            <p class = "answer"><input type="radio" name = "METHOD" value="rkf" />RKF</p>
+
+
+            <p>Do you wish to plot the error (difference between analytical and numerical solution) or just the numerical solution?</p>
+            <p class = "answer"><input type="radio" name = "DIFF" value = "False"/>Only numerical solution</p>
+            <p class = "answer"><input type="radio" name = "DIFF" value = "True"/>Only error</p>
+
+            <p>Would you like to view a static, semi-static, or non-static visualisation of the propagation?</p>
+            <p class = "answer"><input type="radio" name = "STATIC" value=1.0 />Static visualisation</p>
+            <p class = "answer"><input type="radio" name = "STATIC" value=0.5 />Semi-static visualisation</p>
+            <p class = "answer"><input type="radio" name = "STATIC" value=0.0 />Non-static visualisation</p>
+
+            <p>Do you wish to overlay the analytical solution?</p>
+            <p class = "answer"><input type="radio" name = "HIDE_A" value=0 />Yes</p>
+            <p class = "answer"><input type="radio" name = "HIDE_A" value=1 />No</p>
+
+            <p>Select additional integration method:</p>
+            <p class = "answer"><input type="radio" name = "ADD_MET" value="no" />No additional method</p>
+            <p class = "answer"><input type="radio" name = "ADD_MET" value="ftcs" />FTCS</p>
+            <p class = "answer"><input type="radio" name = "ADD_MET" value="rk4" />RK4</p>
+            <p class = "answer"><input type="radio" name = "ADD_MET" value="rkf" />RKF</p>
+
+            <p>Value of desired end time: </p>
+            <p><input type="text" name = "t_end" value = "4" /></p>
+        </div>
+
+        <div class = "sys_pars">
+            <h4>System parameters</h4>
+            <p>Value of a: </p>
+            <p><input type="text" name = "a" value = "1" /></p>
+            <p>Value of k0: </p>
+            <p><input type="text" name = "k0" value = "1" /></p>
+            <p>Value of x0 and y0: </p>
+            <p><input type="text" name = "x0" value = "0" /></p>
+            <p>Value of ky0:</p>
+            <p><input type="text" name = "ky0" value = "1" /></p>
+        </div>
+
+
+        <div class = "num_pars">
+            <h4>Numerical parameters</h4>
+            <p>Min x-value and y-value: </p>
+            <p class = "question"><input type="text" name = "x_min" value = "-20" /></p>
+            <p>Max x-value and y-value: </p>
+            <p class = "question"><input type="text" name = "x_max" value = "20" /></p>
+            <p>Value of dx and dy: </p>
+            <p class = "question"><input type="text" name = "dx" value = "0.1" /></p>
+            <p>Value of dt: </p>
+            <p class = "question"><input type="text" name = "dt" value = "0.0001" /></p>
+        </div>
+
+
+        <p><input type="submit" value="Generate simulation" /></p>
+        
     </form>
 </div>
 {% endblock %}

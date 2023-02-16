@@ -64,10 +64,10 @@
 #------------------------------------------------------------------------------
 
 import os
-from visualisation import visualise_1D, visualise_2D
-from log_handling import create_log, read_log
+from NumericalMethods.visualisation import visualise_1D, visualise_2D
+from NumericalMethods.log_handling import create_log, read_log
 
-def main(log_file="log.txt"):
+def main(log_file=os.path.join("NumericalMethods","log.txt")):
     
     # if log file does not exist in location create log file with default values
     if os.path.exists(log_file)==False:
@@ -75,14 +75,7 @@ def main(log_file="log.txt"):
     
     # extract information from log files
     case, method, settings, sys_par, num_par=read_log(log_file)
-    
     if case=="caseA" or case=="caseC" or case=="caseE":
         visualise_1D(case,method, settings, sys_par, num_par)
     elif case=="caseB" or case=="caseD":
-        visualise_2D(case,method, settings, sys_par, num_par)                                         
-
-# execute
-
-#create_log("log.txt")
-
-main()
+        visualise_2D(case,method, settings, sys_par, num_par)

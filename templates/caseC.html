@@ -1,12 +1,12 @@
 {% extends "base.html" %}
-{% block title %}Free Wavepacket 1D{% endblock %}
+{% block title %}Finite potential barrier{% endblock %}
 {% block navbar %}
 <nav class="navbar">
     <ul>
         <li><a href="/">Home</a></li>
-        <li><a class = "active" href="caseA">Free Wavepacket 1D</a></li>
+        <li><a href="caseA">Free Wavepacket 1D</a></li>
         <li><a href="caseB">Free Wavepacket 2D</a></li>
-        <li><a href="caseC">Finite Potential Barrier</a></li>
+        <li><a class = "active" href="caseC">Finite Potential Barrier</a></li>
         <li><a href="caseD">Single-slit Diffraction</a></li>
         <li><a href="caseE">Two-Particle Interference</a></li>
     </ul>
@@ -14,9 +14,9 @@
 {% endblock %}
 {% block bodycontent %}
 <div class = "bodycontent">
-    <h1>Free Wavepacket in 1D</h1>
+    <h1>Finite potential barrier</h1>
     <h3>Description of Scenario</h3>
-    <p>This scenario describes a situation in one dimension where there is no external potential, and the Gaussian wavepacket is allowed to spread and move freely.</p>
+    <p>This scenario describes a situation in one dimension where there is a finite external potential barrier which the Gaussian wavepacket interacts with.</p>
 </div>
 {% endblock %}
 
@@ -37,13 +37,13 @@
             <p class = "answer"><input type="radio" name = "DIFF" value = "True"/>Only error</p>
 
             <p>Would you like to view a static, semi-static, or non-static visualisation of the propagation?</p>
-            <p class = "answer"><input type="radio" name = "STATIC" value=1.0 />Static visualisation</p>
-            <p class = "answer"><input type="radio" name = "STATIC" value=0.5 />Semi-static visualisation</p>
-            <p class = "answer"><input type="radio" name = "STATIC" value=0.0 />Non-static visualisation</p>
+            <p class = "answer"><input type="radio" name = "STATIC" value="1.0" />Static visualisation</p>
+            <p class = "answer"><input type="radio" name = "STATIC" value="0.5" />Semi-static visualisation</p>
+            <p class = "answer"><input type="radio" name = "STATIC" value="0.0" />Non-static visualisation</p>
 
-            <p>Do you wish to overlay the analytical solution?</p>
-            <p class = "answer"><input type="radio" name = "HIDE_A" value=0 />Yes</p>
-            <p class = "answer"><input type="radio" name = "HIDE_A" value=1 />No</p>
+            <p>Do you wish to overlay the potential?</p>
+            <p class="answer"><input type="radio" name="SHOW_V" value="1">Yes</p>
+            <p class="answer"><input type="radio" name="SHOW_V" value="0">No</p>
 
             <p>Select additional integration method:</p>
             <p class = "answer"><input type="radio" name = "ADD_MET" value="no" />No additional method</p>
@@ -53,7 +53,7 @@
 
 
             <p>Value of desired end time: </p>
-            <p><input type="text" name = "t_end" value = "4" /></p>
+            <p><input type="text" name = "t_end" value = "2" /></p>
         </div>
 
         <div class = "sys_pars">
@@ -62,8 +62,12 @@
             <p><input type="text" name = "a" value = "1" /></p>
             <p>Value of k0: </p>
             <p><input type="text" name = "k0" value = "1" /></p>
+            <p>Value of V0: </p>
+            <p><input type="text" name = "V0" value = "10" /></p>
+            <p>Value of d: </p>
+            <p><input type="text" name = "d" value = "4" /></p>
             <p>Value of x0: </p>
-            <p><input type="text" name = "x0" value = "0" /></p>
+            <p><input type="text" name = "x0" value = "-2" /></p>
         </div>
 
         <div class = "num_pars">
