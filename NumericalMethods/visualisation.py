@@ -251,8 +251,8 @@ def visualise_1D(case,method, settings, sys_par, num_par):
                 plt.plot(x,P_diff2[0],color="black", label=r'Error on RK4 scheme (total: {0:.3f})'.format(integrate_1d(P_diff2[0],x)))
                 plt.plot(x,P_diff3[0],color="gray", label=r'Error on RKF scheme (total: {0:.3f})'.format(integrate_1d(P_diff3[0],x)))
             else:
-                plt.plot(x,P_rk4[0],color="grey", label=r'RK4 scheme normalised to {0:.4f} '.format(val_rk4[0]))
-                plt.plot(x,P_rkf[0],color="blue", label=r'RKF scheme normalised to {0:.4f} '.format(val_rkf[0])) 
+                plt.plot(x,P_rk4[0],color="black", label=r'RK4 scheme normalised to {0:.4f} '.format(val_rk4[0]))
+                plt.plot(x,P_rkf[0],color="gray", label=r'RKF scheme normalised to {0:.4f} '.format(val_rkf[0])) 
 
             if v==True and diff==False:
                 plt.plot(V_x,np.array([0,P_rkf[0].max()]),color="green",linestyle="--", label=r'Finite potential barrier of height {0:.1f}'.format(V0))
@@ -268,7 +268,7 @@ def visualise_1D(case,method, settings, sys_par, num_par):
                 plt.plot(x,P_diff3[0],color="gray", label=r'Error on RKF scheme (total: {0:.3f})'.format(integrate_1d(P_diff3[0],x)))
             else:
                 plt.plot(x,P_ftcs[0],color="black", label=r'FTCS scheme normalised to {0:.4f} '.format(val_ftcs[0]))
-                plt.plot(x,P_rkf[0],color="blue", label=r'RKF scheme normalised to {0:.4f} '.format(val_rkf[0]))
+                plt.plot(x,P_rkf[0],color="gray", label=r'RKF scheme normalised to {0:.4f} '.format(val_rkf[0]))
                         
             if v==True:
                 plt.plot(V_x,np.array([0,P_ftcs[0].max()]),color="green",linestyle="--", label=r'Finite potential barrier of height {0:.1f}'.format(V0))
@@ -447,8 +447,8 @@ def visualise_1D(case,method, settings, sys_par, num_par):
                     ax = plt.subplot(1,1,1)
                     ax.text(0.95*x.min(),P_diff1[0].max(),'t={0:.3e}'.format(T[i]), animated=True, fontsize=body_size, ha="left",va="bottom")
                     l_ftcs, = ax.plot(x,P_diff1[i],color="black")
-                    l_rk4, = ax.plot(x,P_diff2[i],color="black")
-                    l_rkf, = ax.plot(x,P_diff3[i],color="black")
+                    l_rk4, = ax.plot(x,P_diff2[i],color="gray")
+                    l_rkf, = ax.plot(x,P_diff3[i],color="blue")
 
                     label_ftcs = r'Error on FTCS scheme (total: {0:.3f})'.format(integrate_1d(P_diff1[i],x))
                     label_rk4 = r'Error on RK4 scheme (total: {0:.3f})'.format(integrate_1d(P_diff2[i],x))
@@ -473,17 +473,17 @@ def visualise_1D(case,method, settings, sys_par, num_par):
                     ax = plt.subplot(1,1,1)
                     ax.text(0.95*x.min(),P_ftcs[0].max(),'t={0:.3e}'.format(T[i]), animated=True, fontsize=body_size, ha="left",va="bottom")
                     l_ftcs, = ax.plot(x,P_ftcs[i],color="black")
-                    l_rk4, = ax.plot(x,P_rk4[i],color="black")
-                    l_rkf, = ax.plot(x,P_rkf[i],color="black")
+                    l_rk4, = ax.plot(x,P_rk4[i],color="gray")
+                    l_rkf, = ax.plot(x,P_rkf[i],color="blue")
 
                     label_ftcs = r'FTCS scheme normalised to {0:.4f} '.format(val_ftcs[i])
                     label_rk4 = r'RK4 scheme normalised to {0:.4f} '.format(val_rk4[i])
                     label_rkf  = r'RKF scheme normalised to {0:.4f} '.format(val_rkf[i])
                     
                     if v ==True:
-                        l_p = ax.plot(V_x,np.array([0,P[0].max()]),color="green",linestyle="--", label=r'Finite potential barrier of height {0:.1f}'.format(V0))
-                        ax.plot(-V_x,np.array([0,P[0].max()]),color="green",linestyle="--")
-                        ax.plot([-d/2, d/2],np.array([P[0].max(),P[0].max()]),color="green",linestyle="--")
+                        l_p = ax.plot(V_x,np.array([0,P_rkf[0].max()]),color="green",linestyle="--", label=r'Finite potential barrier of height {0:.1f}'.format(V0))
+                        ax.plot(-V_x,np.array([0,P_rkf[0].max()]),color="green",linestyle="--")
+                        ax.plot([-d/2, d/2],np.array([P_rkf[0].max(),P_rkf[0].max()]),color="green",linestyle="--")
                         label_potential = r'Finite potential barrier of height {0:.1f}'.format(V0)
 
                         ax.legend([l_ftcs, l_rk4, l_rkf, l_p], [label_ftcs, label_rk4, label_rkf, label_potential ],loc="upper right", fontsize=body_size )

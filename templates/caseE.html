@@ -30,19 +30,12 @@
             <p class = "answer"><input type="radio" name = "METHOD" value="ftcs" />FTCS</p>
             <p class = "answer"><input type="radio" name = "METHOD" value="rk4" />RK4</p>
             <p class = "answer"><input type="radio" name = "METHOD" value="rkf" />RKF</p>
-
-            <p>Do you wish to plot the error (difference between analytical and numerical solution) or just the numerical solution?</p>
-            <p class = "answer"><input type="radio" name = "DIFF" value = "False"/>Only numerical solution</p>
-            <p class = "answer"><input type="radio" name = "DIFF" value = "True"/>Only error</p>
+            <p class = "answer"><input type="radio" name = "METHOD" value="all" />All above methods</p>
 
             <p>Would you like to view a static, semi-static, or non-static visualisation of the propagation?</p>
             <p class = "answer"><input type="radio" name = "STATIC" value="1.0" />Static visualisation</p>
             <p class = "answer"><input type="radio" name = "STATIC" value="0.5" />Semi-static visualisation</p>
             <p class = "answer"><input type="radio" name = "STATIC" value="0.0" />Non-static visualisation</p>
-
-            <p>Do you wish to overlay the potential?</p>
-            <p class="answer"><input type="radio" name="SHOW_V" value="1">Yes</p>
-            <p class="answer"><input type="radio" name="SHOW_V" value="0">No</p>
 
             <p>Select additional integration method:</p>
             <p class = "answer"><input type="radio" name = "ADD_MET" value="no" />No additional method</p>
@@ -54,20 +47,22 @@
             <p>Value of desired end time: </p>
             <p><input type="text" name = "t_end" value = "4" /></p>
         </div>
-        
+
         <div class = "sys_pars">
             <h4>System parameters</h4>
             <p>Value of a: </p>
             <p><input type="text" name = "a" value = "1" /></p>
             <p>Value of b: </p>
             <p><input type="text" name = "b" value = "1" /></p>
-            <p>Value of k0: </p>
+            <p>Value of alpha: </p>
+            <p><input type="text" name = "alpha" value = "0.5" /></p>
+            <p>Value of k0 for first Gaussian: </p>
             <p><input type="text" name = "k0" value = "1" /></p>
-            <p>Value of ky0: </p>
+            <p>Value of k0 for second Gaussian: </p>
             <p><input type="text" name = "ky0" value = "-1" /></p>
-            <p>Value of x0: </p>
+            <p>Value of x0 for first Gaussian: </p>
             <p><input type="text" name = "x0" value = "-5" /></p>
-            <p>Value of y0: </p>
+            <p>Value of x0 for second Gaussian: </p>
             <p><input type="text" name = "y0" value = "5" /></p>
         </div>
 

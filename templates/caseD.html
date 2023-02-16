@@ -30,10 +30,7 @@
             <p class = "answer"><input type="radio" name = "METHOD" value="ftcs" />FTCS</p>
             <p class = "answer"><input type="radio" name = "METHOD" value="rk4" />RK4</p>
             <p class = "answer"><input type="radio" name = "METHOD" value="rkf" />RKF</p>
-
-            <p>Do you wish to plot the error (difference between analytical and numerical solution) or just the numerical solution?</p>
-            <p class = "answer"><input type="radio" name = "DIFF" value = "False"/>Only numerical solution</p>
-            <p class = "answer"><input type="radio" name = "DIFF" value = "True"/>Only error</p>
+            <p class = "answer"><input type="radio" name = "METHOD" value="all" />All above methods</p>
 
             <p>Would you like to view a static, semi-static, or non-static visualisation of the propagation?</p>
             <p class = "answer"><input type="radio" name = "STATIC" value=1.0 />Static visualisation</p>
@@ -53,19 +50,25 @@
             <p>Value of desired end time: </p>
             <p><input type="text" name = "t_end" value = "4" /></p>
         </div>
-        
+
         <div class = "sys_pars">
             <h4>System parameters</h4>
             <p>Value of a: </p>
             <p><input type="text" name = "a" value = "1" /></p>
             <p>Value of b: </p>
             <p><input type="text" name = "b" value = "1" /></p>
+            <p>Value of d: </p>
+            <p><input type="text" name = "d" value = "2" /></p>
+            <p>Value of w: </p>
+            <p><input type="text" name = "w" value = "2" /></p>
             <p>Value of k0: </p>
             <p><input type="text" name = "k0" value = "1" /></p>
             <p>Value of ky0: </p>
             <p><input type="text" name = "ky0" value = "0" /></p>
-            <p>Value of x0 and y0: </p>
+            <p>Value of x0: </p>
             <p><input type="text" name = "x0" value = "0" /></p>
+            <p>Value of y0: </p>
+            <p><input type="text" name = "y0" value = "0" /></p>
         </div>
 
         <div class = "num_pars">
