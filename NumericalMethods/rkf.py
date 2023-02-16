@@ -1,5 +1,5 @@
 #@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@
-#     RK4 SCHEMES
+#     RKF SCHEMES
 
 import numpy as np
 from wavefuncs import wavepacket_1d, wavepacket_2d, wavepacket_2particle
@@ -11,7 +11,7 @@ import warnings
 warnings.simplefilter(action='ignore', category=RuntimeWarning) # surpress RuntimeWarnings 
 
 # RK4 method to solve one-dimensional case numerically (cases A & C)
-def rk4_1D(case, settings, sys_par, num_par):
+def rkf_1D(case, settings, sys_par, num_par):
      
     # set up grids
     x_min = num_par[0]
@@ -62,19 +62,20 @@ def rk4_1D(case, settings, sys_par, num_par):
     for k in np.arange(tn):
         f = np.zeros(xn).astype("complex"); k1 = np.zeros(xn).astype("complex");  k2 = np.zeros(xn).astype("complex"); k3 = np.zeros(xn).astype("complex"); k4 = np.zeros(xn).astype("complex")
 
-        f[1:xn-1] =  ( (1j/2)*(psi[0:xn-2]-2*psi[1:xn-1]+psi[2:xn])/(dx**2) +  1j * V[1:xn-1]*psi[1:xn-1] )
+        f[1:xn-1] =  ( (1j/2)*(psi[0:xn-2]-2*psi[1:xn-1]+psi[2:xn])/(dx**2) - 1j * V[1:xn-1]*psi[1:xn-1] )
 
         k1 = dt * f
 
-        k2[1:xn-1] = dt* ( f[1:xn-1] + (1j/4)* (  (k1[0:xn-2]-2*k1[1:xn-1]+k1[2:xn])/(dx**2) + 2*  V[1:xn-1]*(k1[1:xn-1]) ) )
+        k2[1:xn-1] = dt* ( f[1:xn-1] + (1/4)* (1j/2)* (  (k1[0:xn-2]-2*k1[1:xn-1]+k1[2:xn])/(dx**2) - 2* V[1:xn-1]*(psi[1:xn-1] + k1[1:xn-1]) ) )
 
-        k3[1:xn-1] = dt*( f[1:xn-1] + (1j/4)*( (k2[0:xn-2]-2*k2[1:xn-1]+k2[2:xn])/(dx**2) + 2*  V[1:xn-1]*(k2[1:xn-1])) )
+        k3[1:xn-1] = dt*( f[1:xn-1] + (9/32) * (1j/2)*( (k2[0:xn-2]-2*k2[1:xn-1]+k2[2:xn])/(dx**2) - 2* V[1:xn-1]*(psi[1:xn-1] + k2[1:xn-1])) + (3/32)*(9/32) * (1j/2)*( (k1[0:xn-2]-2*k1[1:xn-1]+k1[2:xn])/(dx**2) - 2* V[1:xn-1]*(psi[1:xn-1] + k1[1:xn-1])) )
 
-        k4[1:xn-1] = dt*( f[1:xn-1] + (1j/2)*((k3[0:xn-2]-2*k3[1:xn-1]+k3[2:xn])/(dx**2) + 2*  V[1:xn-1]*(k3[1:xn-1])))
+        k4[1:xn-1] = dt*( f[1:xn-1] + (1j/2)*((k3[0:xn-2]-2*k3[1:xn-1]+k3[2:xn])/(dx**2) - 2* V[1:xn-1]*(psi[1:xn-1] + k3[1:xn-1])))
 
-        psi = psi + k1/6 + k2/3 + k3/3 + k4/6
+        psi = psi + k1*(16/135) + k2*(0) + k3*(6656/12825) + k4*(28561/56430)+k5*(-9/50)+ k6*(2/55)
 
         
+
         #Force boundary conditions on the off chance something has gone wrong and they contain a value
         psi[0] = 0; psi[xn-1] = 0
 
@@ -87,7 +88,7 @@ def rk4_1D(case, settings, sys_par, num_par):
     return P, x, val, T
 
 # RK4 method to solve two-dimensional case numerically (cases B & D)
-def rk4_2D(case, settings, sys_par, num_par):
+def rkf_2D(case, settings, sys_par, num_par):
      
     # set up grids
     x_min = num_par[0]
@@ -177,7 +178,7 @@ def rk4_2D(case, settings, sys_par, num_par):
     return P, x, y, val, T
 
 # RK4 method to solve two-particle case numerically (case E)  
-def rk4_2particle(case, settings, sys_par, num_par): 
+def rkf_2particle(case, settings, sys_par, num_par): 
     
     # set up grids
     x_min = num_par[0]
@@ -228,15 +229,15 @@ def rk4_2particle(case, settings, sys_par, num_par):
     for k in np.arange(tn):
         f = np.zeros(xn).astype("complex"); k1 = np.zeros(xn).astype("complex");  k2 = np.zeros(xn).astype("complex"); k3 = np.zeros(xn).astype("complex"); k4 = np.zeros(xn).astype("complex")
 
-        f[1:xn-1] =  ( (1j/2)*(psi[0:xn-2]-2*psi[1:xn-1]+psi[2:xn])/(dx**2) + 1j * V[1:xn-1]*psi[1:xn-1] )
+        f[1:xn-1] =  ( (1j/2)*(psi[0:xn-2]-2*psi[1:xn-1]+psi[2:xn])/(dx**2) - 1j * V[1:xn-1]*psi[1:xn-1] )
 
         k1 = dt * f
 
-        k2[1:xn-1] = dt* ( f[1:xn-1] + (1j/4)* (  (k1[0:xn-2]-2*k1[1:xn-1]+k1[2:xn])/(dx**2) + 2* V[1:xn-1]*(k1[1:xn-1]) ) )
+        k2[1:xn-1] = dt* ( f[1:xn-1] + (1j/4)* (  (k1[0:xn-2]-2*k1[1:xn-1]+k1[2:xn])/(dx**2) - 2* V[1:xn-1]*(psi[1:xn-1] + k1[1:xn-1]) ) )
 
-        k3[1:xn-1] = dt*( f[1:xn-1] + (1j/4)*( (k2[0:xn-2]-2*k2[1:xn-1]+k2[2:xn])/(dx**2) + 2* V[1:xn-1]*(k2[1:xn-1])) )
+        k3[1:xn-1] = dt*( f[1:xn-1] + (1j/4)*( (k2[0:xn-2]-2*k2[1:xn-1]+k2[2:xn])/(dx**2) - 2* V[1:xn-1]*(psi[1:xn-1] + k2[1:xn-1])) )
 
-        k4[1:xn-1] = dt*( f[1:xn-1] + (1j/2)*((k3[0:xn-2]-2*k3[1:xn-1]+k3[2:xn])/(dx**2) + 2* V[1:xn-1]*(k3[1:xn-1])))
+        k4[1:xn-1] = dt*( f[1:xn-1] + (1j/2)*((k3[0:xn-2]-2*k3[1:xn-1]+k3[2:xn])/(dx**2) - 2* V[1:xn-1]*(psi[1:xn-1] + k3[1:xn-1])))
 
         psi = psi + k1/6 + k2/3 + k3/3 + k4/6
 

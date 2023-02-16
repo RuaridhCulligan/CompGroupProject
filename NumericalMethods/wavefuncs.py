@@ -38,8 +38,8 @@ def wavepacket_2particle(x, sys_params):
     x0 = sys_params[9]
     y0 = sys_params[10]
 
-    psi_2 = (2*a/np.pi)**(1/4) * np.exp(-a*(x-x0)**2) * np.exp(1j*k0*(x-x0))
-    psi_1 = (2*b/np.pi)**(1/4) * np.exp(-b*(x-y0)**2) * np.exp(1j*ky0*(x-y0))
+    psi_2 = 1/np.sqrt(2) * (2*a/np.pi)**(1/4) * np.exp(-a*(x-x0)**2) * np.exp(1j*k0*(x-x0))
+    psi_1 = 1/np.sqrt(2) * (2*b/np.pi)**(1/4) * np.exp(-b*(x-y0)**2) * np.exp(1j*ky0*(x-y0))
     
     return psi_1,psi_2
 # analytical solution for caseA (1D free wavepacket) at position x and time t

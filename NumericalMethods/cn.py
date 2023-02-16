@@ -55,7 +55,7 @@ def cn_1D(case, settings, sys_par, num_par):
         k_arr = np.array([tn-1])
         T     = np.array([t_end])
         P     = np.empty(len(T), dtype="object")
-        val   = np.array([1])
+        val   = np.array([1.0])
         j     = 0
 
     sigma = np.ones(xn)*(dt*1j)/(4*dx**2)
