@@ -9,7 +9,7 @@ import os
 
 from ftcs import ftcs_1D, ftcs_2D, ftcs_2particle
 from rk4 import rk4_1D, rk4_2D, rk4_2particle
-from cn import cn_1D, cn_2D, cn_2particle
+from rkf import rkf_1D, rkf_2D, rkf_2particle
 from num_aux import integrate_1d, integrate_2d
 from wavefuncs import an_sol_1D, an_sol_2D
 
@@ -58,20 +58,20 @@ def visualise_1D(case,method, settings, sys_par, num_par):
             P, x, val, T = rk4_2particle(case, settings, sys_par, num_par)
         else:    
             P, x, val, T = rk4_1D(case, settings, sys_par, num_par)
-    elif method=="cn" and ADD_MET == "no":
+    elif method=="rkf" and ADD_MET == "no":
         if case=="caseE":
-            P, x, val, T = cn_2particle(case, settings, sys_par, num_par)
+            P, x, val, T = rkf_2particle(case, settings, sys_par, num_par)
         else:
-            P, x, val, T = cn_1D(case, settings, sys_par, num_par)    
+            P, x, val, T = rkf_1D(case, settings, sys_par, num_par)    
     elif method=="all" and ADD_MET == "no":
         if case=="caseE":
             P_ftcs, x, val_ftcs, T = ftcs_2particle(case, settings, sys_par, num_par)
             P_rk4, x, val_rk4, T   = rk4_2particle(case, settings, sys_par, num_par)
-            P_cn, x, val_cn, T     = cn_2particle(case, settings, sys_par, num_par)
+            P_rkf, x, val_rkf, T     = rkf_2particle(case, settings, sys_par, num_par)
         else:    
             P_ftcs, x, val_ftcs, T = ftcs_1D(case, settings, sys_par, num_par)
             P_rk4, x, val_rk4, T   = rk4_1D(case, settings, sys_par, num_par)
-            P_cn, x, val_cn, T     = cn_1D(case, settings, sys_par, num_par)
+            P_rkf, x, val_rkf, T     = rkf_1D(case, settings, sys_par, num_par)
     elif method=="an":
         x_min   = num_par[0]
         x_max   = num_par[1]
@@ -109,20 +109,20 @@ def visualise_1D(case,method, settings, sys_par, num_par):
         else:    
             P_ftcs, x, val_ftcs, T = ftcs_1D(case, settings, sys_par, num_par)
             P_rk4, x, val_rk4, T = rk4_1D(case, settings, sys_par, num_par)
-    elif (method == "rk4" and ADD_MET == "cn") or (method == "cn" and ADD_MET == "rk4"):
+    elif (method == "rk4" and ADD_MET == "rkf") or (method == "rkf" and ADD_MET == "rk4"):
         if case=="caseE":
             P_rk4, x, val_rk4, T = rk4_2particle(case, settings, sys_par, num_par)
-            P_cn, x, val_cn, T = cn_2particle(case, settings, sys_par, num_par)
+            P_rkf, x, val_rkf, T = rkf_2particle(case, settings, sys_par, num_par)
         else:    
             P_rk4, x, val_rk4, T = rk4_1D(case, settings, sys_par, num_par)
-            P_cn, x, val_cn, T = cn_1D(case, settings, sys_par, num_par)
-    elif (method == "ftcs" and ADD_MET == "cn") or (method == "cn" and ADD_MET == "ftcs"):
+            P_rkf, x, val_rkf, T = rkf_1D(case, settings, sys_par, num_par)
+    elif (method == "ftcs" and ADD_MET == "rkf") or (method == "rkf" and ADD_MET == "ftcs"):
         if case=="caseE":
             P_ftcs, x, val_ftcs, T = ftcs_2particle(case, settings, sys_par, num_par)
-            P_cn, x, val_cn, T = cn_2particle(case, settings, sys_par, num_par)
+            P_rkf, x, val_rkf, T = rkf_2particle(case, settings, sys_par, num_par)
         else:    
             P_ftcs, x, val_ftcs, T = ftcs_1D(case, settings, sys_par, num_par)
-            P_cn, x, val_cn, T = cn_1D(case, settings, sys_par, num_par)
+            P_rkf, x, val_rkf, T = rkf_1D(case, settings, sys_par, num_par)
     
     # implement option to display potential in relevant cases
     SHOW_V = float(settings[3])
@@ -148,8 +148,8 @@ def visualise_1D(case,method, settings, sys_par, num_par):
             P_an = np.copy(P_ftcs) 
         elif ADD_MET=="rk4":
             P_an = np.copy(P_rk4)  
-        elif ADD_MET=="cn":
-            P_an = np.copy(P_cn)           
+        elif ADD_MET=="rkf":
+            P_an = np.copy(P_rkf)           
       
         for i in np.arange(len(T)):
             psi = an_sol_1D(x, T[i], sys_par)
@@ -193,12 +193,12 @@ def visualise_1D(case,method, settings, sys_par, num_par):
                 plt.plot(-V_x,np.array([0,P[0].max()]),color="green",linestyle="--")
                 plt.plot([-d/2, d/2],np.array([P[0].max(),P[0].max()]),color="green",linestyle="--")
        
-        elif method=="cn" and ADD_MET == "no": 
+        elif method=="rkf" and ADD_MET == "no": 
             if diff == "True" and case == "caseA":
                 P_diff = np.abs(P - P_an)
-                plt.plot(x,P_diff[0],color="black", label=r'Error on CN scheme (total: {0:.3f})'.format(integrate_1d(P_diff[0],x)))
+                plt.plot(x,P_diff[0],color="black", label=r'Error on RKF scheme (total: {0:.3f})'.format(integrate_1d(P_diff[0],x)))
             else:
-                plt.plot(x,P[0],color="black", label=r'CN scheme normalised to {0:.4f} '.format(val[0]))
+                plt.plot(x,P[0],color="black", label=r'RKF scheme normalised to {0:.4f} '.format(val[0]))
 
             if v==True:
                 plt.plot(V_x,np.array([0,P[0].max()]),color="green",linestyle="--", label=r'Finite potential barrier of height {0:.1f}'.format(V0))
@@ -209,14 +209,14 @@ def visualise_1D(case,method, settings, sys_par, num_par):
             if diff == "True" and case == "caseA":
                 P_diff1 = np.abs(P_ftcs - P_an)
                 P_diff2 = np.abs(P_rk4 - P_an)
-                P_diff3 = np.abs(P_cn - P_an)
+                P_diff3 = np.abs(P_rkf - P_an)
                 plt.plot(x,P_diff1[0],color="black", label=r'Error on FTCS scheme (total: {0:.3f})'.format(integrate_1d(P_diff1[0],x)))
                 plt.plot(x,P_diff2[0],color="gray", label=r'Error on RK4 scheme (total: {0:.3f})'.format(integrate_1d(P_diff2[0],x)))
-                plt.plot(x,P_diff3[0],color="blue", label=r'Error on CN scheme (total: {0:.3f})'.format(integrate_1d(P_diff3[0],x)))
+                plt.plot(x,P_diff3[0],color="blue", label=r'Error on RKF scheme (total: {0:.3f})'.format(integrate_1d(P_diff3[0],x)))
             else:
                 plt.plot(x,P_ftcs[0],color="black", label=r'FTCS scheme normalised to {0:.4f} '.format(val_ftcs[0]))
                 plt.plot(x,P_rk4[0],color="grey", label=r'RK4 scheme normalised to {0:.4f} '.format(val_rk4[0]))
-                plt.plot(x,P_cn[0],color="blue", label=r'CN scheme normalised to {0:.4f} '.format(val_cn[0]))
+                plt.plot(x,P_rkf[0],color="blue", label=r'RKF scheme normalised to {0:.4f} '.format(val_rkf[0]))
                 
             if v==True:
                 plt.plot(V_x,np.array([0,P_ftcs[0].max()]),color="green",linestyle="--", label=r'Finite potential barrier of height {0:.1f}'.format(V0))
@@ -244,31 +244,31 @@ def visualise_1D(case,method, settings, sys_par, num_par):
                 plt.plot([-d/2, d/2],np.array([P_ftcs[0].max(),P_ftcs[0].max()]),color="green",linestyle="--")
             
         
-        elif (method == "rk4" and ADD_MET == "cn") or (method == "cn" and ADD_MET == "rk4"):
+        elif (method == "rk4" and ADD_MET == "rkf") or (method == "rkf" and ADD_MET == "rk4"):
             if diff == "True" and case == "caseA":
                 P_diff2 = np.abs(P_rk4 - P_an)
-                P_diff3 = np.abs(P_cn - P_an)
+                P_diff3 = np.abs(P_rkf - P_an)
                 plt.plot(x,P_diff2[0],color="black", label=r'Error on RK4 scheme (total: {0:.3f})'.format(integrate_1d(P_diff2[0],x)))
-                plt.plot(x,P_diff3[0],color="gray", label=r'Error on CN scheme (total: {0:.3f})'.format(integrate_1d(P_diff3[0],x)))
+                plt.plot(x,P_diff3[0],color="gray", label=r'Error on RKF scheme (total: {0:.3f})'.format(integrate_1d(P_diff3[0],x)))
             else:
                 plt.plot(x,P_rk4[0],color="grey", label=r'RK4 scheme normalised to {0:.4f} '.format(val_rk4[0]))
-                plt.plot(x,P_cn[0],color="blue", label=r'CN scheme normalised to {0:.4f} '.format(val_cn[0])) 
+                plt.plot(x,P_rkf[0],color="blue", label=r'RKF scheme normalised to {0:.4f} '.format(val_rkf[0])) 
 
             if v==True and diff==False:
-                plt.plot(V_x,np.array([0,P_cn[0].max()]),color="green",linestyle="--", label=r'Finite potential barrier of height {0:.1f}'.format(V0))
-                plt.plot(-V_x,np.array([0,P_cn[0].max()]),color="green",linestyle="--")
-                plt.plot([-d/2, d/2],np.array([P_cn[0].max(),P_cn[0].max()]),color="green",linestyle="--")
+                plt.plot(V_x,np.array([0,P_rkf[0].max()]),color="green",linestyle="--", label=r'Finite potential barrier of height {0:.1f}'.format(V0))
+                plt.plot(-V_x,np.array([0,P_rkf[0].max()]),color="green",linestyle="--")
+                plt.plot([-d/2, d/2],np.array([P_rkf[0].max(),P_rkf[0].max()]),color="green",linestyle="--")
             
         
-        elif (method == "ftcs" and ADD_MET == "cn") or (method == "cn" and ADD_MET == "ftcs"):
+        elif (method == "ftcs" and ADD_MET == "rkf") or (method == "rkf" and ADD_MET == "ftcs"):
             if diff == "True" and case == "caseA":
                 P_diff1 = np.abs(P_ftcs - P_an)
-                P_diff3 = np.abs(P_cn - P_an)
+                P_diff3 = np.abs(P_rkf - P_an)
                 plt.plot(x,P_diff1[0],color="black", label=r'Error on FTCS scheme (total: {0:.3f})'.format(integrate_1d(P_diff1[0],x)))
-                plt.plot(x,P_diff3[0],color="gray", label=r'Error on CN scheme (total: {0:.3f})'.format(integrate_1d(P_diff3[0],x)))
+                plt.plot(x,P_diff3[0],color="gray", label=r'Error on RKF scheme (total: {0:.3f})'.format(integrate_1d(P_diff3[0],x)))
             else:
                 plt.plot(x,P_ftcs[0],color="black", label=r'FTCS scheme normalised to {0:.4f} '.format(val_ftcs[0]))
-                plt.plot(x,P_cn[0],color="blue", label=r'CN scheme normalised to {0:.4f} '.format(val_cn[0]))
+                plt.plot(x,P_rkf[0],color="blue", label=r'RKF scheme normalised to {0:.4f} '.format(val_rkf[0]))
                         
             if v==True:
                 plt.plot(V_x,np.array([0,P_ftcs[0].max()]),color="green",linestyle="--", label=r'Finite potential barrier of height {0:.1f}'.format(V0))
@@ -391,7 +391,7 @@ def visualise_1D(case,method, settings, sys_par, num_par):
                     ax.set_xlabel(r'Spatial dimension $x$', fontsize=body_size)
                     camera.snap()
         
-        elif method=="cn" and ADD_MET == "no": 
+        elif method=="rkf" and ADD_MET == "no": 
             if diff == "True" and case == "caseA":
                 P_diff = np.abs(P - P_an)
                 for i in np.arange(len(T)):
@@ -403,9 +403,9 @@ def visualise_1D(case,method, settings, sys_par, num_par):
                         l2, = ax.plot(V_x,np.array([0,P_diff[0].max()]),color="green",linestyle="--", label=r'Finite potential barrier of height {0:.1f}'.format(V0))
                         l3 = ax.plot(-V_x,np.array([0,P_diff[0].max()]),color="green",linestyle="--")
                         ax.plot([-d/2, d/2],np.array([P[0].max(),P[0].max()]),color="green",linestyle="--")
-                        ax.legend([l, l2], [r'Error on CN scheme (total: {0:.3f})'.format(integrate_1d(P_diff[i],x)),r'Finite potential barrier of height {0:.1f}'.format(V0) ],loc="upper right", fontsize=body_size )
+                        ax.legend([l, l2], [r'Error on RKF scheme (total: {0:.3f})'.format(integrate_1d(P_diff[i],x)),r'Finite potential barrier of height {0:.1f}'.format(V0) ],loc="upper right", fontsize=body_size )
                     else:
-                        ax.legend([l], [r'Error on CN scheme (total: {0:.3f})'.format(integrate_1d(P_diff[i],x))],  loc="upper right", fontsize=body_size)
+                        ax.legend([l], [r'Error on RKF scheme (total: {0:.3f})'.format(integrate_1d(P_diff[i],x))],  loc="upper right", fontsize=body_size)
                     
                     ax.set_ylabel(r'Probability density $|\Psi(x,t)|^2$', fontsize=body_size)
                     ax.set_xlabel(r'Spatial dimension $x$', fontsize=body_size)
@@ -416,7 +416,7 @@ def visualise_1D(case,method, settings, sys_par, num_par):
                     ax = plt.subplot(1,1,1)
                     ax.text(0.95*x.min(),P[0].max(),'t={0:.3e}'.format(T[i]), animated=True, fontsize=body_size, ha="left",va="bottom")
                     l, = ax.plot(x,P[i],color="black")
-                    label = r'CN scheme normalised to {0:.4f} '.format(val[i])
+                    label = r'RKF scheme normalised to {0:.4f} '.format(val[i])
                     
                     if v ==True:
                         l_p, = ax.plot(V_x,np.array([0,P[0].max()]),color="green",linestyle="--")
@@ -441,18 +441,18 @@ def visualise_1D(case,method, settings, sys_par, num_par):
             if diff == "True" and case == "caseA":
                 P_diff1 = np.abs(P_ftcs - P_an)
                 P_diff2 = np.abs(P_rk4 - P_an)
-                P_diff3 = np.abs(P_cn - P_an)
+                P_diff3 = np.abs(P_rkf - P_an)
 
                 for i in np.arange(len(T)):
                     ax = plt.subplot(1,1,1)
                     ax.text(0.95*x.min(),P_diff1[0].max(),'t={0:.3e}'.format(T[i]), animated=True, fontsize=body_size, ha="left",va="bottom")
                     l_ftcs, = ax.plot(x,P_diff1[i],color="black")
                     l_rk4, = ax.plot(x,P_diff2[i],color="black")
-                    l_cn, = ax.plot(x,P_diff3[i],color="black")
+                    l_rkf, = ax.plot(x,P_diff3[i],color="black")
 
                     label_ftcs = r'Error on FTCS scheme (total: {0:.3f})'.format(integrate_1d(P_diff1[i],x))
                     label_rk4 = r'Error on RK4 scheme (total: {0:.3f})'.format(integrate_1d(P_diff2[i],x))
-                    label_cn  = r'Error on CN scheme (total: {0:.3f})'.format(integrate_1d(P_diff3[i],x))
+                    label_rkf  = r'Error on RKF scheme (total: {0:.3f})'.format(integrate_1d(P_diff3[i],x))
                     
                     if v ==True:
                         l_p, = ax.plot(V_x,np.array([0,P_diff1[0].max()]),color="green",linestyle="--")
@@ -460,9 +460,9 @@ def visualise_1D(case,method, settings, sys_par, num_par):
                         ax.plot([-d/2, d/2],np.array([P[0].max(),P[0].max()]),color="green",linestyle="--")
                         label_potential = r'Finite potential barrier of height {0:.1f}'.format(V0)
 
-                        ax.legend([l_ftcs, l_rk4, l_cn, l_p], [label_ftcs, label_rk4, label_cn, label_potential ],loc="upper right", fontsize=body_size )
+                        ax.legend([l_ftcs, l_rk4, l_rkf, l_p], [label_ftcs, label_rk4, label_rkf, label_potential ],loc="upper right", fontsize=body_size )
                     else:
-                        ax.legend([l_ftcs, l_rk4, l_cn], [label_ftcs, label_rk4, label_cn],loc="upper right", fontsize=body_size )
+                        ax.legend([l_ftcs, l_rk4, l_rkf], [label_ftcs, label_rk4, label_rkf],loc="upper right", fontsize=body_size )
                     
                     ax.set_ylabel(r'Probability density $|\Psi(x,t)|^2$', fontsize=body_size)
                     ax.set_xlabel(r'Spatial dimension $x$', fontsize=body_size)
@@ -474,11 +474,11 @@ def visualise_1D(case,method, settings, sys_par, num_par):
                     ax.text(0.95*x.min(),P_ftcs[0].max(),'t={0:.3e}'.format(T[i]), animated=True, fontsize=body_size, ha="left",va="bottom")
                     l_ftcs, = ax.plot(x,P_ftcs[i],color="black")
                     l_rk4, = ax.plot(x,P_rk4[i],color="black")
-                    l_cn, = ax.plot(x,P_cn[i],color="black")
+                    l_rkf, = ax.plot(x,P_rkf[i],color="black")
 
                     label_ftcs = r'FTCS scheme normalised to {0:.4f} '.format(val_ftcs[i])
                     label_rk4 = r'RK4 scheme normalised to {0:.4f} '.format(val_rk4[i])
-                    label_cn  = r'CN scheme normalised to {0:.4f} '.format(val_cn[i])
+                    label_rkf  = r'RKF scheme normalised to {0:.4f} '.format(val_rkf[i])
                     
                     if v ==True:
                         l_p = ax.plot(V_x,np.array([0,P[0].max()]),color="green",linestyle="--", label=r'Finite potential barrier of height {0:.1f}'.format(V0))
@@ -486,14 +486,14 @@ def visualise_1D(case,method, settings, sys_par, num_par):
                         ax.plot([-d/2, d/2],np.array([P[0].max(),P[0].max()]),color="green",linestyle="--")
                         label_potential = r'Finite potential barrier of height {0:.1f}'.format(V0)
 
-                        ax.legend([l_ftcs, l_rk4, l_cn, l_p], [label_ftcs, label_rk4, label_cn, label_potential ],loc="upper right", fontsize=body_size )
+                        ax.legend([l_ftcs, l_rk4, l_rkf, l_p], [label_ftcs, label_rk4, label_rkf, label_potential ],loc="upper right", fontsize=body_size )
                     elif an==True:
                         l_a, = ax.plot(x,P_an[0],color="red",linestyle="--")
                         label_an = r'Analytical solution'
 
-                        ax.legend([l_ftcs, l_rk4, l_cn, l_a], [label_ftcs, label_rk4, label_cn, label_an],loc="upper right", fontsize=body_size )
+                        ax.legend([l_ftcs, l_rk4, l_rkf, l_a], [label_ftcs, label_rk4, label_rkf, label_an],loc="upper right", fontsize=body_size )
                     else:
-                        ax.legend([l_ftcs, l_rk4, l_cn], [label_ftcs, label_rk4, label_cn],loc="upper right", fontsize=body_size )
+                        ax.legend([l_ftcs, l_rk4, l_rkf], [label_ftcs, label_rk4, label_rkf],loc="upper right", fontsize=body_size )
                     
                     ax.set_ylabel(r'Probability density $|\Psi(x,t)|^2$', fontsize=body_size)
                     ax.set_xlabel(r'Spatial dimension $x$', fontsize=body_size)
@@ -559,22 +559,22 @@ def visualise_1D(case,method, settings, sys_par, num_par):
                     ax.set_xlabel(r'Spatial dimension $x$', fontsize=body_size)
                     camera.snap()
         
-        elif (method == "rk4" and ADD_MET == "cn") or (method == "cn" and ADD_MET == "rk4"):
+        elif (method == "rk4" and ADD_MET == "rkf") or (method == "rkf" and ADD_MET == "rk4"):
             if diff == "True" and case == "caseA":
                 P_diff2 = np.abs(P_rk4 - P_an)
-                P_diff3 = np.abs(P_cn - P_an)
+                P_diff3 = np.abs(P_rkf - P_an)
 
                 for i in np.arange(len(T)):
                     ax = plt.subplot(1,1,1)
                     ax.text(0.95*x.min(),P_diff1[0].max(),'t={0:.3e}'.format(T[i]), animated=True, fontsize=body_size, ha="left",va="bottom")
                     l_rk4, = ax.plot(x,P_diff2[i],color="black")
-                    l_cn, = ax.plot(x,P_diff3[i],color="black")
+                    l_rkf, = ax.plot(x,P_diff3[i],color="black")
 
                     label_rk4 = r'Error on RK4 scheme (total: {0:.3f})'.format(integrate_1d(P_diff2[i],x))
-                    label_cn  = r'Error on CN scheme (total: {0:.3f})'.format(integrate_1d(P_diff3[i],x))
+                    label_rkf  = r'Error on RKF scheme (total: {0:.3f})'.format(integrate_1d(P_diff3[i],x))
                     
 
-                    ax.legend([ l_rk4, l_cn], [label_rk4, label_cn],loc="upper right", fontsize=body_size )
+                    ax.legend([ l_rk4, l_rkf], [label_rk4, label_rkf],loc="upper right", fontsize=body_size )
                     
                     ax.set_ylabel(r'Probability density $|\Psi(x,t)|^2$', fontsize=body_size)
                     ax.set_xlabel(r'Spatial dimension $x$', fontsize=body_size)
@@ -585,10 +585,10 @@ def visualise_1D(case,method, settings, sys_par, num_par):
                     ax = plt.subplot(1,1,1)
                     ax.text(0.95*x.min(),P_ftcs[0].max(),'t={0:.3e}'.format(T[i]), animated=True, fontsize=body_size, ha="left",va="bottom")
                     l_rk4, = ax.plot(x,P_rk4[i],color="black")
-                    l_cn, = ax.plot(x,P_cn[i],color="black")
+                    l_rkf, = ax.plot(x,P_rkf[i],color="black")
 
                     label_rk4 = r'RK4 scheme normalised to {0:.4f} '.format(val_rk4[i])
-                    label_cn  = r'CN scheme normalised to {0:.4f} '.format(val_cn[i])
+                    label_rkf  = r'RKF scheme normalised to {0:.4f} '.format(val_rkf[i])
                     
                     if v ==True:
                         l_p, = ax.plot(V_x,np.array([0,P[0].max()]),color="green",linestyle="--", label=r'Finite potential barrier of height {0:.1f}'.format(V0))
@@ -596,35 +596,35 @@ def visualise_1D(case,method, settings, sys_par, num_par):
                         ax.plot([-d/2, d/2],np.array([P[0].max(),P[0].max()]),color="green",linestyle="--")
                         label_potential = r'Finite potential barrier of height {0:.1f}'.format(V0)
 
-                        ax.legend([l_rk4, l_cn, l_p], [label_rk4, label_cn, label_potential ],loc="upper right", fontsize=body_size )
+                        ax.legend([l_rk4, l_rkf, l_p], [label_rk4, label_rkf, label_potential ],loc="upper right", fontsize=body_size )
                     elif an==True:
                         l_a, = ax.plot(x,P_an[0],color="red",linestyle="--")
                         label_an = r'Analytical solution'
 
-                        ax.legend([l_rk4, l_cn, l_a], [label_rk4, label_cn, label_an],loc="upper right", fontsize=body_size )
+                        ax.legend([l_rk4, l_rkf, l_a], [label_rk4, label_rkf, label_an],loc="upper right", fontsize=body_size )
                     else:
-                        ax.legend([l_rk4, l_cn], [label_rk4, label_cn],loc="upper right", fontsize=body_size )
+                        ax.legend([l_rk4, l_rkf], [label_rk4, label_rkf],loc="upper right", fontsize=body_size )
                     
                     ax.set_ylabel(r'Probability density $|\Psi(x,t)|^2$', fontsize=body_size)
                     ax.set_xlabel(r'Spatial dimension $x$', fontsize=body_size)
                     camera.snap()
 
-        elif (method == "ftcs" and ADD_MET == "cn") or (method == "cn" and ADD_MET == "ftcs"):   
+        elif (method == "ftcs" and ADD_MET == "rkf") or (method == "rkf" and ADD_MET == "ftcs"):   
             if diff == "True" and case == "caseA":
                 P_diff1 = np.abs(P_ftcs - P_an)
-                P_diff3 = np.abs(P_cn - P_an)
+                P_diff3 = np.abs(P_rkf - P_an)
 
                 for i in np.arange(len(T)):
                     ax = plt.subplot(1,1,1)
                     ax.text(0.95*x.min(),P_diff1[0].max(),'t={0:.3e}'.format(T[i]), animated=True, fontsize=body_size, ha="left",va="bottom")
                     l_ftcs, = ax.plot(x,P_diff1[i],color="black")
-                    l_cn, = ax.plot(x,P_diff3[i],color="black")
+                    l_rkf, = ax.plot(x,P_diff3[i],color="black")
 
                     label_ftcs = r'Error on FTCS scheme (total: {0:.3f})'.format(integrate_1d(P_diff1[i],x))
-                    label_cn  = r'Error on CN scheme (total: {0:.3f})'.format(integrate_1d(P_diff3[i],x))
+                    label_rkf  = r'Error on RKF scheme (total: {0:.3f})'.format(integrate_1d(P_diff3[i],x))
                     
                    
-                    ax.legend([l_ftcs, l_cn], [label_ftcs, label_cn],loc="upper right", fontsize=body_size )
+                    ax.legend([l_ftcs, l_rkf], [label_ftcs, label_rkf],loc="upper right", fontsize=body_size )
                     
                     ax.set_ylabel(r'Probability density $|\Psi(x,t)|^2$', fontsize=body_size)
                     ax.set_xlabel(r'Spatial dimension $x$', fontsize=body_size)
@@ -635,10 +635,10 @@ def visualise_1D(case,method, settings, sys_par, num_par):
                     ax = plt.subplot(1,1,1)
                     ax.text(0.95*x.min(),P_ftcs[0].max(),'t={0:.3e}'.format(T[i]), animated=True, fontsize=body_size, ha="left",va="bottom")
                     l_ftcs, = ax.plot(x,P_ftcs[i],color="black")
-                    l_cn, = ax.plot(x,P_cn[i],color="black")
+                    l_rkf, = ax.plot(x,P_rkf[i],color="black")
 
                     label_ftcs = r'FTCS scheme normalised to {0:.4f} '.format(val_ftcs[i])
-                    label_cn  = r'CN scheme normalised to {0:.4f} '.format(val_cn[i])
+                    label_rkf  = r'RKF scheme normalised to {0:.4f} '.format(val_rkf[i])
                     
                     if v ==True:
                         l_p, = ax.plot(V_x,np.array([0,P[0].max()]),color="green",linestyle="--", label=r'Finite potential barrier of height {0:.1f}'.format(V0))
@@ -646,14 +646,14 @@ def visualise_1D(case,method, settings, sys_par, num_par):
                         ax.plot([-d/2, d/2],np.array([P[0].max(),P[0].max()]),color="green",linestyle="--")
                         label_potential = r'Finite potential barrier of height {0:.1f}'.format(V0)
 
-                        ax.legend([l_ftcs,  l_cn, l_p], [label_ftcs,  label_cn, label_potential ],loc="upper right", fontsize=body_size )
+                        ax.legend([l_ftcs,  l_rkf, l_p], [label_ftcs,  label_rkf, label_potential ],loc="upper right", fontsize=body_size )
                     elif an==True:
                         l_a, = ax.plot(x,P_an[i],color="red",linestyle="--")
                         label_an = r'Analytical solution'
 
-                        ax.legend([l_ftcs,  l_cn, l_a], [label_ftcs, label_cn, label_an],loc="upper right", fontsize=body_size )
+                        ax.legend([l_ftcs,  l_rkf, l_a], [label_ftcs, label_rkf, label_an],loc="upper right", fontsize=body_size )
                     else:
-                        ax.legend([l_ftcs, l_cn], [label_ftcs,  label_cn],loc="upper right", fontsize=body_size )
+                        ax.legend([l_ftcs, l_rkf], [label_ftcs,  label_rkf],loc="upper right", fontsize=body_size )
                     
                     ax.set_ylabel(r'Probability density $|\Psi(x,t)|^2$', fontsize=body_size)
                     ax.set_xlabel(r'Spatial dimension $x$', fontsize=body_size)
@@ -726,12 +726,12 @@ def visualise_1D(case,method, settings, sys_par, num_par):
                         axs[i].set_xlabel(r'Spatial dimension $x$', fontsize=body_size)
 
 
-            elif method=="cn": 
+            elif method=="rkf": 
                 if diff == "True" and case == "caseA":
                     P_diff = np.abs(P - P_an)
                     for i in range(len(T)):
                         axs[i].set_title("t={0:.3f}".format(T[i]))
-                        axs[i].plot(x,P_diff[i],color="black", label=r'Error on CN scheme (total: {0:.3f})'.format(integrate_1d(P_diff[i],x)))
+                        axs[i].plot(x,P_diff[i],color="black", label=r'Error on RKF scheme (total: {0:.3f})'.format(integrate_1d(P_diff[i],x)))
                         
                         axs[i].legend(fontsize=body_size, loc="upper right")
                         axs[i].set_ylabel(r'$|\Psi(x,t)|^2$', fontsize=body_size)
@@ -739,7 +739,7 @@ def visualise_1D(case,method, settings, sys_par, num_par):
                 else:
                     for i in range(len(T)):
                         axs[i].set_title("t={0:.3f}".format(T[i]))
-                        axs[i].plot(x,P[i],color="black", label= r'CN scheme normalised to {0:.4f}'.format(val[i]))
+                        axs[i].plot(x,P[i],color="black", label= r'RKF scheme normalised to {0:.4f}'.format(val[i]))
                         if an==True and method != "an" and diff == "False":
                             axs[i].plot(x,P_an[i],color="red",linestyle="--", label=r'Analytical solution') 
                         if v == True:
@@ -755,12 +755,12 @@ def visualise_1D(case,method, settings, sys_par, num_par):
                 if diff == "True" and case == "caseA":
                     P_diff1 = np.abs(P_ftcs - P_an)
                     P_diff2 = np.abs(P_rk4 - P_an)
-                    P_diff3 = np.abs(P_cn - P_an)
+                    P_diff3 = np.abs(P_rkf - P_an)
                     for i in range(len(T)):
                         axs[i].set_title("t={0:.3f}".format(T[i]))
                         axs[i].plot(x,P_diff1[i],color="black", label=r'Error on FTCS scheme (total: {0:.3f})'.format(integrate_1d(P_diff1[i],x)))
                         axs[i].plot(x,P_diff2[i],color="gray", label=r'Error on RK4 method (total: {0:.3f})'.format(integrate_1d(P_diff2[i],x)))
-                        axs[i].plot(x,P_diff3[i],color="blue", label=r'Error on CN scheme (total: {0:.3f})'.format(integrate_1d(P_diff3[i],x)))
+                        axs[i].plot(x,P_diff3[i],color="blue", label=r'Error on RKF scheme (total: {0:.3f})'.format(integrate_1d(P_diff3[i],x)))
                         
                         axs[i].legend(fontsize=body_size, loc="upper right")
                         axs[i].set_ylabel(r'$|\Psi(x,t)|^2$', fontsize=body_size)
@@ -770,7 +770,7 @@ def visualise_1D(case,method, settings, sys_par, num_par):
                         axs[i].set_title("t={0:.3f}".format(T[i]))
                         axs[i].plot(x,P_ftcs[i],color="black", label= r'FTCS scheme normalised to {0:.4f}'.format(val[i]))
                         axs[i].plot(x,P_rk4[i],color="gray", label= r'RK4 scheme normalised to {0:.4f}'.format(val[i]))
-                        axs[i].plot(x,P_cn[i],color="blue", label= r'CN scheme normalised to {0:.4f}'.format(val[i]))
+                        axs[i].plot(x,P_rkf[i],color="blue", label= r'RKF scheme normalised to {0:.4f}'.format(val[i]))
                         if an==True and method != "an" and diff == "False":
                             axs[i].plot(x,P_an[i],color="red",linestyle="--", label=r'Analytical solution')       
                         if v == True:
@@ -820,14 +820,14 @@ def visualise_1D(case,method, settings, sys_par, num_par):
                         axs[i].set_xlabel(r'Spatial dimension $x$', fontsize=body_size)
 
 
-            if (method == "rk4" and ADD_MET == "cn") or (method == "cn" and ADD_MET == "rk4"):
+            if (method == "rk4" and ADD_MET == "rkf") or (method == "rkf" and ADD_MET == "rk4"):
                 if diff == "True" and case == "caseA":
                     P_diff1 = np.abs(P_rk4 - P_an)
-                    P_diff2 = np.abs(P_cn - P_an)
+                    P_diff2 = np.abs(P_rkf - P_an)
                     for i in range(len(T)):
                         axs[i].set_title("t={0:.3f}".format(T[i]))
                         axs[i].plot(x,P_diff1[i],color="black", label=r'Error on RK4 method (total: {0:.3f})'.format(integrate_1d(P_diff1[i],x)))
-                        axs[i].plot(x,P_diff2[i],color="gray", label=r'Error on CN scheme (total: {0:.3f})'.format(integrate_1d(P_diff2[i],x)))
+                        axs[i].plot(x,P_diff2[i],color="gray", label=r'Error on RKF scheme (total: {0:.3f})'.format(integrate_1d(P_diff2[i],x)))
                          
                         axs[i].legend(fontsize=body_size, loc="upper right")
                         axs[i].set_ylabel(r'$|\Psi(x,t)|^2$', fontsize=body_size)
@@ -836,7 +836,7 @@ def visualise_1D(case,method, settings, sys_par, num_par):
                     for i in range(len(T)):
                         axs[i].set_title("t={0:.3f}".format(T[i]))
                         axs[i].plot(x,P_rk4[i],color="black", label= r'RK4 method normalised to {0:.4f}'.format(val_rk4[i]))
-                        axs[i].plot(x,P_cn[i],color="gray", label= r'CN scheme normalised to {0:.4f}'.format(val_cn[i]))
+                        axs[i].plot(x,P_rkf[i],color="gray", label= r'RKF scheme normalised to {0:.4f}'.format(val_rkf[i]))
                         if an==True and method != "an" and diff == "False":
                             axs[i].plot(x,P_an[i],color="red",linestyle="--", label=r'Analytical solution') 
                         if v == True:
@@ -848,14 +848,14 @@ def visualise_1D(case,method, settings, sys_par, num_par):
                         axs[i].set_xlabel(r'Spatial dimension $x$', fontsize=body_size)
 
 
-            elif (method == "ftcs" and ADD_MET == "cn") or (method == "cn" and ADD_MET == "ftcs"):
+            elif (method == "ftcs" and ADD_MET == "rkf") or (method == "rkf" and ADD_MET == "ftcs"):
                 if diff == "True" and case == "caseA":
                     P_diff1 = np.abs(P_ftcs - P_an)
-                    P_diff2 = np.abs(P_cn - P_an)
+                    P_diff2 = np.abs(P_rkf - P_an)
                     for i in range(len(T)):
                         axs[i].set_title("t={0:.3f}".format(T[i]))
                         axs[i].plot(x,P_diff1[i],color="black", label=r'Error on FTCS scheme (total: {0:.3f})'.format(integrate_1d(P_diff1[i],x)))
-                        axs[i].plot(x,P_diff2[i],color="gray", label=r'Error on CN scheme (total: {0:.3f})'.format(integrate_1d(P_diff2[i],x)))
+                        axs[i].plot(x,P_diff2[i],color="gray", label=r'Error on RKF scheme (total: {0:.3f})'.format(integrate_1d(P_diff2[i],x)))
                         
                         axs[i].legend(fontsize=body_size, loc="upper right")
                         axs[i].set_ylabel(r'$|\Psi(x,t)|^2$', fontsize=body_size)
@@ -864,7 +864,7 @@ def visualise_1D(case,method, settings, sys_par, num_par):
                     for i in range(len(T)):
                         axs[i].set_title("t={0:.3f}".format(T[i]))
                         axs[i].plot(x,P_ftcs[i],color="black", label= r'FTCS scheme normalised to {0:.4f}'.format(val_ftcs[i]))
-                        axs[i].plot(x,P_cn[i],color="gray", label= r'CN scheme normalised to {0:.4f}'.format(val_cn[i]))
+                        axs[i].plot(x,P_rkf[i],color="gray", label= r'RKF scheme normalised to {0:.4f}'.format(val_rkf[i]))
                         if an==True and method != "an" and diff == "False":
                             axs[i].plot(x,P_an[i],color="red",linestyle="--", label=r'Analytical solution')
                         if v == True:
@@ -901,8 +901,8 @@ def visualise_2D(case,method, settings, sys_par, num_par):
         P, x,y, val, T = ftcs_2D(case, settings, sys_par, num_par)
     elif method=="rk4" and ADD_MET == "no":   
         P, x,y, val, T = rk4_2D(case, settings, sys_par, num_par)
-    elif method=="cn" and ADD_MET == "no":
-        P, x, val, T = cn_2D(case, settings, sys_par, num_par)    
+    elif method=="rkf" and ADD_MET == "no":
+        P, x,y, val, T = rkf_2D(case, settings, sys_par, num_par)    
     elif method=="all" and ADD_MET == "no":
         raise Exception("Overlay of different solutions can not be visualised in 2D.")
     elif method=="an":
@@ -944,9 +944,9 @@ def visualise_2D(case,method, settings, sys_par, num_par):
     
     elif (method == "ftcs" and ADD_MET == "rk4") or (method == "rk4" and ADD_MET == "ftcs"):   
         raise Exception("Overlay of different solutions can not be visualised in 2D.")
-    elif (method == "rk4" and ADD_MET == "cn") or (method == "cn" and ADD_MET == "rk4"):
+    elif (method == "rk4" and ADD_MET == "rkf") or (method == "rkf" and ADD_MET == "rk4"):
         raise Exception("Overlay of different solutions can not be visualised in 2D.")
-    elif (method == "ftcs" and ADD_MET == "cn") or (method == "cn" and ADD_MET == "ftcs"):
+    elif (method == "ftcs" and ADD_MET == "rkf") or (method == "rkf" and ADD_MET == "ftcs"):
         raise Exception("Overlay of different solutions can not be visualised in 2D.")
     elif method=="all":
         raise Exception("Overlay of different solutions can not be visualised in 2D.")    
@@ -1028,12 +1028,12 @@ def visualise_2D(case,method, settings, sys_par, num_par):
                     ax.plot([-d/2, -d/2],[+w/2, +w/2],[P[0].max(),0], color="green", ls="--")
                     ax.plot([-d/2, -d/2],[-w/2, -w/2],[P[0].max(),0], color="green", ls="--")     
 
-        elif method=="cn" and ADD_MET == "no": 
+        elif method=="rkf" and ADD_MET == "no": 
             if diff == "True" and case == "caseB":
                 P_diff = np.abs(P - P_an)
-                surf = ax.plot_surface(X,Y,P_diff[0],color="black", cmap="binary", label=r'Error on CN scheme (total: {0:.3f})'.format(integrate_2d(P_diff[0],x,y)))
+                surf = ax.plot_surface(X,Y,P_diff[0],color="black", cmap="binary", label=r'Error on RKF scheme (total: {0:.3f})'.format(integrate_2d(P_diff[0],x,y)))
             else:
-                surf = ax.plot_surface(X,Y,P[0],color="black", cmap="binary", label=r'CN scheme normalised to {0:.4f} '.format(val[0]))
+                surf = ax.plot_surface(X,Y,P[0],color="black", cmap="binary", label=r'RKF scheme normalised to {0:.4f} '.format(val[0]))
 
                 if v==True:
                     ax.plot([-d/2, -d/2],[y.min(), -w/2],[P[0].max(),P[0].max()], color="green", ls="--", label=r'Slit')
@@ -1191,7 +1191,7 @@ def visualise_2D(case,method, settings, sys_par, num_par):
                     ax.set_ylabel(r'Spatial dimension $y$', fontsize=body_size)
                     camera.snap()
 
-        elif method=="cn":
+        elif method=="rkf":
 
             if diff==True and case=="caseB":
                 P_diff = np.abs(P - P_an)
@@ -1204,7 +1204,7 @@ def visualise_2D(case,method, settings, sys_par, num_par):
                     surf._facecolors2d  = surf._facecolor3d
                     surf._edgecolors2d  = surf._edgecolor3d
 
-                    ax.legend([surf], [r'Error on CN scheme (total: {0:.3f})'.format(integrate_2d(P_diff[i],x,y))],  loc="upper right", fontsize=body_size)
+                    ax.legend([surf], [r'Error on RKF scheme (total: {0:.3f})'.format(integrate_2d(P_diff[i],x,y))],  loc="upper right", fontsize=body_size)
                     ax.set_zlabel(r'Probability density $|\Psi(x,y,t)|^2$', fontsize=body_size)
                     ax.set_xlabel(r'Spatial dimension $x$', fontsize=body_size)
                     ax.set_ylabel(r'Spatial dimension $y$', fontsize=body_size)
@@ -1230,9 +1230,9 @@ def visualise_2D(case,method, settings, sys_par, num_par):
                         ax.plot([+d/2, +d/2],[-w/2, -w/2],[P[i].max(),0], color="green", ls="--")
                         ax.plot([-d/2, -d/2],[+w/2, +w/2],[P[i].max(),0], color="green", ls="--")
                         ax.plot([-d/2, -d/2],[-w/2, -w/2],[P[i].max(),0], color="green", ls="--")
-                        ax.legend([surf, pot], [r'CN scheme normalised to {0:.4f} '.format(val[i]), r'Slit'],  loc="upper right", fontsize=body_size)
+                        ax.legend([surf, pot], [r'RKF scheme normalised to {0:.4f} '.format(val[i]), r'Slit'],  loc="upper right", fontsize=body_size)
                     else:
-                        ax.legend([surf], [r'CN scheme normalised to {0:.4f} '.format(val[i])],  loc="upper right", fontsize=body_size)
+                        ax.legend([surf], [r'RKF scheme normalised to {0:.4f} '.format(val[i])],  loc="upper right", fontsize=body_size)
                     ax.set_zlabel(r'Probability density $|\Psi(x,y,t)|^2$', fontsize=body_size)
                     ax.set_xlabel(r'Spatial dimension $x$', fontsize=body_size)
                     ax.set_ylabel(r'Spatial dimension $y$', fontsize=body_size)
@@ -1336,12 +1336,12 @@ def visualise_2D(case,method, settings, sys_par, num_par):
                         axs[i].set_ylabel(r'$y$', fontsize=body_size)
 
 
-            elif method=="cn": 
+            elif method=="rkf": 
                 if diff == "True" and case == "caseB":
                     P_diff = np.abs(P - P_an)
                     for i in range(len(T)):
                         axs[i].set_title("t={0:.3f}".format(T[i]))
-                        surf = axs[i].plot_surface(X,Y,P_diff[i],color="black", cmap="binary", label=r'Error on CN scheme (total: {0:.3f})'.format(integrate_2d(P_diff[i],x,y)))
+                        surf = axs[i].plot_surface(X,Y,P_diff[i],color="black", cmap="binary", label=r'Error on RKF scheme (total: {0:.3f})'.format(integrate_2d(P_diff[i],x,y)))
                         surf.set_facecolor("black")
                         surf._facecolors2d  = surf._facecolor3d
                         surf._edgecolors2d  = surf._edgecolor3d
@@ -1354,7 +1354,7 @@ def visualise_2D(case,method, settings, sys_par, num_par):
                 else:
                     for i in range(len(T)):
                         axs[i].set_title("t={0:.3f}".format(T[i]))
-                        surf = axs[i].plot_surface(X,Y,P[i],color="black", cmap="binary", label= r'CN scheme normalised to {0:.4f}'.format(val[i]))
+                        surf = axs[i].plot_surface(X,Y,P[i],color="black", cmap="binary", label= r'RKF scheme normalised to {0:.4f}'.format(val[i]))
                         surf.set_facecolor("black")
                         surf._facecolors2d  = surf._facecolor3d
                         surf._edgecolors2d  = surf._edgecolor3d
@@ -1394,9 +1394,9 @@ def visualise_2D(case,method, settings, sys_par, num_par):
         else:
             if (method == "rk4" and ADD_MET == "ftcs") or (method == "ftcs" and ADD_MET == "rk4"):
                 raise Exception("Overlay of different solutions can not be visualised in 2D.")
-            elif (method == "rk4" and ADD_MET == "cn") or (method == "cn" and ADD_MET == "rk4"):
+            elif (method == "rk4" and ADD_MET == "rkf") or (method == "rkf" and ADD_MET == "rk4"):
                 raise Exception("Overlay of different solutions can not be visualised in 2D.")
-            elif (method == "ftcs" and ADD_MET == "cn") or (method == "cn" and ADD_MET == "ftcs"):
+            elif (method == "ftcs" and ADD_MET == "rkf") or (method == "rkf" and ADD_MET == "ftcs"):
                 raise Exception("Overlay of different solutions can not be visualised in 2D.")
             
         plt.savefig(out_file2D)

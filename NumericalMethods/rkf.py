@@ -10,6 +10,24 @@ from scipy.signal import find_peaks
 import warnings
 warnings.simplefilter(action='ignore', category=RuntimeWarning) # surpress RuntimeWarnings 
 
+def spatial_term(k,V,xn, dx):
+
+    f = np.copy(k)
+
+    f[1:xn-1] =  ( (1j/2)*(k[0:xn-2]-2*k[1:xn-1]+k[2:xn])/(dx**2) + 1j * V[1:xn-1]*k[1:xn-1] )   
+    f[0] = 0
+    f[xn-1]= 0 
+
+    return f
+
+def spatial_term2D(k,xn,yn, dx, dy):
+
+    f = np.copy(k)
+
+    f[1:xn-1, 1: yn-1]  = ( (1j/2) *((k[1:xn-1,2:yn]-2*k[1:xn-1,1:yn-1]+k[1:xn-1,0:yn-2])/(dy**2) + (k[2:xn,1:yn-1]-2*k[1:xn-1,1:yn-1]+k[0:xn-2,1:yn-1])/(dx**2)))   
+
+    return f    
+
 # RK4 method to solve one-dimensional case numerically (cases A & C)
 def rkf_1D(case, settings, sys_par, num_par):
      
@@ -61,20 +79,24 @@ def rkf_1D(case, settings, sys_par, num_par):
     #Loop over the time values and calculate the derivative
     for k in np.arange(tn):
         f = np.zeros(xn).astype("complex"); k1 = np.zeros(xn).astype("complex");  k2 = np.zeros(xn).astype("complex"); k3 = np.zeros(xn).astype("complex"); k4 = np.zeros(xn).astype("complex")
+        k5 = np.zeros(xn).astype("complex") ; k6 = np.zeros(xn).astype("complex")
 
-        f[1:xn-1] =  ( (1j/2)*(psi[0:xn-2]-2*psi[1:xn-1]+psi[2:xn])/(dx**2) - 1j * V[1:xn-1]*psi[1:xn-1] )
+        f[1:xn-1] = spatial_term(psi, V,xn, dx)[1:xn-1]
 
         k1 = dt * f
 
-        k2[1:xn-1] = dt* ( f[1:xn-1] + (1/4)* (1j/2)* (  (k1[0:xn-2]-2*k1[1:xn-1]+k1[2:xn])/(dx**2) - 2* V[1:xn-1]*(psi[1:xn-1] + k1[1:xn-1]) ) )
+        k2[1:xn-1] = dt* ( f[1:xn-1] + (1/4)* spatial_term(k1, V,xn,dx)[1:xn-1])
 
-        k3[1:xn-1] = dt*( f[1:xn-1] + (9/32) * (1j/2)*( (k2[0:xn-2]-2*k2[1:xn-1]+k2[2:xn])/(dx**2) - 2* V[1:xn-1]*(psi[1:xn-1] + k2[1:xn-1])) + (3/32)*(9/32) * (1j/2)*( (k1[0:xn-2]-2*k1[1:xn-1]+k1[2:xn])/(dx**2) - 2* V[1:xn-1]*(psi[1:xn-1] + k1[1:xn-1])) )
+        k3[1:xn-1] = dt*( f[1:xn-1] + (3/32) * spatial_term(k1, V,xn,dx)[1:xn-1]  + (9/32) * spatial_term(k2, V,xn,dx)[1:xn-1] )  
 
-        k4[1:xn-1] = dt*( f[1:xn-1] + (1j/2)*((k3[0:xn-2]-2*k3[1:xn-1]+k3[2:xn])/(dx**2) - 2* V[1:xn-1]*(psi[1:xn-1] + k3[1:xn-1])))
+        k4[1:xn-1] = dt*( f[1:xn-1] + (1932/2197) * spatial_term(k1, V,xn,dx)[1:xn-1]  + (-7200/2197) * spatial_term(k2, V,xn,dx)[1:xn-1] + (7296/2197) * spatial_term(k3, V,xn, dx)[1:xn-1])
+
+        k5[1:xn-1] = dt*( f[1:xn-1] + (439/216) * spatial_term(k1, V,xn,dx)[1:xn-1]  + (-8) * spatial_term(k2, V,xn,dx)[1:xn-1] + (3680/513) * spatial_term(k3, V,xn, dx)[1:xn-1] + (-845/4104) * spatial_term(k4, V, xn,dx)[1:xn-1])  
+
+        k6[1:xn-1] = dt*( f[1:xn-1] + (-8/27) * spatial_term(k1, V,xn,dx)[1:xn-1]  + (2) * spatial_term(k2, V,xn,dx)[1:xn-1] + (-3544/2565) * spatial_term(k3, V,xn, dx)[1:xn-1] + (1859/4104) * spatial_term(k4, V, xn,dx)[1:xn-1] + (-11/40)*spatial_term(k5, V, xn,dx)[1:xn-1])
 
         psi = psi + k1*(16/135) + k2*(0) + k3*(6656/12825) + k4*(28561/56430)+k5*(-9/50)+ k6*(2/55)
 
-        
 
         #Force boundary conditions on the off chance something has gone wrong and they contain a value
         psi[0] = 0; psi[xn-1] = 0
@@ -150,17 +172,27 @@ def rkf_2D(case, settings, sys_par, num_par):
         k2 = np.zeros((xn,yn)).astype("complex") 
         k3 = np.zeros((xn,yn)).astype("complex") 
         k4 = np.zeros((xn,yn)).astype("complex")
+        k5 = np.zeros((xn,yn)).astype("complex")
+        k6 = np.zeros((xn,yn)).astype("complex")
 
         # apply potential
         psi = psi * V
 
-        f[1:xn-1, 1: yn-1]  = dt * ( (1j/2) *((psi[1:xn-1,2:yn]-2*psi[1:xn-1,1:yn-1]+psi[1:xn-1,0:yn-2])/(dy**2) + (psi[2:xn,1:yn-1]-2*psi[1:xn-1,1:yn-1]+psi[0:xn-2,1:yn-1])/(dx**2)))  
-        k1 = dt * f 
-        k2[1:xn-1, 1: yn-1] = dt * ( f[1:xn-1, 1: yn-1] + (1j/4)* ((k1[1:xn-1,2:yn]-2*k1[1:xn-1,1:yn-1]+k1[1:xn-1,0:yn-2])/(dy**2) + (k1[2:xn,1:yn-1]-2*k1[1:xn-1,1:yn-1]+k1[0:xn-2,1:yn-1])/(dx**2)) )
-        k3[1:xn-1, 1: yn-1] = dt * ( f[1:xn-1, 1: yn-1] + (1j/4)* ((k2[1:xn-1,2:yn]-2*k2[1:xn-1,1:yn-1]+k2[1:xn-1,0:yn-2])/(dy**2) + (k2[2:xn,1:yn-1]-2*k2[1:xn-1,1:yn-1]+k2[0:xn-2,1:yn-1])/(dx**2)) )
-        k4[1:xn-1, 1: yn-1] = dt * ( f[1:xn-1, 1: yn-1] + (1j/2)* ((k3[1:xn-1,2:yn]-2*k3[1:xn-1,1:yn-1]+k3[1:xn-1,0:yn-2])/(dy**2) + (k3[2:xn,1:yn-1]-2*k3[1:xn-1,1:yn-1]+k3[0:xn-2,1:yn-1])/(dx**2)))
+        f[1:xn-1, 1: yn-1] = spatial_term2D(psi,xn,yn, dx, dy)[1:xn-1, 1: yn-1]
 
-        psi = psi + k1/6 + k2/3 + k3/3 + k4/6
+        k1 = dt * f
+
+        k2[1:xn-1, 1: yn-1] = dt* ( f[1:xn-1, 1: yn-1] + (1/4)* spatial_term2D(k1,xn,yn, dx, dy)[1:xn-1, 1: yn-1])
+
+        k3[1:xn-1, 1: yn-1] = dt*( f[1:xn-1, 1: yn-1] + (3/32) * spatial_term2D(k1,xn,yn, dx, dy)[1:xn-1, 1: yn-1]  + (9/32) * spatial_term2D(k2,xn,yn, dx, dy)[1:xn-1, 1: yn-1] )  
+
+        k4[1:xn-1, 1: yn-1] = dt*( f[1:xn-1, 1: yn-1] + (1932/2197) * spatial_term2D(k1,xn,yn, dx, dy)[1:xn-1, 1: yn-1]  + (-7200/2197) * spatial_term2D(k2,xn,yn, dx, dy)[1:xn-1, 1: yn-1] + (7296/2197) * spatial_term2D(k3,xn,yn, dx, dy)[1:xn-1, 1: yn-1])
+
+        k5[1:xn-1, 1: yn-1] = dt*( f[1:xn-1, 1: yn-1] + (439/216) * spatial_term2D(k1,xn,yn, dx, dy)[1:xn-1, 1: yn-1]  + (-8) * spatial_term2D(k2,xn,yn, dx, dy)[1:xn-1, 1: yn-1] + (3680/513) * spatial_term2D(k3,xn,yn, dx, dy)[1:xn-1, 1: yn-1] + (-845/4104) * spatial_term2D(k4,xn,yn, dx, dy)[1:xn-1, 1: yn-1])  
+
+        k6[1:xn-1, 1: yn-1] = dt*( f[1:xn-1, 1: yn-1] + (-8/27) * spatial_term2D(k1,xn,yn, dx, dy)[1:xn-1, 1: yn-1]  + (2) * spatial_term2D(k2,xn,yn, dx, dy)[1:xn-1, 1: yn-1] + (-3544/2565) * spatial_term2D(k3,xn,yn, dx, dy)[1:xn-1, 1: yn-1] + (1859/4104) * spatial_term2D(k4,xn,yn, dx, dy)[1:xn-1, 1: yn-1] + (-11/40)*spatial_term2D(k5,xn,yn, dx, dy)[1:xn-1, 1: yn-1])
+
+        psi = psi + k1*(16/135) + k2*(0) + k3*(6656/12825) + k4*(28561/56430)+k5*(-9/50)+ k6*(2/55)
 
         #Force boundary conditions on the off chance something has gone wrong and they contain a value
         psi[0:,0] = 0
@@ -228,18 +260,23 @@ def rkf_2particle(case, settings, sys_par, num_par):
     # run loop to compute FTCS scheme and write mod square of result to file
     for k in np.arange(tn):
         f = np.zeros(xn).astype("complex"); k1 = np.zeros(xn).astype("complex");  k2 = np.zeros(xn).astype("complex"); k3 = np.zeros(xn).astype("complex"); k4 = np.zeros(xn).astype("complex")
+        k5 = np.zeros(xn).astype("complex") ; k6 = np.zeros(xn).astype("complex")
 
-        f[1:xn-1] =  ( (1j/2)*(psi[0:xn-2]-2*psi[1:xn-1]+psi[2:xn])/(dx**2) - 1j * V[1:xn-1]*psi[1:xn-1] )
+        f[1:xn-1] = spatial_term(psi, V,xn, dx)[1:xn-1]
 
         k1 = dt * f
 
-        k2[1:xn-1] = dt* ( f[1:xn-1] + (1j/4)* (  (k1[0:xn-2]-2*k1[1:xn-1]+k1[2:xn])/(dx**2) - 2* V[1:xn-1]*(psi[1:xn-1] + k1[1:xn-1]) ) )
+        k2[1:xn-1] = dt* ( f[1:xn-1] + (1/4)* spatial_term(k1, V,xn,dx)[1:xn-1])
 
-        k3[1:xn-1] = dt*( f[1:xn-1] + (1j/4)*( (k2[0:xn-2]-2*k2[1:xn-1]+k2[2:xn])/(dx**2) - 2* V[1:xn-1]*(psi[1:xn-1] + k2[1:xn-1])) )
+        k3[1:xn-1] = dt*( f[1:xn-1] + (3/32) * spatial_term(k1, V,xn,dx)[1:xn-1]  + (9/32) * spatial_term(k2, V,xn,dx)[1:xn-1] )  
 
-        k4[1:xn-1] = dt*( f[1:xn-1] + (1j/2)*((k3[0:xn-2]-2*k3[1:xn-1]+k3[2:xn])/(dx**2) - 2* V[1:xn-1]*(psi[1:xn-1] + k3[1:xn-1])))
+        k4[1:xn-1] = dt*( f[1:xn-1] + (1932/2197) * spatial_term(k1, V,xn,dx)[1:xn-1]  + (-7200/2197) * spatial_term(k2, V,xn,dx)[1:xn-1] + (7296/2197) * spatial_term(k3, V,xn, dx)[1:xn-1])
 
-        psi = psi + k1/6 + k2/3 + k3/3 + k4/6
+        k5[1:xn-1] = dt*( f[1:xn-1] + (439/216) * spatial_term(k1, V,xn,dx)[1:xn-1]  + (-8) * spatial_term(k2, V,xn,dx)[1:xn-1] + (3680/513) * spatial_term(k3, V,xn, dx)[1:xn-1] + (-845/4104) * spatial_term(k4, V, xn,dx)[1:xn-1])  
+
+        k6[1:xn-1] = dt*( f[1:xn-1] + (-8/27) * spatial_term(k1, V,xn,dx)[1:xn-1]  + (2) * spatial_term(k2, V,xn,dx)[1:xn-1] + (-3544/2565) * spatial_term(k3, V,xn, dx)[1:xn-1] + (1859/4104) * spatial_term(k4, V, xn,dx)[1:xn-1] + (-11/40)*spatial_term(k5, V, xn,dx)[1:xn-1])
+
+        psi = psi + k1*(16/135) + k2*(0) + k3*(6656/12825) + k4*(28561/56430)+k5*(-9/50)+ k6*(2/55)
 
         #Force boundary conditions on the off chance something has gone wrong and they contain a value
         psi[0] = 0; psi[xn-1] = 0
