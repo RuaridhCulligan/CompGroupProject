@@ -13,7 +13,7 @@ import os
 from log_handling import read_log
 from ftcs import ftcs_1D, ftcs_2D, ftcs_2particle
 from rk4 import rk4_1D, rk4_2D, rk4_2particle 
-from cn import cn_1D, cn_2D, cn_2particle
+from rkf import rkf_1D, rkf_2D, rkf_2particle
 from wavefuncs import an_sol_1D, an_sol_2D
 from num_aux import integrate_1d, integrate_2d
 
@@ -100,9 +100,9 @@ def single_run(case, method, dt, dx, dy):
             start = time.time()
             P, x, _, _ = rk4_1D(case,  settings, sys_params, num_par) 
             stop = time.time()
-        elif method=="cn":
+        elif method=="rkf":
             start = time.time()
-            P, x, _, _ = cn_1D(case,  settings, sys_params, num_par) 
+            P, x, _, _ = rkf_1D(case,  settings, sys_params, num_par) 
             stop = time.time()       
 
         P_an = np.abs(an_sol_1D(x,t_end, sys_params))**2
@@ -118,9 +118,9 @@ def single_run(case, method, dt, dx, dy):
             start = time.time()
             P, x, y, _, _ = rk4_2D(case,  settings, sys_params, num_par) 
             stop = time.time()
-        elif method=="cn":
+        elif method=="rkf":
             start = time.time()
-            P, x, y, _, _ = cn_2D(case,  settings, sys_params, num_par) 
+            P, x, y, _, _ = rkf_2D(case,  settings, sys_params, num_par) 
             stop = time.time()     
 
         P_an =np.abs(an_sol_2D(x,y,t_end,sys_params))**2  
@@ -136,9 +136,9 @@ def single_run(case, method, dt, dx, dy):
             start = time.time()
             P, x, val, _ = rk4_1D(case,  settings, sys_params, num_par) 
             stop = time.time()
-        elif method=="cn":
+        elif method=="rkf":
             start = time.time()
-            P, x, val, _ = cn_1D(case,  settings, sys_params, num_par) 
+            P, x, val, _ = rkf_1D(case,  settings, sys_params, num_par) 
             stop = time.time()    
 
         err = np.abs(val[0] -1)
@@ -152,9 +152,9 @@ def single_run(case, method, dt, dx, dy):
             start = time.time()
             P, x,y, val, _ = rk4_2D(case,  settings, sys_params, num_par) 
             stop = time.time()
-        elif method=="cn":
+        elif method=="rkf":
             start = time.time()
-            P, x,y, val, _ = cn_2D(case,  settings, sys_params, num_par) 
+            P, x,y, val, _ = rkf_2D(case,  settings, sys_params, num_par) 
             stop = time.time()    
 
         err = np.abs(val[0] -1)    
@@ -168,9 +168,9 @@ def single_run(case, method, dt, dx, dy):
             start = time.time()
             P, x, val, _ = rk4_2particle(case,  settings, sys_params, num_par) 
             stop = time.time()
-        elif method=="cn":
+        elif method=="rkf":
             start = time.time()
-            P, x, val, _ = cn_2particle(case,  settings, sys_params, num_par) 
+            P, x, val, _ = rkf_2particle(case,  settings, sys_params, num_par) 
             stop = time.time()    
 
         err = np.abs(val[0] -1)
@@ -231,8 +231,8 @@ def err_vs_step_time(case,method,mode, d0, d_arr, fit ):
         if method=="all":
             arr_ftcs = space_loop(case, "ftcs", d0, d_arr)
             arr_rk4 =  space_loop(case, "rk4", d0, d_arr)
-            arr_cn =   space_loop(case, "cn", d0, d_arr)
-        elif method=="ftcs" or method=="rk4" or method=="cn":
+            arr_rkf =   space_loop(case, "rkf", d0, d_arr)
+        elif method=="ftcs" or method=="rk4" or method=="rkf":
             arr =  space_loop(case, method, d0, d_arr)  
     elif mode=="time_loop":
         
@@ -245,8 +245,8 @@ def err_vs_step_time(case,method,mode, d0, d_arr, fit ):
         if method=="all":
             arr_ftcs = time_loop(case, "ftcs", d0, d_arr)
             arr_rk4 =  time_loop(case, "rk4", d0, d_arr)
-            arr_cn =   time_loop(case, "cn", d0, d_arr)
-        elif method=="ftcs" or method=="rk4" or method=="cn":
+            arr_rkf =   time_loop(case, "rkf", d0, d_arr)
+        elif method=="ftcs" or method=="rk4" or method=="rkf":
             arr =  time_loop(case, method, d0, d_arr)
 
     # customise description in each case
@@ -288,14 +288,14 @@ def err_vs_step_time(case,method,mode, d0, d_arr, fit ):
         axs[0].scatter(d_arr, arr[0] , label=r'RK4 scheme', color="black", marker=".")
         if fit==True:
             axs[0].plot(d_space,d_space**p[1]*np.exp(p[0]),color="red", ls="--" , label=r'best fit: $\epsilon \propto ({0})^{{ {1:.4f} }}$'.format(d, p[1]))
-    elif method=="cn":
-        axs[0].scatter(d_arr, arr[0] , label=r'CN scheme', color="black",  marker=".")
+    elif method=="rkf":
+        axs[0].scatter(d_arr, arr[0] , label=r'RKF scheme', color="black",  marker=".")
         if fit==True:
             axs[0].plot(d_space,d_space**p[1]*np.exp(p[0]),color="red", ls="--" , label=r'best fit: $\epsilon \propto ({0})^{{ {1:.4f} }}$'.format(d, p[1]))
     elif method=="all":
         axs[0].scatter(d_arr, arr_ftcs[0] , label=r'FTCS scheme', color="black",  marker=".")
         axs[0].scatter(d_arr, arr_rk4[0] , label=r'RK4 scheme', color="gray",  marker=".")
-        axs[0].scatter(d_arr, arr_cn[0] , label=r'CN scheme', color="blue",  marker=".")        
+        axs[0].scatter(d_arr, arr_rkf[0] , label=r'RKF scheme', color="blue",  marker=".")        
     
     axs[0].legend(fontsize=body_size, loc="upper center")
     axs[0].set_ylabel(r'$\epsilon$', fontsize=body_size)
@@ -322,14 +322,14 @@ def err_vs_step_time(case,method,mode, d0, d_arr, fit ):
         axs[1].scatter(arr[1], arr[0] , label=r'RK4 scheme', color="black", marker=".")
         if fit==True:
             axs[1].plot(T_space,T_space**p[1]*np.exp(p[0]),color="red", ls="--" , label=r'best fit: $\epsilon \propto T^{{ {0:.4f} }}$'.format(p[1]))
-    elif method=="cn":
-        axs[1].scatter(arr[1], arr[0] , label=r'CN scheme', color="black",  marker=".")
+    elif method=="rkf":
+        axs[1].scatter(arr[1], arr[0] , label=r'RKF scheme', color="black",  marker=".")
         if fit==True:
             axs[1].plot(T_space,T_space**p[1]*np.exp(p[0]),color="red", ls="--" , label=r'best fit: $\epsilon \propto T^{{ {0:.4f} }}$'.format(p[1]))
     elif method=="all":
         axs[1].scatter(arr_ftcs[1], arr_ftcs[0] , label=r'FTCS scheme', color="black",  marker=".")
         axs[1].scatter(arr_rk4[1], arr_rk4[0] , label=r'RK4 scheme', color="gray",  marker=".")
-        axs[1].scatter(arr_cn[1], arr_cn[0] , label=r'CN scheme', color="blue",  marker=".")        
+        axs[1].scatter(arr_rkf[1], arr_rkf[0] , label=r'RKF scheme', color="blue",  marker=".")        
     
     axs[1].legend(fontsize=body_size, loc="upper center")
     axs[1].set_ylabel(r'$\epsilon$', fontsize=body_size)
@@ -356,8 +356,8 @@ def time_cpu_vs_step(case, method, mode, d0, d_arr, fit):
         if method=="all":
             arr_ftcs = space_loop(case, "ftcs", d0, d_arr)
             arr_rk4 =  space_loop(case, "rk4", d0, d_arr)
-            arr_cn =   space_loop(case, "cn", d0, d_arr)
-        elif method=="ftcs" or method=="rk4" or method=="cn":
+            arr_rkf =   space_loop(case, "rkf", d0, d_arr)
+        elif method=="ftcs" or method=="rk4" or method=="rkf":
             arr =  space_loop(case, method, d0, d_arr)  
     elif mode=="time_loop":
 
@@ -370,8 +370,8 @@ def time_cpu_vs_step(case, method, mode, d0, d_arr, fit):
         if method=="all":
             arr_ftcs = time_loop(case, "ftcs", d0, d_arr)
             arr_rk4 =  time_loop(case, "rk4", d0, d_arr)
-            arr_cn =   time_loop(case, "cn", d0, d_arr)
-        elif method=="ftcs" or method=="rk4" or method=="cn":
+            arr_rkf =   time_loop(case, "rkf", d0, d_arr)
+        elif method=="ftcs" or method=="rk4" or method=="rkf":
             arr =  time_loop(case, method, d0, d_arr)
 
     # customise description in each case
@@ -410,14 +410,14 @@ def time_cpu_vs_step(case, method, mode, d0, d_arr, fit):
         axs[0].scatter(d_arr, arr[1] , label=r'RK4 scheme', color="black", marker=".")
         if fit==True:
             axs[0].plot(d_space,d_space**p[1]*np.exp(p[0]),color="red", ls="--" , label=r'best fit: $T \propto ({0})^{{ {1:.4f} }}$'.format(d, p[1])) 
-    elif method=="cn":
-        axs[0].scatter(d_arr, arr[1] , label=r'CN scheme', color="black",  marker=".")
+    elif method=="rkf":
+        axs[0].scatter(d_arr, arr[1] , label=r'RKF scheme', color="black",  marker=".")
         if fit==True:
             axs[0].plot(d_space,d_space**p[1]*np.exp(p[0]),color="red", ls="--" , label=r'best fit: $T \propto ({0})^{{ {1:.4f} }}$'.format(d, p[1])) 
     elif method=="all":
         axs[0].scatter(d_arr, arr_ftcs[1] , label=r'FTCS scheme', color="black",  marker=".")
         axs[0].scatter(d_arr, arr_rk4[1] , label=r'RK4 scheme', color="gray",  marker=".")
-        axs[0].scatter(d_arr, arr_cn[1] , label=r'CN scheme', color="blue",  marker=".")        
+        axs[0].scatter(d_arr, arr_rkf[1] , label=r'RKF scheme', color="blue",  marker=".")        
     
     axs[0].legend(fontsize=body_size, loc="upper center")
     axs[0].set_ylabel(r'$T (s)$', fontsize=body_size)
@@ -440,14 +440,14 @@ def time_cpu_vs_step(case, method, mode, d0, d_arr, fit):
         axs[1].scatter(d_arr, arr[2] , label=r'RK4 scheme', color="black", marker=".")
         if fit==True:
             axs[1].plot(d_space,d_space**p[1]*np.exp(p[0]),color="red", ls="--" , label=r'best fit: $\% CPU \propto ({0})^{{ {1:.4f} }}$'.format(d, p[1]))
-    elif method=="cn":
-        axs[1].scatter(d_arr, arr[2] , label=r'CN scheme', color="black",  marker=".")
+    elif method=="rkf":
+        axs[1].scatter(d_arr, arr[2] , label=r'RKF scheme', color="black",  marker=".")
         if fit==True:
             axs[1].plot(d_space,d_space**p[1]*np.exp(p[0]),color="red", ls="--" , label=r'best fit: $\% CPU \propto ({0})^{{ {1:.4f} }}$'.format(d, p[1]))
     elif method=="all":
         axs[1].scatter(d_arr, arr_ftcs[2] , label=r'FTCS scheme', color="black",  marker=".")
         axs[1].scatter(d_arr, arr_rk4[2] , label=r'RK4 scheme', color="gray",  marker=".")
-        axs[1].scatter(d_arr, arr_cn[2] , label=r'CN scheme', color="blue",  marker=".")        
+        axs[1].scatter(d_arr, arr_rkf[2] , label=r'RKF scheme', color="blue",  marker=".")        
     
     axs[1].legend(fontsize=body_size, loc="upper center")
     axs[1].set_ylabel(r'$\% CPU$ ', fontsize=body_size)
