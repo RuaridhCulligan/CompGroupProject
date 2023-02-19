@@ -153,7 +153,7 @@ def rk4_2D(case, settings, sys_par, num_par):
         # apply potential
         psi = psi * V
 
-        f[1:xn-1, 1: yn-1]  = dt * ( (1j/2) *((psi[1:xn-1,2:yn]-2*psi[1:xn-1,1:yn-1]+psi[1:xn-1,0:yn-2])/(dy**2) + (psi[2:xn,1:yn-1]-2*psi[1:xn-1,1:yn-1]+psi[0:xn-2,1:yn-1])/(dx**2)))  
+        f[1:xn-1, 1: yn-1]  = ( (1j/2) *((psi[1:xn-1,2:yn]-2*psi[1:xn-1,1:yn-1]+psi[1:xn-1,0:yn-2])/(dy**2) + (psi[2:xn,1:yn-1]-2*psi[1:xn-1,1:yn-1]+psi[0:xn-2,1:yn-1])/(dx**2)))  
         k1 = dt * f 
         k2[1:xn-1, 1: yn-1] = dt * ( f[1:xn-1, 1: yn-1] + (1j/4)* ((k1[1:xn-1,2:yn]-2*k1[1:xn-1,1:yn-1]+k1[1:xn-1,0:yn-2])/(dy**2) + (k1[2:xn,1:yn-1]-2*k1[1:xn-1,1:yn-1]+k1[0:xn-2,1:yn-1])/(dx**2)) )
         k3[1:xn-1, 1: yn-1] = dt * ( f[1:xn-1, 1: yn-1] + (1j/4)* ((k2[1:xn-1,2:yn]-2*k2[1:xn-1,1:yn-1]+k2[1:xn-1,0:yn-2])/(dy**2) + (k2[2:xn,1:yn-1]-2*k2[1:xn-1,1:yn-1]+k2[0:xn-2,1:yn-1])/(dx**2)) )
