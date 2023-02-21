@@ -1013,7 +1013,7 @@ def visualise_2D(case,method, settings, sys_par, num_par):
                 P_diff = np.abs(P - P_an)
                 surf = ax.plot_surface(X,Y,P_diff[0],color="black", cmap="binary", label=r'Error on RK4 scheme (total: {0:.3f})'.format(integrate_2d(P_diff[0],x,y)))
             else:
-                surf = ax.plot_surface(X,Y,color="black", cmap="binary", label=r'RK4 method normalised to {0:.4f} '.format(val[0]))  
+                surf = ax.plot_surface(X,Y,P[0],color="black", cmap="binary", label=r'RK4 method normalised to {0:.4f} '.format(val[0]))  
 
                 if v==True:
                     ax.plot([-d/2, -d/2],[y.min(), -w/2],[P[0].max(),P[0].max()], color="green", ls="--", label=r'Slit')
