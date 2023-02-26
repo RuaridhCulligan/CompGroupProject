@@ -466,8 +466,10 @@ def main(case, method, mode, d0, d_arr, fit=True):
         print("Error: argument mode must be equal to 'space_loop' or 'time_loop' ")
         return 1
     else:
-        err_vs_step_time(case,method, mode, d0, d_arr, fit) 
+        err_vs_step_time(case,method, mode, d0, d_arr, fit)
+        print("Done with 1/2, starting 2/2")
         time_cpu_vs_step(case,method, mode, d0, d_arr, fit) 
+         
 
 
 
@@ -475,6 +477,6 @@ def main(case, method, mode, d0, d_arr, fit=True):
 dt0 = 0.0001 #0.00001 
 dx0 = 0.1
 dx_arr = np.linspace(0.5, 0.1, 100)  # np.array([0.1, 0.2]) 
-dt_arr = np.array([0.001])
+dt_arr = np.linspace(0.004, 0.006, 100) # RKF: np.linspace(0.001, 0.01, 100)  #  RK4: np.linspace(0.0001, 0.001, 100)       # FTCS: np.linspace(0.00001, 0.0001, 100)
 
-main("caseA", "all", "space_loop", dt0, dx_arr, True)
+main("caseA", "rk4", "time_loop", dx0, dt_arr, True)

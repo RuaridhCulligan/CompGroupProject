@@ -566,7 +566,7 @@ def visualise_1D(case,method, settings, sys_par, num_par):
 
                 for i in np.arange(len(T)):
                     ax = plt.subplot(1,1,1)
-                    ax.text(0.95*x.min(),P_diff1[0].max(),'t={0:.3e}'.format(T[i]), animated=True, fontsize=body_size, ha="left",va="bottom")
+                    ax.text(0.95*x.min(),P_diff2[0].max(),'t={0:.3e}'.format(T[i]), animated=True, fontsize=body_size, ha="left",va="bottom")
                     l_rk4, = ax.plot(x,P_diff2[i],color="black")
                     l_rkf, = ax.plot(x,P_diff3[i],color="black")
 
