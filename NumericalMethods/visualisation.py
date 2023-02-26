@@ -519,7 +519,7 @@ def visualise_1D(case,method, settings, sys_par, num_par):
                     ax = plt.subplot(1,1,1)
                     ax.text(0.95*x.min(),P_diff1[0].max(),'t={0:.3e}'.format(T[i]), animated=True, fontsize=body_size, ha="left",va="bottom")
                     l_ftcs, = ax.plot(x,P_diff1[i],color="black")
-                    l_rk4, = ax.plot(x,P_diff2[i],color="black")
+                    l_rk4, = ax.plot(x,P_diff2[i],color="grey")
 
                     label_ftcs = r'Error on FTCS scheme (total: {0:.3f})'.format(integrate_1d(P_diff1[i],x))
                     label_rk4 = r'Error on RK4 scheme (total: {0:.3f})'.format(integrate_1d(P_diff2[i],x))
@@ -568,7 +568,7 @@ def visualise_1D(case,method, settings, sys_par, num_par):
                     ax = plt.subplot(1,1,1)
                     ax.text(0.95*x.min(),P_diff2[0].max(),'t={0:.3e}'.format(T[i]), animated=True, fontsize=body_size, ha="left",va="bottom")
                     l_rk4, = ax.plot(x,P_diff2[i],color="black")
-                    l_rkf, = ax.plot(x,P_diff3[i],color="black")
+                    l_rkf, = ax.plot(x,P_diff3[i],color="grey")
 
                     label_rk4 = r'Error on RK4 scheme (total: {0:.3f})'.format(integrate_1d(P_diff2[i],x))
                     label_rkf  = r'Error on RKF scheme (total: {0:.3f})'.format(integrate_1d(P_diff3[i],x))
@@ -585,7 +585,7 @@ def visualise_1D(case,method, settings, sys_par, num_par):
                     ax = plt.subplot(1,1,1)
                     ax.text(0.95*x.min(),P_ftcs[0].max(),'t={0:.3e}'.format(T[i]), animated=True, fontsize=body_size, ha="left",va="bottom")
                     l_rk4, = ax.plot(x,P_rk4[i],color="black")
-                    l_rkf, = ax.plot(x,P_rkf[i],color="black")
+                    l_rkf, = ax.plot(x,P_rkf[i],color="grey")
 
                     label_rk4 = r'RK4 scheme normalised to {0:.4f} '.format(val_rk4[i])
                     label_rkf  = r'RKF scheme normalised to {0:.4f} '.format(val_rkf[i])
@@ -618,7 +618,7 @@ def visualise_1D(case,method, settings, sys_par, num_par):
                     ax = plt.subplot(1,1,1)
                     ax.text(0.95*x.min(),P_diff1[0].max(),'t={0:.3e}'.format(T[i]), animated=True, fontsize=body_size, ha="left",va="bottom")
                     l_ftcs, = ax.plot(x,P_diff1[i],color="black")
-                    l_rkf, = ax.plot(x,P_diff3[i],color="black")
+                    l_rkf, = ax.plot(x,P_diff3[i],color="grey")
 
                     label_ftcs = r'Error on FTCS scheme (total: {0:.3f})'.format(integrate_1d(P_diff1[i],x))
                     label_rkf  = r'Error on RKF scheme (total: {0:.3f})'.format(integrate_1d(P_diff3[i],x))
@@ -635,7 +635,7 @@ def visualise_1D(case,method, settings, sys_par, num_par):
                     ax = plt.subplot(1,1,1)
                     ax.text(0.95*x.min(),P_ftcs[0].max(),'t={0:.3e}'.format(T[i]), animated=True, fontsize=body_size, ha="left",va="bottom")
                     l_ftcs, = ax.plot(x,P_ftcs[i],color="black")
-                    l_rkf, = ax.plot(x,P_rkf[i],color="black")
+                    l_rkf, = ax.plot(x,P_rkf[i],color="grey")
 
                     label_ftcs = r'FTCS scheme normalised to {0:.4f} '.format(val_ftcs[i])
                     label_rkf  = r'RKF scheme normalised to {0:.4f} '.format(val_rkf[i])
